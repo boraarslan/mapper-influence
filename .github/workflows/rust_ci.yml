@@ -1,0 +1,77 @@
+name: rust-ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    - main
+
+jobs:
+
+  cargo-clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+      - uses: Swatinem/rust-cache@v2  
+      - name: cargo clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: "--workspace --tests --all-features"
+
+  cargo-deny:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+      - uses: Swatinem/rust-cache@v2  
+      - name: cargo deny
+        uses: EmbarkStudios/cargo-deny-action@v1
+
+  cargo-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+          with:
+            toolchain: nightly
+      - uses: Swatinem/rust-cache@v2  
+      - name: cargo fmt
+        uses: actions-rs/cargo@v1
+          command: fmt
+          args: fmt --all -- --check
+
+  cargo-nextest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+      - uses: Swatinem/rust-cache@v2  
+      - name: Install nextest
+        uses: taiki-e/install-action@nextest
+      - name: cargo nextest
+        uses: actions-rs/cargo@v1
+          command: nextest
+          args: run
+
+  cargo-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+      - uses: Swatinem/rust-cache@v2  
+      - name: cargo doc
+        uses: actions-rs/cargo@v1
+          command: doc
+          args: --no-deps --all-features --document-private-items
