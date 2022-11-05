@@ -40,8 +40,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
-          with:
-            toolchain: nightly
+        with:
+          toolchain: nightly
       - uses: Swatinem/rust-cache@v2  
       - name: cargo fmt
         uses: actions-rs/cargo@v1
