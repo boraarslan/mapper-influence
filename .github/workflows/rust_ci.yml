@@ -45,6 +45,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2  
       - name: cargo fmt
         uses: actions-rs/cargo@v1
+        with:
           command: fmt
           args: fmt --all -- --check
 
@@ -60,6 +61,7 @@ jobs:
         uses: taiki-e/install-action@nextest
       - name: cargo nextest
         uses: actions-rs/cargo@v1
+        with:
           command: nextest
           args: run
 
@@ -73,5 +75,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2  
       - name: cargo doc
         uses: actions-rs/cargo@v1
+        with:
           command: doc
           args: --no-deps --all-features --document-private-items
