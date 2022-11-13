@@ -1,12 +1,12 @@
 -- Add up migration script here
-create table users(
+create table if not exists users(
     id bigserial primary key,
     user_name text not null,
     profile_picture text not null,
     bio text
 );
 
-create table influences(
+create table if not exists influences(
     from_id bigserial references users(id),
     to_id bigserial references users(id),
     influence_level int,
