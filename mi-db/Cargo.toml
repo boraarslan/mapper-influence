@@ -14,3 +14,12 @@ sqlx = { version = "0.6", features = [
 ] }
 tracing = "0.1"
 thiserror = "1.0"
+
+[build-dependencies]
+sqlx = { version = "0.6", features = [
+    "default",
+    "runtime-tokio-rustls",
+    "postgres",
+] }
+tokio = {version = "1.21", features = ["macros"]}
+dotenvy = "0.15"
