@@ -10,7 +10,7 @@ env:
   CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: 1
   RUSTFLAGS: -Dwarnings
-  DATABASE_URL: postgresql://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
+  DATABASE_URL: postgres://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
 
 jobs:
   cargo-clippy:
