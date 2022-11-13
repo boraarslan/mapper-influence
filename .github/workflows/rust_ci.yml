@@ -18,6 +18,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo clippy
         uses: actions-rs/clippy-check@v1
@@ -34,6 +35,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo deny
         uses: EmbarkStudios/cargo-deny-action@v1
@@ -51,8 +53,8 @@ jobs:
       - name: cargo fmt
         uses: actions-rs/cargo@v1
         with:
-          command: fmt
-          args: fmt --all -- --check
+          command: +nightly fmt
+          args: --all -- --check
 
   cargo-nextest:
     runs-on: ubuntu-latest
@@ -63,6 +65,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
       - uses: Swatinem/rust-cache@v2  
       - name: Install nextest
         uses: taiki-e/install-action@nextest
@@ -81,6 +84,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo doc
         uses: actions-rs/cargo@v1
