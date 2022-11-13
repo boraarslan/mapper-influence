@@ -38,7 +38,9 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo deny
-        uses: EmbarkStudios/cargo-deny-action@v1
+        uses: actions-rs/cargo@v1
+        with:
+          command: deny
 
   cargo-fmt:
     runs-on: ubuntu-latest
@@ -49,6 +51,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
+          components: rustfmt
       - uses: Swatinem/rust-cache@v2  
       - name: cargo fmt
         uses: actions-rs/cargo@v1
