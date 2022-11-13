@@ -78,7 +78,7 @@ jobs:
           toolchain: nightly
           args: --all -- --check
 
-  cargo-nextest:
+  cargo-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -89,13 +89,10 @@ jobs:
           toolchain: stable
           override: true
       - uses: Swatinem/rust-cache@v2  
-      - name: Install nextest
-        uses: taiki-e/install-action@nextest
-      - name: cargo nextest
+      - name: cargo test
         uses: actions-rs/cargo@v1
         with:
-          command: nextest
-          args: run
+          command: test
     services:
       # PostgreSQL service container
       postgres:
