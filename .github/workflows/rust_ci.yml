@@ -21,9 +21,9 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo clippy
-        uses: actions-rs/clippy-check@v1
+        uses: actions-rs/cargo@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          command: clippy
           args: "--workspace --tests --all-features"
 
   cargo-deny:
@@ -53,7 +53,8 @@ jobs:
       - name: cargo fmt
         uses: actions-rs/cargo@v1
         with:
-          command: +nightly fmt
+          command: fmt
+          toolchain: nightly
           args: --all -- --check
 
   cargo-nextest:
