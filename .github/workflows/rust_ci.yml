@@ -6,6 +6,11 @@ on:
   push:
     branches:
       - main
+env:
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -Dwarnings
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 jobs:
 
@@ -31,16 +36,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
       - uses: Swatinem/rust-cache@v2  
       - name: cargo deny
-        uses: actions-rs/cargo@v1
+        uses: EmbarkStudios/cargo-deny-action@v1
         with:
-          command: deny
+          rust-version: "1.65.0"
+          log-level: warn
+          command: check  
 
   cargo-fmt:
     runs-on: ubuntu-latest
