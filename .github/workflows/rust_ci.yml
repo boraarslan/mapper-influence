@@ -128,3 +128,19 @@ jobs:
         with:
           command: doc
           args: --no-deps --all-features --document-private-items
+    services:
+      # PostgreSQL service container
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: mapper-influence
+          POSTGRES_PASSWORD: mi-dev
+          POSTGRES_DB: mapper-influence-dev
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
