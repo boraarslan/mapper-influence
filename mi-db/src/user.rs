@@ -5,7 +5,7 @@ use crate::PG_UNIQUE_KEY_VIOLATION;
 
 #[derive(Debug, FromRow, Clone, PartialEq, Eq)]
 pub struct User {
-    /// Osu user ID of an user
+    /// Osu user ID of a user
     pub id: i64,
     /// Last known user name of the user
     pub user_name: String,
@@ -140,6 +140,8 @@ mod tests {
 
     use super::*;
 
+    const NOT_FOUND_ERROR_TEXT: &str = "Query against absent users should return NotFound error.";
+
     fn user_for_test() -> User {
         User {
             id: 1,
@@ -192,7 +194,7 @@ mod tests {
 
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
     }
 
@@ -217,14 +219,14 @@ mod tests {
 
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
         let err = update_user_bio(None, -100, &db).await.unwrap_err();
 
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
         let err = update_user_picture("does_not_matter", -100, &db)
@@ -233,7 +235,7 @@ mod tests {
 
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
     }
 
@@ -291,7 +293,7 @@ mod tests {
             UserError::UserNotFound(db_user_id) => {
                 assert_eq!(user.id, db_user_id)
             }
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
     }
 
@@ -301,7 +303,7 @@ mod tests {
 
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!("Query against absent users should return NotFound error."),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
     }
 }
