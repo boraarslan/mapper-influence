@@ -4,7 +4,7 @@ use sqlx::postgres::PgPoolOptions;
 #[tokio::main]
 async fn main() {
     // trigger recompilation when a new migration is added
-    println!("cargo:rerun-if-changed=migrations");
+    // println!("cargo:rerun-if-changed=migrations");
     dotenv().unwrap();
     // Only run migrations in CI
     let ci_env = std::env::var("MAPPER_INFLUENCE_CI_ENV").is_ok();
