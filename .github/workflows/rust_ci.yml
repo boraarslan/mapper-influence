@@ -78,7 +78,7 @@ jobs:
           toolchain: nightly
           args: --all -- --check
 
-  cargo-nextest:
+  cargo-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
