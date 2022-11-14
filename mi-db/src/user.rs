@@ -162,7 +162,7 @@ mod tests {
         user.bio = None;
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user, "User insert without bio failed.");
+        assert_eq!(user.clone(), db_user, "User insert without bio failed.");
 
         let user_second = User {
             //using the key of previously inserted user for key vialation test
