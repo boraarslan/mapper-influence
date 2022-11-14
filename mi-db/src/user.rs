@@ -142,9 +142,9 @@ mod tests {
 
     const NOT_FOUND_ERROR_TEXT: &str = "Query against absent users should return NotFound error.";
 
-    fn user_for_test() -> User {
+    fn user_for_test(id: i64) -> User {
         User {
-            id: 1,
+            id,
             user_name: "boraarslan".to_string(),
             profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
             bio: Some("I am tired.".to_string()),
@@ -153,34 +153,24 @@ mod tests {
 
     #[sqlx::test]
     async fn test_insert_user(db: PgPool) {
-        let user = user_for_test();
+        let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user);
-    }
+        assert_eq!(user, db_user, "User insert failed.");
 
-    #[sqlx::test]
-    async fn test_insert_no_bio(db: PgPool) {
-        let user = user_for_test();
+        let mut user = user_for_test(2);
+        user.bio = None;
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user);
-    }
+        assert_eq!(user, db_user, "User insert without bio failed.");
 
-    #[sqlx::test]
-    async fn test_insert_same_id(db: PgPool) {
-        let user_first = user_for_test();
         let user_second = User {
-            id: user_first.id,
+            //using the key of previously inserted user for key vialation test
+            id: user.id,
             user_name: "fursum".to_string(),
             profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
             bio: None,
         };
-
-        insert_user(user_first.clone(), &db).await.unwrap();
-        let db_user = search_user(user_first.id, &db).await.unwrap();
-        assert_eq!(user_first, db_user);
-
         let error = insert_user(user_second, &db).await.unwrap_err();
         match error {
             UserError::UserAlreadyExists(1) => {}
