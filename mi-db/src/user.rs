@@ -190,7 +190,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_update_user_name(db: PgPool) {
-        let user = user_for_test();
+        let user = user_for_test(1);
 
         insert_user(user.clone(), &db).await.unwrap();
         update_user_name("fursum", user.id, &db).await.unwrap();
@@ -231,7 +231,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_update_user_profile_picture(db: PgPool) {
-        let user = user_for_test();
+        let user = user_for_test(1);
 
         insert_user(user.clone(), &db).await.unwrap();
         update_user_picture("random.someothersite.com/bora2.jpeg", user.id, &db)
@@ -250,7 +250,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_update_user_bio(db: PgPool) {
-        let user = user_for_test();
+        let user = user_for_test(1);
 
         insert_user(user.clone(), &db).await.unwrap();
         update_user_bio(Some("I changed my mind."), user.id, &db)
@@ -269,7 +269,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_delete_user(db: PgPool) {
-        let user = user_for_test();
+        let user = user_for_test(1);
 
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
