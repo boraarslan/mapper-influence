@@ -173,7 +173,7 @@ mod tests {
         };
         let error = insert_user(user_second, &db).await.unwrap_err();
         match error {
-            UserError::UserAlreadyExists(1) => {}
+            UserError::UserAlreadyExists(2) => {}
             _ => panic!("Database should return key violation error on duplicate entries."),
         }
     }
