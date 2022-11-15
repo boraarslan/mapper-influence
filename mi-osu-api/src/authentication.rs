@@ -26,14 +26,15 @@ impl AuthRequestBody {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthResponseBody {
-    token_type: String,
-    expires_in: u32,
-    access_token: String,
-    refresh_token: String,
+    pub token_type: String,
+    pub expires_in: u32,
+    pub access_token: String,
+    pub refresh_token: String,
 }
+
 #[allow(dead_code)]
 #[derive(Debug, Error)]
-enum AuthenticationError {
+pub enum AuthenticationError {
     #[error("Error during the request with status code {0}: {1}")]
     Status(u16, String),
     #[error("Error during serializing the body.")]
