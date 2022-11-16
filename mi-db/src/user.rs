@@ -134,7 +134,7 @@ pub enum UserError {
     DatabaseError(#[from] sqlx::Error),
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "db-tests"))]
 mod tests {
     use sqlx::PgPool;
 

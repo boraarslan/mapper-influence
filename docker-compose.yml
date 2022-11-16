@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:15.1-alpine
+    container_name: postgres-mi
+    ports:
+      - "5432:5432"
+    profiles:
+      - all
+      - postgres
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: ${POSTGRES_USER:-mi-dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mi-dev}
+      POSTGRES_DB: ${POSTGRES_DB:-mapper-influence-dev}
+    healthcheck:
+      test: ["CMD", "pg_isready"]
