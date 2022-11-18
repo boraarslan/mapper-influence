@@ -144,6 +144,44 @@
     },
     "query": "DELETE FROM influences WHERE from_id = $1 AND to_id = $2 RETURNING from_id"
   },
+  "8e93e459e9a797324b7fe5e3d90d4f6db69e3131543532ef71fffe41d787660a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "to_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "influence_level",
+          "ordinal": 2,
+          "type_info": "Int4"
+        },
+        {
+          "name": "info",
+          "ordinal": 3,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM influences WHERE to_id = $1"
+  },
   "b20516efd17ee210d247e5b55deafcfaa3b754906bfdce8252ca90dfa015a213": {
     "describe": {
       "columns": [
