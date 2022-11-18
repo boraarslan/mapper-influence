@@ -18,7 +18,7 @@ docker-compose-down:
 
 test-all: docker-compose-up
 	sqlx migrate run --database-url ${DATABASE_URL} --source ./mi-db/migrations
-	cargo test --all-features
+	DATABASE_URL=${DATABASE_URL} cargo test --all-features
 
 update-db-schema: docker-compose-up
 	sqlx migrate run --database-url ${DATABASE_URL} --source ./mi-db/migrations	
