@@ -9,7 +9,7 @@ create table if not exists users(
 create table if not exists influences(
     from_id bigserial references users(id),
     to_id bigserial references users(id),
-    influence_level int,
+    influence_level int not null,
     info text,
     constraint pk_influence primary key (from_id, to_id)
 );
