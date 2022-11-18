@@ -35,6 +35,26 @@ pub async fn get_all_influences_by_from_id(
     }
 }
 
+pub async fn get_all_influences_by_to_id(
+    user_id: i64,
+    db: &PgPool,
+) -> Result<Vec<Influence>, InfluenceError> {
+    let search_result = sqlx::query_as!(
+        Influence,
+        "SELECT * FROM influences WHERE to_id = $1",
+        user_id
+    )
+    .fetch_all(db)
+    .await;
+
+    match search_result {
+        Ok(influences) if influences.is_empty() => Err(InfluenceError::InfluenceNotFound(user_id)),
+        Ok(influences) => Ok(influences),
+        Err(sqlx::Error::RowNotFound) => Err(InfluenceError::InfluenceNotFound(user_id)),
+        Err(db_err) => Err(InfluenceError::from(db_err)),
+    }
+}
+
 pub async fn insert_influence(influence: Influence, db: &PgPool) -> Result<(), InfluenceError> {
     let insert_result = sqlx::query!(
         "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id",
