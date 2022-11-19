@@ -12,6 +12,7 @@ env:
   RUSTFLAGS: -Dwarnings
   MAPPER_INFLUENCE_CI_ENV: 1
   DATABASE_URL: postgres://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
+  MI_TEST_REDIS_URL: redis://localhost:6379
 
 jobs:
   cargo-clippy:
@@ -109,6 +110,15 @@ jobs:
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7.0.5-alpine
+        ports:
+          - "6379:6379"
+        options: >-
+          --health-cmd redis-cli ping | grep PONG
+          --health-interval 1s
+          --health-timeout 3s
           --health-retries 5
 
   cargo-doc:

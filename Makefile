@@ -1,5 +1,6 @@
 DOCKER_SERVICES ?= all
-DATABASE_URL = postgres://mi-dev:mi-dev@localhost:5432/mapper-influence-dev 
+PG_DATABASE_URL = postgres://mi-dev:mi-dev@localhost:5432/mapper-influence-dev 
+REDIS_URL = redis://localhost:6379
 
 fmt:
 	@echo "Formatting Rust files"
@@ -17,9 +18,9 @@ docker-compose-down:
 	docker compose -f docker-compose.yml down --remove-orphans
 
 test-all: docker-compose-up
-	sqlx migrate run --database-url ${DATABASE_URL} --source ./mi-db/migrations
-	DATABASE_URL=${DATABASE_URL} cargo test --all-features
+	sqlx migrate run --database-url ${PG_DATABASE_URL} --source ./mi-db/migrations
+	DATABASE_URL=${PG_DATABASE_URL} MI_TEST_REDIS_URL=${REDIS_URL} cargo test --all-features
 
 update-db-schema: docker-compose-up
-	sqlx migrate run --database-url ${DATABASE_URL} --source ./mi-db/migrations	
-	cd mi-db && cargo sqlx prepare --database-url ${DATABASE_URL}
+	sqlx migrate run --database-url ${PG_DATABASE_URL} --source ./mi-db/migrations	
+	cd mi-db && cargo sqlx prepare --database-url ${PG_DATABASE_URL}
