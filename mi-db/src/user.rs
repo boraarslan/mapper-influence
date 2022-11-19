@@ -153,22 +153,22 @@ mod tests {
 
     #[sqlx::test]
     async fn test_insert_user(db: PgPool) {
-        //Testing user insert
+        // Test user insert
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user, "User insert failed.");
+        assert_eq!(user, db_user);
 
-        //Testing user insert with optional field
+        // Test user insert with optional field
         let mut user = user_for_test(2);
         user.bio = None;
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user.clone(), db_user, "User insert without bio failed.");
+        assert_eq!(user.clone(), db_user);
 
-        //Testing user insert with duplicate keys
+        // Test user insert with duplicate keys
         let user_second = User {
-            //Using the key of previously inserted user for key vialation test
+            //Using the key of the previously inserted user for key violation test
             id: user.id,
             user_name: "fursum".to_string(),
             profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
@@ -183,26 +183,16 @@ mod tests {
 
     #[sqlx::test]
     async fn test_update_user(db: PgPool) {
-        //Testing username update
+        // Test username update
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_name("fursum", user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(
-            db_user.user_name,
-            "fursum".to_string(),
-            "Username failed to update"
-        );
-        assert_eq!(
-            user.bio, db_user.bio,
-            "User bio failed to update after username update."
-        );
-        assert_eq!(
-            user.profile_picture, db_user.profile_picture,
-            "User profile pictures failed to update after username update."
-        );
+        assert_eq!(db_user.user_name, "fursum".to_string(),);
+        assert_eq!(user.bio, db_user.bio,);
+        assert_eq!(user.profile_picture, db_user.profile_picture,);
 
-        //Testing profile picture update
+        // Test profile picture update
         let user = user_for_test(2);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_picture("random.someothersite.com/bora2.jpeg", user.id, &db)
@@ -214,43 +204,24 @@ mod tests {
             db_user.profile_picture,
             "random.someothersite.com/bora2.jpeg".to_string()
         );
-        assert_eq!(
-            user.user_name, db_user.user_name,
-            "Username failed to update after profile picture update."
-        );
-        assert_eq!(
-            user.bio, db_user.bio,
-            "User bio failed to update after profile picture update."
-        );
+        assert_eq!(user.user_name, db_user.user_name,);
+        assert_eq!(user.bio, db_user.bio,);
 
-        //Testing user bio update
+        // Test user bio update
         let user = user_for_test(3);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_bio(Some("I changed my mind."), user.id, &db)
             .await
             .unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(
-            db_user.bio,
-            Some("I changed my mind.".to_string()),
-            "User bio failed to update."
-        );
-        assert_eq!(
-            user.profile_picture, db_user.profile_picture,
-            "User profile picture faied to update after profile picture update."
-        );
-        assert_eq!(
-            user.user_name, db_user.user_name,
-            "Username failed to update after profile picture update."
-        );
+        assert_eq!(db_user.bio, Some("I changed my mind.".to_string()),);
+        assert_eq!(user.profile_picture, db_user.profile_picture,);
+        assert_eq!(user.user_name, db_user.user_name,);
 
-        //Testing user bio update to none value
+        // Test user bio update to none value
         update_user_bio(None, user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(
-            db_user.bio, None,
-            "User bio failed to update to none value."
-        );
+        assert_eq!(db_user.bio, None,);
     }
 
     #[sqlx::test]
@@ -258,14 +229,14 @@ mod tests {
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user, "User insert failed.");
+        assert_eq!(user, db_user);
 
         delete_user(user.id, &db).await.unwrap();
         let err = search_user(user.id, &db).await.unwrap_err();
 
         match err {
             UserError::UserNotFound(db_user_id) => {
-                assert_eq!(user.id, db_user_id, "Failed to delete the user.")
+                assert_eq!(user.id, db_user_id)
             }
             _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
@@ -273,62 +244,47 @@ mod tests {
 
     #[sqlx::test]
     async fn test_non_existent(db: PgPool) {
-        //Testing search for non-existent user
+        // Test search for non-existent user
         let err = search_user(-100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!(
-                "Test failed while searching for non-existent user: {}",
-                NOT_FOUND_ERROR_TEXT
-            ),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
-        //Testing username update for non-existent user
+        // Test username update for non-existent user
         let err = update_user_name("112does_not_matter", -100, &db)
             .await
             .unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!(
-                "Test failed while updating the username of a non-existent user: {}",
-                NOT_FOUND_ERROR_TEXT
-            ),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
-        //Testing user bio update for non-existent user
+        // Test user bio update for non-existent user
         let err = update_user_bio(None, -100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
             _ => {
-                panic!(
-                    "Test failed while updating the user bio of a non-existent user: {}",
-                    NOT_FOUND_ERROR_TEXT
-                )
+                panic!("{}", NOT_FOUND_ERROR_TEXT)
             }
         }
 
-        //Testing user update for non-existent user
+        // Test user update for non-existent user
         let err = update_user_picture("does_not_matter.png", -100, &db)
             .await
             .unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
             _ => {
-                panic!(
-                    "Test failed while updating the profile_picture of a non-existent user: {}",
-                    NOT_FOUND_ERROR_TEXT
-                )
+                panic!("{}", NOT_FOUND_ERROR_TEXT)
             }
         }
 
-        //testing user delete for non-existet user
+        // Test user delete for non-existet user
         let err = delete_user(-100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => panic!(
-                "Test failed while trying to delete a non-existent user: {}",
-                NOT_FOUND_ERROR_TEXT
-            ),
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
     }
 }
