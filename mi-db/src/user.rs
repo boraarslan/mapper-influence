@@ -188,9 +188,9 @@ mod tests {
         insert_user(user.clone(), &db).await.unwrap();
         update_user_name("fursum", user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(db_user.user_name, "fursum".to_string(),);
-        assert_eq!(user.bio, db_user.bio,);
-        assert_eq!(user.profile_picture, db_user.profile_picture,);
+        assert_eq!(db_user.user_name, "fursum".to_string());
+        assert_eq!(user.bio, db_user.bio);
+        assert_eq!(user.profile_picture, db_user.profile_picture);
 
         // Test profile picture update
         let user = user_for_test(2);
@@ -204,8 +204,8 @@ mod tests {
             db_user.profile_picture,
             "random.someothersite.com/bora2.jpeg".to_string()
         );
-        assert_eq!(user.user_name, db_user.user_name,);
-        assert_eq!(user.bio, db_user.bio,);
+        assert_eq!(user.user_name, db_user.user_name);
+        assert_eq!(user.bio, db_user.bio);
 
         // Test user bio update
         let user = user_for_test(3);
@@ -215,13 +215,13 @@ mod tests {
             .unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
         assert_eq!(db_user.bio, Some("I changed my mind.".to_string()),);
-        assert_eq!(user.profile_picture, db_user.profile_picture,);
-        assert_eq!(user.user_name, db_user.user_name,);
+        assert_eq!(user.profile_picture, db_user.profile_picture);
+        assert_eq!(user.user_name, db_user.user_name);
 
         // Test user bio update to none value
         update_user_bio(None, user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(db_user.bio, None,);
+        assert_eq!(db_user.bio, None);
     }
 
     #[sqlx::test]
@@ -264,9 +264,7 @@ mod tests {
         let err = update_user_bio(None, -100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => {
-                panic!("{}", NOT_FOUND_ERROR_TEXT)
-            }
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
         // Test user update for non-existent user
@@ -275,9 +273,7 @@ mod tests {
             .unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
-            _ => {
-                panic!("{}", NOT_FOUND_ERROR_TEXT)
-            }
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
         }
 
         // Test user delete for non-existet user
