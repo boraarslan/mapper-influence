@@ -20,6 +20,7 @@ pub struct AuthRequestBuilder {
 }
 
 impl AuthRequestBuilder {
+    #[allow(dead_code)]
     pub fn new(client_id: String, client_secret: String, redirect_uri: String) -> Self {
         Self {
             client_id,
@@ -27,6 +28,7 @@ impl AuthRequestBuilder {
             redirect_uri,
         }
     }
+    #[allow(dead_code)]
     pub fn request_body(&self, code: String) -> AuthRequestBody {
         AuthRequestBody {
             client_id: self.client_id.clone(),
@@ -37,6 +39,7 @@ impl AuthRequestBuilder {
             refresh_token: None,
         }
     }
+    #[allow(dead_code)]
     pub fn refresh_body(&self, refresh_token: String) -> AuthRequestBody {
         AuthRequestBody {
             client_id: self.client_id.clone(),
