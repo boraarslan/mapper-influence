@@ -214,7 +214,7 @@ mod tests {
             .await
             .unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(db_user.bio, Some("I changed my mind.".to_string()),);
+        assert_eq!(db_user.bio, Some("I changed my mind.".to_string()));
         assert_eq!(user.profile_picture, db_user.profile_picture);
         assert_eq!(user.user_name, db_user.user_name);
 
