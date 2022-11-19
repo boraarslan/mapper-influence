@@ -117,6 +117,7 @@ async fn request_token(
 mod tests {
     use super::*;
 
+    #[ignore]
     #[tokio::test]
     async fn test() {
         dotenv::dotenv().unwrap();
