@@ -1,0 +1,303 @@
+{
+  "db": "PostgreSQL",
+  "51530a1a06b0ae31e99258c59fd819580d9993fd23ee08f9df65ef7924a21275": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE users SET user_name = $1 WHERE id = $2 RETURNING id"
+  },
+  "58327aa90726e98d2f31a5178c611b22b3177ea71f812c9f53e4164f22cd1f8a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "DELETE FROM users WHERE id = $1 RETURNING id"
+  },
+  "60fd0e0da707e92b214adef7489778fe11cf20e0090c17a1492a7b341e9304e5": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id"
+  },
+  "689ccc8a2c47be7848241b7a600220ae40f9b5e42e6db5c65303b2d227412dab": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8",
+          "Int4",
+          "Text"
+        ]
+      }
+    },
+    "query": "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id"
+  },
+  "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "bio",
+          "ordinal": 3,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM users WHERE id = $1"
+  },
+  "8cdda88cc181541f72fc905f0444da40e8165750a8c27db6da174f0cc2bcac22": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "DELETE FROM influences WHERE from_id = $1 AND to_id = $2 RETURNING from_id"
+  },
+  "8e93e459e9a797324b7fe5e3d90d4f6db69e3131543532ef71fffe41d787660a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "to_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "influence_level",
+          "ordinal": 2,
+          "type_info": "Int4"
+        },
+        {
+          "name": "info",
+          "ordinal": 3,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM influences WHERE to_id = $1"
+  },
+  "b20516efd17ee210d247e5b55deafcfaa3b754906bfdce8252ca90dfa015a213": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE influences SET info = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
+  },
+  "c48c463c5b2ea7bbb97258775db9151d86eee3570906b6968ba0e52dbb67368a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int8",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
+  },
+  "d6588d3396369e752d050dbc206a0a2fcfeae1edf84e7445c5a00f9598356619": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Text",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO users (id, user_name, profile_picture, bio) VALUES ($1, $2, $3, $4)"
+  },
+  "f31147e2bf34fbff116b7aee015121b433c592434e66ac2a4d35e7c4f6a967c0": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE users SET bio = $1 WHERE id = $2 RETURNING id"
+  },
+  "f749cbfc1f240abd5f0b804c7a567e84730e6dbc4f444da645450f275c1d8c15": {
+    "describe": {
+      "columns": [
+        {
+          "name": "from_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "to_id",
+          "ordinal": 1,
+          "type_info": "Int8"
+        },
+        {
+          "name": "influence_level",
+          "ordinal": 2,
+          "type_info": "Int4"
+        },
+        {
+          "name": "info",
+          "ordinal": 3,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT * FROM influences WHERE from_id = $1"
+  }
+}

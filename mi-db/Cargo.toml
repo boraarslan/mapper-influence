@@ -20,6 +20,10 @@ sqlx = { version = "0.6", features = [
     "default",
     "runtime-tokio-rustls",
     "postgres",
+    "offline",
 ] }
-tokio = {version = "1.21", features = ["macros"]}
+tokio = { version = "1.22", features = ["macros"] }
 dotenvy = "0.15"
+
+[features]
+db-tests = []
