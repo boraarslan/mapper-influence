@@ -142,9 +142,9 @@ mod tests {
 
     const NOT_FOUND_ERROR_TEXT: &str = "Query against absent users should return NotFound error.";
 
-    fn user_for_test() -> User {
+    fn user_for_test(id: i64) -> User {
         User {
-            id: 1,
+            id,
             user_name: "boraarslan".to_string(),
             profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
             bio: Some("I am tired.".to_string()),
@@ -153,125 +153,72 @@ mod tests {
 
     #[sqlx::test]
     async fn test_insert_user(db: PgPool) {
-        let user = user_for_test();
+        // Test user insert
+        let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
         assert_eq!(user, db_user);
-    }
 
-    #[sqlx::test]
-    async fn test_insert_no_bio(db: PgPool) {
-        let user = user_for_test();
+        // Test user insert with optional field
+        let mut user = user_for_test(2);
+        user.bio = None;
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user);
-    }
+        assert_eq!(user.clone(), db_user);
 
-    #[sqlx::test]
-    async fn test_insert_same_id(db: PgPool) {
-        let user_first = user_for_test();
+        // Test user insert with duplicate keys
         let user_second = User {
-            id: user_first.id,
+            //Using the key of the previously inserted user for key violation test
+            id: user.id,
             user_name: "fursum".to_string(),
             profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
             bio: None,
         };
-
-        insert_user(user_first.clone(), &db).await.unwrap();
-        let db_user = search_user(user_first.id, &db).await.unwrap();
-        assert_eq!(user_first, db_user);
-
         let error = insert_user(user_second, &db).await.unwrap_err();
         match error {
-            UserError::UserAlreadyExists(1) => {}
+            UserError::UserAlreadyExists(2) => {}
             _ => panic!("Database should return key violation error on duplicate entries."),
         }
     }
 
     #[sqlx::test]
-    async fn test_search_non_existent_user(db: PgPool) {
-        let err = search_user(-100, &db).await.unwrap_err();
-
-        match err {
-            UserError::UserNotFound(-100) => {}
-            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
-        }
-    }
-
-    #[sqlx::test]
-    async fn test_update_user_name(db: PgPool) {
-        let user = user_for_test();
-
+    async fn test_update_user(db: PgPool) {
+        // Test username update
+        let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_name("fursum", user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-
         assert_eq!(db_user.user_name, "fursum".to_string());
         assert_eq!(user.bio, db_user.bio);
         assert_eq!(user.profile_picture, db_user.profile_picture);
-    }
 
-    #[sqlx::test]
-    async fn test_update_non_existent(db: PgPool) {
-        let err = update_user_name("does_not_matter", -100, &db)
-            .await
-            .unwrap_err();
-
-        match err {
-            UserError::UserNotFound(-100) => {}
-            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
-        }
-
-        let err = update_user_bio(None, -100, &db).await.unwrap_err();
-
-        match err {
-            UserError::UserNotFound(-100) => {}
-            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
-        }
-
-        let err = update_user_picture("does_not_matter", -100, &db)
-            .await
-            .unwrap_err();
-
-        match err {
-            UserError::UserNotFound(-100) => {}
-            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
-        }
-    }
-
-    #[sqlx::test]
-    async fn test_update_user_profile_picture(db: PgPool) {
-        let user = user_for_test();
-
+        // Test profile picture update
+        let user = user_for_test(2);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_picture("random.someothersite.com/bora2.jpeg", user.id, &db)
             .await
             .unwrap();
 
         let db_user = search_user(user.id, &db).await.unwrap();
-
         assert_eq!(
             db_user.profile_picture,
             "random.someothersite.com/bora2.jpeg".to_string()
         );
         assert_eq!(user.user_name, db_user.user_name);
         assert_eq!(user.bio, db_user.bio);
-    }
 
-    #[sqlx::test]
-    async fn test_update_user_bio(db: PgPool) {
-        let user = user_for_test();
-
+        // Test user bio update
+        let user = user_for_test(3);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_bio(Some("I changed my mind."), user.id, &db)
             .await
             .unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-
         assert_eq!(db_user.bio, Some("I changed my mind.".to_string()));
         assert_eq!(user.profile_picture, db_user.profile_picture);
         assert_eq!(user.user_name, db_user.user_name);
 
+        // Test user bio update to none value
         update_user_bio(None, user.id, &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
         assert_eq!(db_user.bio, None);
@@ -279,11 +226,9 @@ mod tests {
 
     #[sqlx::test]
     async fn test_delete_user(db: PgPool) {
-        let user = user_for_test();
-
+        let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         let db_user = search_user(user.id, &db).await.unwrap();
-
         assert_eq!(user, db_user);
 
         delete_user(user.id, &db).await.unwrap();
@@ -298,9 +243,41 @@ mod tests {
     }
 
     #[sqlx::test]
-    async fn test_delete_non_existent_user(db: PgPool) {
-        let err = delete_user(-100, &db).await.unwrap_err();
+    async fn test_non_existent(db: PgPool) {
+        // Test search for non-existent user
+        let err = search_user(-100, &db).await.unwrap_err();
+        match err {
+            UserError::UserNotFound(-100) => {}
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
+        }
 
+        // Test username update for non-existent user
+        let err = update_user_name("112does_not_matter", -100, &db)
+            .await
+            .unwrap_err();
+        match err {
+            UserError::UserNotFound(-100) => {}
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
+        }
+
+        // Test user bio update for non-existent user
+        let err = update_user_bio(None, -100, &db).await.unwrap_err();
+        match err {
+            UserError::UserNotFound(-100) => {}
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
+        }
+
+        // Test user update for non-existent user
+        let err = update_user_picture("does_not_matter.png", -100, &db)
+            .await
+            .unwrap_err();
+        match err {
+            UserError::UserNotFound(-100) => {}
+            _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
+        }
+
+        // Test user delete for non-existet user
+        let err = delete_user(-100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
             _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
