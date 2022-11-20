@@ -57,7 +57,8 @@ pub async fn get_all_influences_by_to_id(
 
 pub async fn insert_influence(influence: Influence, db: &PgPool) -> Result<(), InfluenceError> {
     let insert_result = sqlx::query!(
-        "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id",
+        "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) \
+         RETURNING from_id",
         influence.from_id,
         influence.to_id,
         influence.influence_level,
@@ -95,11 +96,14 @@ pub async fn update_influence_level(
     influence_level: i32,
     db: &PgPool,
 ) -> Result<(), InfluenceError> {
-    let update_result = sqlx::query!("UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id", 
+    let update_result = sqlx::query!(
+        "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING \
+         from_id",
         influence_level,
         from_id,
         to_id
-    ).fetch_one(db)
+    )
+    .fetch_one(db)
     .await;
 
     match update_result {
@@ -171,9 +175,8 @@ pub enum InfluenceError {
 mod tests {
     use sqlx::PgPool;
 
-    use crate::user::{insert_user, User};
-
     use super::*;
+    use crate::user::{insert_user, User};
 
     fn user_for_test(user_id: i64) -> User {
         User {

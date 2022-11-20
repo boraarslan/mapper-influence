@@ -168,7 +168,7 @@ mod tests {
 
         // Test user insert with duplicate keys
         let user_second = User {
-            //Using the key of the previously inserted user for key violation test
+            // Using the key of the previously inserted user for key violation test
             id: user.id,
             user_name: "fursum".to_string(),
             profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
