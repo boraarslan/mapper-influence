@@ -1,6 +1,8 @@
-use reqwest::{Client, StatusCode};
+use crate::evaluate_request;
+
+use super::APIError;
+use reqwest::Client;
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthRequestBody {
@@ -61,56 +63,18 @@ pub struct AuthResponseBody {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Error)]
-pub enum AuthenticationError {
-    #[error("Error during the request with status code {0}: {1}")]
-    Status(u16, String),
-    #[error("Error during serializing the body.")]
-    Serialization,
-    #[error("Error during deserializing the response.")]
-    Deserialization,
-    #[error("Error during sending the response.")]
-    Request,
-}
-
-impl AuthenticationError {
-    #[allow(dead_code)]
-    pub fn error_from_status(status_code: StatusCode) -> AuthenticationError {
-        AuthenticationError::Status(
-            status_code.as_u16(),
-            status_code.canonical_reason().unwrap_or("").to_string(),
-        )
-    }
-}
-
-#[allow(dead_code)]
 async fn request_token(
     client: &Client,
     body: AuthRequestBody,
-) -> Result<AuthResponseBody, AuthenticationError> {
+) -> Result<AuthResponseBody, APIError> {
     let response_result = client
         .post("https://osu.ppy.sh/oauth/token")
         .json(&body)
         .send()
-        .await;
-
-    match response_result {
-        Ok(response) => {
-            let response_status = response.status();
-            if !response_status.is_success() {
-                return Err(AuthenticationError::error_from_status(response_status));
-            }
-            let response_body = response.json::<AuthResponseBody>().await;
-            response_body.map_err(|_| AuthenticationError::Deserialization)
-        }
-        Err(error) => {
-            if let Some(status) = error.status() {
-                Err(AuthenticationError::error_from_status(status))
-            } else {
-                Err(AuthenticationError::Request)
-            }
-        }
-    }
+        .await?;
+    let response_result = evaluate_request(response_result)?;
+    let response_body = response_result.json::<AuthResponseBody>().await?;
+    Ok(response_body)
 }
 
 #[cfg(test)]
@@ -131,7 +95,7 @@ mod tests {
         );
 
         // get fresh code from https://mapper-influences.vercel.app/oauth
-        // It's single use.
+        // It's single use. Without fresh code, it should panic at unwraps.
         let code = "code".to_string();
         let body = auth_request_builder.request_body(code);
         let first_response = dbg!(request_token(&client, body).await.unwrap());
