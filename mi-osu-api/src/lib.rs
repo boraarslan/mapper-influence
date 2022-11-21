@@ -22,25 +22,6 @@ pub enum APIError {
     Request(#[from] reqwest::Error),
 }
 
-#[allow(dead_code)]
-#[derive(Debug, Error)]
-pub enum RequestError {
-    #[error("Error while building the request.")]
-    Builder,
-    #[error("Error while redirecting the request.")]
-    Redirect,
-    #[error("Request timed out.")]
-    Timeout,
-    #[error("Error during request process.")]
-    Request,
-    #[error("Error while connecting.")]
-    Connect,
-    #[error("Error while encoding the request body.")]
-    Body,
-    #[error("Error while decoding the response.")]
-    Decode,
-}
-
 // visit https://developer.mozilla.org/en-US/docs/Web/HTTP/Status for more info
 #[allow(dead_code)]
 #[derive(Debug, Error)]
