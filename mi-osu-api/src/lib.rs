@@ -19,39 +19,7 @@ pub enum APIError {
     #[error("The API request returned a response with HTTP error code.")]
     HTTP(HTTPError),
     #[error("There was an error before, during or after sending the request that is not related to HTTP errors.")]
-    Request(RequestError),
-    #[error("An unknown error has been occured.")]
-    Unknown,
-}
-
-impl From<reqwest::Error> for APIError {
-    fn from(reqwest_error: reqwest::Error) -> Self {
-        if reqwest_error.is_status() {
-            return Self::HTTP(HTTPError::from(reqwest_error.status().unwrap()));
-        }
-        if reqwest_error.is_decode() {
-            return Self::Request(RequestError::Decode);
-        }
-        if reqwest_error.is_builder() {
-            return Self::Request(RequestError::Builder);
-        }
-        if reqwest_error.is_redirect() {
-            return Self::Request(RequestError::Redirect);
-        }
-        if reqwest_error.is_timeout() {
-            return Self::Request(RequestError::Timeout);
-        }
-        if reqwest_error.is_request() {
-            return Self::Request(RequestError::Request);
-        }
-        if reqwest_error.is_connect() {
-            return Self::Request(RequestError::Connect);
-        }
-        if reqwest_error.is_body() {
-            return Self::Request(RequestError::Body);
-        }
-        Self::Unknown
-    }
+    Request(#[from] reqwest::Error),
 }
 
 #[allow(dead_code)]
