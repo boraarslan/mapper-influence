@@ -5,22 +5,22 @@ use serde::{Deserialize, Serialize};
 
 use crate::ReqwestError;
 
-const MI_CLIENT_ID: Lazy<String> = Lazy::new(|| {
+static MI_CLIENT_ID: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_CLIENT_ID").expect("Environment variable MI_CLIENT_ID is not set.")
 });
-const MI_CLIENT_SECRET: Lazy<String> = Lazy::new(|| {
+static MI_CLIENT_SECRET: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_CLIENT_SECRET").expect("Environment variable MI_CLIENT_SECRET is not set.")
 });
-const MI_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
+static MI_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_REDIRECT_URI").expect("Environment variable MI_REDIRECT_URI is not set.")
 });
 
 #[derive(Serialize, Debug)]
 struct AuthRequest {
-    pub client_id: String,
-    pub client_secret: String,
-    pub grant_type: String,
-    pub redirect_uri: String,
+    pub client_id: &'static str,
+    pub client_secret: &'static str,
+    pub grant_type: &'static str,
+    pub redirect_uri: &'static str,
     pub code: Option<String>,
     pub refresh_token: Option<String>,
 }
@@ -28,10 +28,10 @@ struct AuthRequest {
 impl AuthRequest {
     pub fn access(code: String) -> AuthRequest {
         AuthRequest {
-            client_id: MI_CLIENT_ID.clone(),
-            client_secret: MI_CLIENT_SECRET.clone(),
-            redirect_uri: MI_REDIRECT_URI.clone(),
-            grant_type: "authorization_code".to_string(),
+            client_id: &MI_CLIENT_ID,
+            client_secret: &MI_CLIENT_SECRET,
+            redirect_uri: &MI_REDIRECT_URI,
+            grant_type: "authorization_code",
             code: Some(code),
             refresh_token: None,
         }
@@ -39,10 +39,10 @@ impl AuthRequest {
 
     pub fn refresh(refresh_token: String) -> AuthRequest {
         AuthRequest {
-            client_id: MI_CLIENT_ID.clone(),
-            client_secret: MI_CLIENT_SECRET.clone(),
-            redirect_uri: MI_REDIRECT_URI.clone(),
-            grant_type: "refresh_token".to_string(),
+            client_id: &MI_CLIENT_ID,
+            client_secret: &MI_CLIENT_SECRET,
+            redirect_uri: &MI_REDIRECT_URI,
+            grant_type: "refresh_token",
             code: None,
             refresh_token: Some(refresh_token),
         }
