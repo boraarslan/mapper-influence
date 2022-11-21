@@ -1,8 +1,8 @@
-use crate::evaluate_request;
-
-use super::APIError;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+
+use super::APIError;
+use crate::evaluate_request;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AuthRequestBody {
@@ -30,6 +30,7 @@ impl AuthRequestBuilder {
             redirect_uri,
         }
     }
+
     #[allow(dead_code)]
     pub fn request_body(&self, code: String) -> AuthRequestBody {
         AuthRequestBody {
@@ -41,6 +42,7 @@ impl AuthRequestBuilder {
             refresh_token: None,
         }
     }
+
     #[allow(dead_code)]
     pub fn refresh_body(&self, refresh_token: String) -> AuthRequestBody {
         AuthRequestBody {

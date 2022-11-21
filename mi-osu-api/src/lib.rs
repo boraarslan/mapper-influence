@@ -3,7 +3,8 @@ mod authentication;
 use reqwest::{Response, StatusCode};
 use thiserror::Error;
 
-// Used in API call methods to determine HTTP errors in case the request goes through but returns with error.
+// Used in API call methods to determine HTTP errors in case the request goes through but returns
+// with error.
 fn evaluate_request(response: Response) -> Result<Response, APIError> {
     if !response.status().is_success() {
         Err(APIError::HTTP(HTTPError::from(response.status())))
@@ -17,7 +18,10 @@ fn evaluate_request(response: Response) -> Result<Response, APIError> {
 pub enum APIError {
     #[error("The API request returned a response with HTTP error code.")]
     HTTP(HTTPError),
-    #[error("There was an error before, during or after sending the request that is not related to HTTP errors.")]
+    #[error(
+        "There was an error before, during or after sending the request that is not related to \
+         HTTP errors."
+    )]
     Request(#[from] reqwest::Error),
 }
 
