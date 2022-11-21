@@ -6,7 +6,6 @@ use thiserror::Error;
 // Used in API call methods to determine HTTP errors in case the request goes through but returns with error.
 fn evaluate_request(response: Response) -> Result<Response, APIError> {
     if !response.status().is_success() {
-        println!("{}", response.status().as_u16());
         Err(APIError::HTTP(HTTPError::from(response.status())))
     } else {
         Ok(response)
