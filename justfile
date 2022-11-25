@@ -1,6 +1,5 @@
 # https://cheatography.com/linux-china/cheat-sheets/justfile/
 
-DOCKER_SERVICES := "all"
 PG_DATABASE_URL := "postgres://mi-dev:mi-dev@localhost:5432/mapper-influence-dev"
 REDIS_URL := "redis://localhost:6379"
 
@@ -12,7 +11,7 @@ fix: fmt
 	@echo "Running cargo clippy --fix"
 	cargo clippy --fix --all-features --allow-dirty --allow-staged
 
-docker-compose-up:
+docker-compose-up DOCKER_SERVICES="all":
 	@echo "Launching {{DOCKER_SERVICES}} Docker service(s)"
 	COMPOSE_PROFILES={{DOCKER_SERVICES}} docker compose -f docker-compose.yml up -d --remove-orphans --wait
 
