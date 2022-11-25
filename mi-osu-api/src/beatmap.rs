@@ -147,7 +147,7 @@ mod tests {
         let client = reqwest::Client::new();
         // Get Access token from auth.rs
         let token = "token";
-        dbg!(request_beatmap(&client, &token, 1304701).await.unwrap());
+        dbg!(request_beatmap(&client, token, 1304701).await.unwrap());
         dbg!(
             request_user_beatmapsets(&client, token, 3953470, BeatmapType::Graveyard)
                 .await
