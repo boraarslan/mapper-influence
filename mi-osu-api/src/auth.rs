@@ -21,6 +21,7 @@ struct AuthRequest {
     pub client_secret: &'static str,
     pub grant_type: &'static str,
     pub redirect_uri: &'static str,
+    pub scope: &'static str,
     pub code: Option<String>,
     pub refresh_token: Option<String>,
 }
@@ -32,6 +33,7 @@ impl AuthRequest {
             client_secret: &MI_CLIENT_SECRET,
             redirect_uri: &MI_REDIRECT_URI,
             grant_type: "authorization_code",
+            scope: "public, identify",
             code: Some(code),
             refresh_token: None,
         }
@@ -43,6 +45,7 @@ impl AuthRequest {
             client_secret: &MI_CLIENT_SECRET,
             redirect_uri: &MI_REDIRECT_URI,
             grant_type: "refresh_token",
+            scope: "public, identify",
             code: None,
             refresh_token: Some(refresh_token),
         }
