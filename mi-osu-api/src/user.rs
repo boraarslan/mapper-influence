@@ -1,71 +1,58 @@
 #![allow(dead_code)]
-use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::Deserialize;
 
 use crate::ReqwestError;
 
-static MI_CLIENT_ID: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_CLIENT_ID").expect("Environment variable MI_CLIENT_ID is not set.")
-});
-static MI_CLIENT_SECRET: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_CLIENT_SECRET").expect("Environment variable MI_CLIENT_SECRET is not set.")
-});
-static MI_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_REDIRECT_URI").expect("Environment variable MI_REDIRECT_URI is not set.")
-});
-
-// Only implementing the essential and likely to be used fields first
 #[derive(Debug, Deserialize)]
 pub struct User {
-    avatar_url: String,
-    id: i64,
-    username: String,
-    join_date: String,
-    kudosu: Kudosu,
-    playmode: String,
-    title: Option<String>,
-    favourite_beatmapset_count: i64,
-    graveyard_beatmapset_count: i64,
-    loved_beatmapset_count: i64,
-    pending_beatmapset_count: i64,
-    guest_beatmapset_count: i64,
-    ranked_beatmapset_count: i64,
-    nominated_beatmapset_count: i64,
-    country: Country,
-    cover: Cover,
-    // not documented but assuming it's string
-    previous_usernames: Vec<String>,
-    badges: Vec<Badge>,
+    pub avatar_url: String,
+    pub id: i64,
+    pub username: String,
+    pub join_date: String,
+    pub kudosu: Kudosu,
+    pub playmode: String,
+    pub title: Option<String>,
+    pub favourite_beatmapset_count: i64,
+    pub graveyard_beatmapset_count: i64,
+    pub loved_beatmapset_count: i64,
+    pub pending_beatmapset_count: i64,
+    pub guest_beatmapset_count: i64,
+    pub ranked_beatmapset_count: i64,
+    pub nominated_beatmapset_count: i64,
+    pub country: Country,
+    pub cover: Cover,
+    pub previous_usernames: Vec<String>,
+    pub badges: Vec<Badge>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Badge {
-    awarded_at: String,
-    description: String,
-    image_url: String,
-    url: String,
+    pub awarded_at: String,
+    pub description: String,
+    pub image_url: String,
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Country {
-    code: String,
-    name: String,
+    pub code: String,
+    pub name: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Cover {
-    custom_url: String,
-    url: String,
+    pub custom_url: String,
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Kudosu {
-    total: i64,
-    available: i64,
+    pub total: i64,
+    pub available: i64,
 }
 
-pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
+pub async fn request_user_info(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
     let response_result = client
         .get("https://osu.ppy.sh/api/v2/me/")
         .header("Authorization", "Bearer ".to_string() + auth_token)
@@ -76,7 +63,6 @@ pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<Use
     Ok(response_body)
 }
 
-// Adding test for example
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -87,6 +73,6 @@ mod tests {
         let client = reqwest::Client::new();
         // Get Access token from auth.rs
         let token = "token";
-        dbg!(request_token_user(&client, token).await.unwrap());
+        dbg!(request_user_info(&client, token).await.unwrap());
     }
 }

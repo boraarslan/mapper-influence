@@ -9,73 +9,73 @@ use crate::ReqwestError;
 
 #[derive(Debug, Deserialize)]
 pub struct Beatmapset {
-    artist: String,
-    artist_unicode: String,
-    creator: String,
-    favourite_count: i64,
-    id: i64,
-    nsfw: bool,
-    offset: i64,
-    play_count: i64,
-    preview_url: String,
-    source: String,
-    spotlight: bool,
-    status: String,
-    title: String,
-    title_unicode: String,
-    track_id: Option<i64>,
-    user_id: i64,
-    video: bool,
-    bpm: i64,
-    can_be_hyped: bool,
-    discussion_enabled: bool,
-    discussion_locked: bool,
-    is_scoreable: bool,
-    last_updated: String,
-    legacy_thread_url: String,
-    nominations_summary: NominationsSummary,
-    ranked: i64,
-    ranked_date: Option<String>,
-    storyboard: bool,
-    submitted_date: String,
-    tags: String,
-    beatmaps: Vec<Beatmap>,
+    pub artist: String,
+    pub artist_unicode: String,
+    pub creator: String,
+    pub favourite_count: i64,
+    pub id: i64,
+    pub nsfw: bool,
+    pub offset: i64,
+    pub play_count: i64,
+    pub preview_url: String,
+    pub source: String,
+    pub spotlight: bool,
+    pub status: String,
+    pub title: String,
+    pub title_unicode: String,
+    pub track_id: Option<i64>,
+    pub user_id: i64,
+    pub video: bool,
+    pub bpm: i64,
+    pub can_be_hyped: bool,
+    pub discussion_enabled: bool,
+    pub discussion_locked: bool,
+    pub is_scoreable: bool,
+    pub last_updated: String,
+    pub legacy_thread_url: String,
+    pub nominations_summary: NominationsSummary,
+    pub ranked: i64,
+    pub ranked_date: Option<String>,
+    pub storyboard: bool,
+    pub submitted_date: String,
+    pub tags: String,
+    pub beatmaps: Vec<Beatmap>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Beatmap {
-    beatmapset_id: i64,
-    difficulty_rating: f64,
-    id: i64,
-    mode: String,
-    status: String,
-    total_length: i64,
-    user_id: i64,
-    version: String,
-    accuracy: f64,
-    ar: f64,
-    bpm: i64,
-    convert: bool,
-    count_circles: i64,
-    count_sliders: i64,
-    count_spinners: i64,
-    cs: f64,
-    drain: f64,
-    hit_length: i64,
-    is_scoreable: bool,
-    last_updated: String,
-    mode_int: i64,
-    passcount: i64,
-    playcount: i64,
-    ranked: i64,
-    url: String,
-    checksum: String,
+    pub beatmapset_id: i64,
+    pub difficulty_rating: f64,
+    pub id: i64,
+    pub mode: String,
+    pub status: String,
+    pub total_length: i64,
+    pub user_id: i64,
+    pub version: String,
+    pub accuracy: f64,
+    pub ar: f64,
+    pub bpm: i64,
+    pub convert: bool,
+    pub count_circles: i64,
+    pub count_sliders: i64,
+    pub count_spinners: i64,
+    pub cs: f64,
+    pub drain: f64,
+    pub hit_length: i64,
+    pub is_scoreable: bool,
+    pub last_updated: String,
+    pub mode_int: i64,
+    pub passcount: i64,
+    pub playcount: i64,
+    pub ranked: i64,
+    pub url: String,
+    pub checksum: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct NominationsSummary {
-    current: i64,
-    required: i64,
+    pub current: i64,
+    pub required: i64,
 }
 
 pub enum BeatmapType {
@@ -102,7 +102,6 @@ pub async fn request_user_beatmapsets(
     user: i64,
     beatmap_type: BeatmapType,
 ) -> Result<Vec<Beatmapset>, ReqwestError> {
-    // Url construction could be optimized with dedicated crates
     let url = format!(
         "https://osu.ppy.sh/api/v2/users/{}/beatmapsets/{}",
         user, beatmap_type
@@ -118,7 +117,6 @@ pub async fn request_user_beatmapsets(
     Ok(response_body)
 }
 
-// the same can also be done with lookup endpoint but I feel like this endpoint is more appropriate
 pub async fn request_beatmap(
     client: &Client,
     auth_token: &str,
@@ -136,7 +134,6 @@ pub async fn request_beatmap(
     Ok(response_body)
 }
 
-// Adding test for example
 #[cfg(test)]
 mod tests {
     use super::*;
