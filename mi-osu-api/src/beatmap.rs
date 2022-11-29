@@ -11,16 +11,16 @@ use crate::ReqwestError;
 pub struct Beatmapset {
     pub id: i64,
     pub status: String,
+    pub creator: String,
     pub beatmaps: Vec<Beatmap>,
     #[serde(flatten)]
-    pub names: BeatmapsetName,
+    pub names: BeatmapsetNames,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct BeatmapsetName {
+pub struct BeatmapsetNames {
     pub artist: String,
     pub artist_unicode: String,
-    pub creator: String,
     pub title: String,
     pub title_unicode: String,
 }
@@ -63,7 +63,7 @@ pub async fn request_user_beatmapsets(
         user, beatmap_type
     );
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_body = response_result.json::<Vec<Beatmapset>>().await?;
+    let response_body: Vec<Beatmapset> = response_result.json().await?;
     Ok(response_body)
 }
 
@@ -74,6 +74,6 @@ pub async fn request_beatmap(
 ) -> Result<Beatmap, ReqwestError> {
     let url = format!("https://osu.ppy.sh/api/v2/beatmaps/{}", beatmap_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_body = response_result.json::<Beatmap>().await?;
+    let response_body: Beatmap = response_result.json().await?;
     Ok(response_body)
 }

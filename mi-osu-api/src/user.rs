@@ -54,7 +54,7 @@ pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<Use
         .send()
         .await?;
 
-    let response_body = response_result.json::<User>().await?;
+    let response_body: User = response_result.json().await?;
     Ok(response_body)
 }
 
@@ -65,6 +65,6 @@ pub async fn request_user(
 ) -> Result<User, ReqwestError> {
     let url = format!("https://osu.ppy.sh/api/v2/users/{}", user_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_body = response_result.json::<User>().await?;
+    let response_body: User = response_result.json().await?;
     Ok(response_body)
 }
