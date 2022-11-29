@@ -13,7 +13,7 @@ pub struct Beatmapset {
     pub status: String,
     pub beatmaps: Vec<Beatmap>,
     #[serde(flatten)]
-    pub name: BeatmapsetName,
+    pub names: BeatmapsetName,
 }
 
 #[derive(Debug, Deserialize)]
@@ -62,13 +62,7 @@ pub async fn request_user_beatmapsets(
         "https://osu.ppy.sh/api/v2/users/{}/beatmapsets/{}",
         user, beatmap_type
     );
-
-    let response_result = client
-        .get(url)
-        .header("Authorization", "Bearer ".to_string() + auth_token)
-        .send()
-        .await?;
-
+    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
     let response_body = response_result.json::<Vec<Beatmapset>>().await?;
     Ok(response_body)
 }
@@ -78,14 +72,8 @@ pub async fn request_beatmap(
     auth_token: &str,
     beatmap_id: i64,
 ) -> Result<Beatmap, ReqwestError> {
-    let url = "https://osu.ppy.sh/api/v2/beatmaps/".to_string() + &beatmap_id.to_string();
-
-    let response_result = client
-        .get(url)
-        .header("Authorization", "Bearer ".to_string() + auth_token)
-        .send()
-        .await?;
-
+    let url = format!("https://osu.ppy.sh/api/v2/beatmaps/{}", beatmap_id);
+    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
     let response_body = response_result.json::<Beatmap>().await?;
     Ok(response_body)
 }

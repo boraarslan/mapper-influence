@@ -13,12 +13,14 @@ pub struct User {
     pub username: String,
     pub country: Country,
     pub cover: Cover,
+    #[serde(rename = "mapping_follower_count")]
+    pub followers: i64,
     #[serde(flatten)]
-    pub beatmapset_count: BeatmapsetCount,
+    pub stats: BeatmapsetStats,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct BeatmapsetCount {
+pub struct BeatmapsetStats {
     #[serde(rename = "ranked_beatmapset_count")]
     pub ranked: i64,
     #[serde(rename = "loved_beatmapset_count")]
@@ -27,8 +29,6 @@ pub struct BeatmapsetCount {
     pub nominated: i64,
     #[serde(rename = "pending_beatmapset_count")]
     pub pending: i64,
-    #[serde(rename = "favourite_beatmapset_count")]
-    pub favourite: i64,
     #[serde(rename = "graveyard_beatmapset_count")]
     pub graveyard: i64,
     #[serde(rename = "guest_beatmapset_count")]
@@ -47,13 +47,24 @@ pub struct Cover {
     pub url: String,
 }
 
-pub async fn request_user_info(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
+pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
     let response_result = client
         .get("https://osu.ppy.sh/api/v2/me/")
-        .header("Authorization", "Bearer ".to_string() + auth_token)
+        .bearer_auth(auth_token)
         .send()
         .await?;
 
+    let response_body = response_result.json::<User>().await?;
+    Ok(response_body)
+}
+
+pub async fn request_user(
+    client: &Client,
+    auth_token: &str,
+    user_id: i64,
+) -> Result<User, ReqwestError> {
+    let url = format!("https://osu.ppy.sh/api/v2/users/{}", user_id);
+    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
     let response_body = response_result.json::<User>().await?;
     Ok(response_body)
 }
