@@ -73,7 +73,7 @@ impl Colour {
         let r = u8::from_str_radix(&hex[1..3], 16)?;
         let g = u8::from_str_radix(&hex[3..5], 16)?;
         let b = u8::from_str_radix(&hex[5..7], 16)?;
-        let colour = Colour { r: r, g: g, b: b };
+        let colour = Colour { r, g, b };
         Ok(colour)
     }
 
