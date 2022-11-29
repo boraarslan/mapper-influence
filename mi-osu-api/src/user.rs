@@ -13,6 +13,7 @@ pub struct User {
     pub username: String,
     pub country: Country,
     pub cover: Cover,
+    pub groups: Vec<UserGroup>,
     #[serde(rename = "mapping_follower_count")]
     pub followers: i64,
     #[serde(flatten)]
@@ -45,6 +46,15 @@ pub struct Country {
 pub struct Cover {
     pub custom_url: String,
     pub url: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UserGroup {
+    pub colour: String,
+    pub is_probationary: bool,
+    pub name: String,
+    pub short_name: String,
+    pub playmodes: Vec<String>,
 }
 
 pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
