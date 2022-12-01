@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use reqwest::Client;
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
 use crate::ReqwestError;
 
