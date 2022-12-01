@@ -56,38 +56,8 @@ pub struct UserGroup {
     pub is_probationary: bool,
     pub name: String,
     pub short_name: String,
+    pub colour: String,
     pub playmodes: Vec<String>,
-    #[serde(deserialize_with = "hex")]
-    pub colour: Colour,
-}
-
-#[derive(Debug)]
-pub struct Colour {
-    r: u8,
-    g: u8,
-    b: u8,
-}
-
-impl Colour {
-    pub fn from_hex(hex: &str) -> Result<Colour, ParseIntError> {
-        let r = u8::from_str_radix(&hex[1..3], 16)?;
-        let g = u8::from_str_radix(&hex[3..5], 16)?;
-        let b = u8::from_str_radix(&hex[5..7], 16)?;
-        let colour = Colour { r, g, b };
-        Ok(colour)
-    }
-
-    pub fn get_hex(&self) -> String {
-        format!("#{:02X}{:02X}{:02X}", self.r, self.g, self.b)
-    }
-}
-
-fn hex<'de, D>(deserializer: D) -> Result<Colour, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let hex: &str = Deserialize::deserialize(deserializer)?;
-    Colour::from_hex(hex).map_err(D::Error::custom)
 }
 
 pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
