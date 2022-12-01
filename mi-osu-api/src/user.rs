@@ -1,8 +1,6 @@
 #![allow(dead_code)]
-use std::num::ParseIntError;
 
 use reqwest::Client;
-use serde::de::Error;
 use serde::{Deserialize, Deserializer};
 
 use crate::ReqwestError;
