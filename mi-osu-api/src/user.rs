@@ -43,7 +43,7 @@ pub struct User {
 
 /// Beatmap stats for the user.
 ///
-/// This information is originally a part of [user] data. But they are seperated in our
+/// This information is originally a part of [`User`] data. But they are seperated in our
 /// implementation for convenience.
 ///
 /// Original field names are different in API and they are shorter in our implementation.
