@@ -39,7 +39,7 @@ use crate::ReqwestError;
 /// Information about a [beatmapset].
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information about all of the fields, refer to
+/// For more information about all of the fields, refer to
 /// [the official osu! API].
 ///
 /// Refer to the [module docs](crate::beatmap) for more information.
@@ -77,7 +77,7 @@ pub struct BeatmapsetNames {
 /// Information about a [beatmap].
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information about all of the fields, refer to
+/// For moıre information about all of the fields, refer to
 /// [the official osu! API].
 ///
 /// Refer to the [module docs](crate::beatmap) for more information.

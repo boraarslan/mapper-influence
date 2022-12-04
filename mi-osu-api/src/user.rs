@@ -19,7 +19,7 @@ use crate::ReqwestError;
 /// Information about a user.
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information about all of the fields, refer to
+/// For more information about all of the fields, refer to
 /// [the official osu! API] for more information.
 ///
 /// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
@@ -99,7 +99,7 @@ pub struct Cover {
 /// This struct contains all the essential data to reconstruct these icons.
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information about all of the fields, refer to
+/// For more information about all of the fields, refer to
 /// [the official osu! API] for more information.
 ///
 /// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
