@@ -1,6 +1,6 @@
 //! osu! user API implementation.
 //!
-//! Used to request [user](https://osu.ppy.sh/docs/index.html#user) data.
+//! It is used for requesting [user](https://osu.ppy.sh/docs/index.html#user) data.
 //! For more information about beatmap endpoints, visit
 //! official osu! API documentation for
 //! [user](https://osu.ppy.sh/docs/index.html#get-user-beatmaps) endpoints.
@@ -16,27 +16,27 @@ use crate::ReqwestError;
 /// Contains information about a user.
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information on all of the fields, refer to
+/// To get information about all of the fields, refer to
 /// [the official osu! API](https://osu.ppy.sh/docs/index.html#user).
 #[derive(Debug, Deserialize)]
 pub struct User {
-    /// The square image in the user profile.
+    /// User's profile picture link
     pub avatar_url: String,
-    /// Unique ID of the user. These numbers represent the order of account creation.
+    /// Unique ID of the user
     pub id: i64,
-    /// Main playmode of the user.
+    /// Main playmode of the user
     pub playmode: String,
     /// Title of the user. Titles are rare profile text that is awarded after user does
-    /// something significant in the community.
+    /// something significant in the community
     pub title: Option<String>,
     pub username: String,
     pub country: Country,
     pub cover: Cover,
     pub groups: Vec<UserGroup>,
-    /// Number of users that are subscribed to this users beatmap updates.
+    /// Count of users that are subscribed to this user's beatmap updates
     #[serde(rename = "mapping_follower_count")]
     pub followers: i64,
-    /// Amounts of maps this user is related for each categories.
+    /// Count of maps this user has in a given category
     #[serde(flatten)]
     pub stats: BeatmapsetStats,
 }
@@ -48,8 +48,6 @@ pub struct User {
 ///
 /// Original field names are different in API and they are shorter in our implementation.
 /// Check [the official osu! API](https://osu.ppy.sh/docs/index.html#user) for more information.
-///
-/// This struct is contained in [`User`] struct.
 #[derive(Debug, Deserialize)]
 pub struct BeatmapsetStats {
     #[serde(rename = "ranked_beatmapset_count")]
@@ -67,8 +65,6 @@ pub struct BeatmapsetStats {
 }
 
 /// Country information of a user.
-///
-/// This struct is contained in [`User`] struct.
 #[derive(Debug, Deserialize)]
 pub struct Country {
     pub code: String,
@@ -78,8 +74,6 @@ pub struct Country {
 /// User profile cover image information.
 ///
 /// Profile covers are the big rectengular images on top of a player profile.
-///
-/// This struct is contained in [`User`] struct.
 #[derive(Debug, Deserialize)]
 pub struct Cover {
     pub custom_url: String,
@@ -92,31 +86,24 @@ pub struct Cover {
 /// They are visible as small icons that are in user profiles.
 /// This struct contains all the essential data to reconstruct these icons.
 ///
-/// This struct is contained in [`User`] struct inside a Vector as the user can have multiple
-/// groups.
-///
 /// Only the relevant fields are implemented in this crate.
-/// To get information on all of the fields, refer to
+/// For more information about all of the fields, refer to
 /// [the official osu! API](https://osu.ppy.sh/docs/index.html#usergroup).
 #[derive(Debug, Deserialize)]
 pub struct UserGroup {
-    /// Probationary users doesn't display small icons in their profile.
+    /// Probationary users don't have small icons in their profiles
     pub is_probationary: bool,
-    /// Name of the group.
+    /// Name of the group
     pub name: String,
-    /// Shortened name of the group. This is what is visible in the user profiles.
+    /// Shortened name of the group. This is what is visible in the user profiles
     pub short_name: String,
-    /// Background colour of the group icon.
+    /// Background colour of the group icon
     pub colour: String,
-    /// Playmode icons that are shown in group icon.
+    /// Playmode icons that are shown in the group icon
     pub playmodes: Vec<String>,
 }
 
-/// A request used to get a [`User`] data with an authorization token that belongs to the user.
-///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `auth_token` - Authorization token that has been acquired in [authorization
-///   module](crate::auth).
+/// A request to get [`User`] data with an authorization token that belongs to the user.
 pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
     let response_result = client
         .get("https://osu.ppy.sh/api/v2/me/")
@@ -128,12 +115,7 @@ pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<Use
     Ok(response_body)
 }
 
-/// A request used to get a [`User`] data with their ID.
-///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `auth_token` - Authorization token that has been acquired in [authorization
-///   module](crate::auth).
-/// * `user_id` - ID of the user which the beatmaps are related to.
+/// A request to get [`User`] data with their ID.
 pub async fn request_user(
     client: &Client,
     auth_token: &str,

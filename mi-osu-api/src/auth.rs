@@ -1,15 +1,15 @@
 //! osu! Authentication API implementation.
 //!
-//! Used to get authentication token and refresh that said token. For more information, visit
+//! It is used to get an authentication token and refresh that said token. For more information, visit
 //! [official osu! API Documentation](https://osu.ppy.sh/docs/index.html#authentication).
 //!
-//! To get authentication token, first the application has to be
+//! To get an authentication token, the application must be
 //! [registered in osu website](https://osu.ppy.sh/home/account/edit#new-oauth-application).
 //!
-//! Afterwards, authorization code have to be acquired using
+//! Afterwards, the authorization code can be acquired using
 //! [authorization code grant](https://osu.ppy.sh/docs/index.html#authorization-code-grant).
 //!
-//! This code can be used to get authentication token to be used in other API endpoints.
+//! The authorization code can be used to get an authentication token to be used in other API endpoints.
 
 #![allow(dead_code)]
 use once_cell::sync::Lazy;
@@ -35,7 +35,7 @@ struct AuthRequest {
     pub grant_type: &'static str,
     pub redirect_uri: &'static str,
     /// Without the "public" scope, authorization tokens can't be used to request public
-    /// information. Check official osu! API [scopes](https://osu.ppy.sh/docs/index.html#scopes) section
+    /// information. Check the official osu! API [scopes](https://osu.ppy.sh/docs/index.html#scopes) section
     pub scope: &'static str,
     pub code: Option<String>,
     pub refresh_token: Option<String>,
@@ -71,14 +71,13 @@ impl AuthRequest {
 /// [`refresh_token`].
 #[derive(Deserialize, Debug)]
 pub struct AuthResponseBody {
-    /// Bearer.
+    /// Bearer token
     pub token_type: String,
-    /// A day in seconds.
+    /// Token validity duration in seconds
     pub expires_in: u32,
-    /// Access token. Used in other endpoints to authorize requests.
+    /// An access token to authorize requests on endpoints 
     pub access_token: String,
     /// Refresh token. Used to get a new access token without using authorization code grant.
-    /// Used mainly in [`refresh_token`].
     pub refresh_token: String,
 }
 
@@ -99,9 +98,6 @@ async fn request_token(
 ///
 /// After using the refresh token, a new refresh token is generated so the old one can not be used
 /// twice.
-///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `refresh_token` - Refresh token that is in [`AuthResponseBody`].
 pub async fn refresh_token(
     client: &Client,
     refresh_token: String,
@@ -113,9 +109,8 @@ pub async fn refresh_token(
 /// Authorization code request method. Returns an [`AuthResponseBody`] with necessary information to
 /// update the code later and authorize other endpoints.
 ///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `code` - Code that is acquired after
-/// [authorization code grant](https://osu.ppy.sh/docs/index.html#authorization-code-grant).
+/// For more information, check the [authorization code grant] section on osu! API documentation.
+/// [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
 pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseBody, ReqwestError> {
     let access_request = AuthRequest::access(code);
     request_token(client, access_request).await

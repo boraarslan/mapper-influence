@@ -1,23 +1,23 @@
 //! osu! Beatmap API implementation.
 //!
-//! Used to request [beatmap](https://osu.ppy.sh/wiki/en/Beatmap) data.
+//! It is used to request [beatmap](https://osu.ppy.sh/wiki/en/Beatmap) data.
 //! For more information about beatmap endpoints, visit
 //! official osu! API documentation for [beatmaps](https://osu.ppy.sh/docs/index.html#beatmaps)
 //! and [user](https://osu.ppy.sh/docs/index.html#get-user-beatmaps) endpoints.
 //!
 //! These endpoints require [access tokens](crate::auth).
 //!
-//! An important point is that a `beatmapset` and a `beatmap` are different concepts despite what
+//! The important point is that a `beatmapset` and a `beatmap` are different concepts despite what
 //! is stated in [official osu wiki](https://osu.ppy.sh/wiki/en/Beatmap).
-//! This is especially true if one works with maps in a technical way like we do here.
+//! It is especially important if one works with maps on a deep level like we do.
 //! It's because the API docs and wiki are conflicting. To avoid confusion,
 //! we are following API definitions in our implementation.
 //!
 //! * Beatmaps in essence are the core of a beatmap data.
-//! They are singular ["difficulties"](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty) of a beatmapset.
-//! They are the .osu files that contain actual beatmap data like object positions.
+//! Beatmaps are individual ["difficulties"](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty) of a beatmapset.
+//! Beatmaps are the .osu files that contain actual beatmap data, like object positions.
 //!
-//! * Beatmapsets are other hand, just a container for the beatmaps.
+//! * Beatmapsets are just a container for the beatmaps.
 //! They contain shared information like name of the song, artist etc.
 //!
 //! In our implementation, [`Beatmapset`] contains shared information and individual
@@ -31,22 +31,22 @@ use serde::Deserialize;
 
 use crate::ReqwestError;
 
-/// Contains information about a [beatmapset](https://osu.ppy.sh/wiki/en/Beatmap).
+/// Information about a [beatmapset](https://osu.ppy.sh/wiki/en/Beatmap).
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information on all of the fields, refer to
+/// To get information about all of the fields, refer to
 /// [the official osu! API](https://osu.ppy.sh/docs/index.html#beatmapset).
 ///
-/// Please refer to [module docs](crate::beatmap) for more information.
+/// Refer to the [module docs](crate::beatmap) for more information.
 #[derive(Debug, Deserialize)]
 pub struct Beatmapset {
-    /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id).
+    /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id)
     pub id: i64,
-    /// Status of the beatmapset. Ranked, Qualified etc.
+    /// Status of the beatmapset. Ranked, Qualified etc
     pub status: String,
-    /// Name of the mapper of this beatmapset.
+    /// Name of the mapper of this beatmapset
     pub creator: String,
-    /// Vector of beatmaps.
+    /// Listof beatmaps
     pub beatmaps: Vec<Beatmap>,
     /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier.
     #[serde(flatten)]
@@ -55,7 +55,7 @@ pub struct Beatmapset {
 
 /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier.
 ///
-/// Unicode fields are for the names with non ascii characters. Mostly japanese characters.
+/// Unicode fields are for the names with non-ASCII characters. It consists mostly of Japanese characters.
 #[derive(Debug, Deserialize)]
 pub struct BeatmapsetNames {
     pub artist: String,
@@ -64,28 +64,27 @@ pub struct BeatmapsetNames {
     pub title_unicode: String,
 }
 
-/// Contains information about a [beatmap](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty).
+/// Information about a [beatmap](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty).
 ///
 /// Only the relevant fields are implemented in this crate.
-/// To get information on all of the fields, refer to
+/// To get information about all of the fields, refer to
 /// [the official osu! API](https://osu.ppy.sh/docs/index.html#beatmap).
 ///
-/// Please refer to [module docs](crate::beatmap) for more information.
+/// Refer to [module docs](crate::beatmap) for more information.
 #[derive(Debug, Deserialize)]
 pub struct Beatmap {
-    /// [Star rating](https://osu.ppy.sh/wiki/en/Beatmap/Star_rating)
+    /// [Star rating](https://osu.ppy.sh/wiki/en/Beatmap/Star_rating) of the beatmap
     pub difficulty_rating: f64,
-    /// Unique ID of a beatmap. Different from [beatmapset ID](Beatmapset::id).
+    /// Unique ID of the beatmap. Different from [beatmapset ID](Beatmapset::id)
     pub id: i64,
-    /// Url of the beatmap. Kept for the convenience of the front-end developers.
+    /// Url of the beatmap
     pub url: String,
-    /// Difficulty name. This field is actually named as "version" in the osu! API but it's not
-    /// familiar for osu! people.
+    /// Difficulty name
     #[serde(rename = "version")]
     pub diff_name: String,
 }
 
-/// Beatmap type to be given as parameter in [`request_user_beatmapsets`]
+/// Type of a beatmap.
 pub enum BeatmapType {
     Graveyard,
     Loved,
@@ -104,18 +103,10 @@ impl fmt::Display for BeatmapType {
     }
 }
 
-/// A request used to get a vector of [`Beatmapset`] which are related to a user.
+/// A request to get a list of [`Beatmapset`] related to a user.
 ///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `auth_token` - Authorization token that has been acquired in [authorization
-///   module](crate::auth).
-/// * `user` - ID of the user which the beatmaps are related to.
-/// * `beatmap_type` - Type of the map being requested. The types of beatmaps are defined in
-///   [`BeatmapType`].
-///
-/// Because of the way this endpoint is implemented in osu! API, there is no way to get all types of
-/// maps at once. The only way is to send seperate requests for [each type of
-/// beatmaps](BeatmapType).
+/// Since osu! does not expose an API to retrieve all of the maps for a given user,
+/// only way to fetch all maps is to send multiple requests for [each type of beatmap](BeatmapType).
 pub async fn request_user_beatmapsets(
     client: &Client,
     auth_token: &str,
@@ -131,12 +122,7 @@ pub async fn request_user_beatmapsets(
     Ok(response_body)
 }
 
-/// A request used to ge a singular [`Beatmap`] data.
-///
-/// * `client` - A [reqwest client](`reqwest::Client`).
-/// * `auth_token` - Authorization token that has been acquired in [authorization
-///   module](crate::auth).
-/// * `user` - ID of the beatmap
+/// A request to get individual [`Beatmap`] data.
 pub async fn request_beatmap(
     client: &Client,
     auth_token: &str,
