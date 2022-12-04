@@ -1,16 +1,18 @@
 //! osu! Authentication API implementation.
 //!
 //! It is used to get an authentication token and refresh that said token. For more information,
-//! visit [official osu! API Documentation](https://osu.ppy.sh/docs/index.html#authentication).
+//! visit [official osu! API Documentation]
 //!
-//! To get an authentication token, the application must be
-//! [registered in osu website](https://osu.ppy.sh/home/account/edit#new-oauth-application).
+//! To get an authentication token, the application must be [registered in osu website]
 //!
-//! Afterwards, the authorization code can be acquired using
-//! [authorization code grant](https://osu.ppy.sh/docs/index.html#authorization-code-grant).
+//! Afterwards, the authorization code can be acquired using [authorization code grant]
 //!
 //! The authorization code can be used to get an authentication token to be used in other API
 //! endpoints.
+//!
+//! [official osu! API Documentation]: <https://osu.ppy.sh/docs/index.html#authentication>
+//! [registered in osu website]: <https://osu.ppy.sh/home/account/edit#new-oauth-application>
+//! [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
 
 #![allow(dead_code)]
 use once_cell::sync::Lazy;
