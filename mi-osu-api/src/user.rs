@@ -1,11 +1,14 @@
 //! osu! user API implementation.
 //!
-//! It is used for requesting [user](https://osu.ppy.sh/docs/index.html#user) data.
+//! It is used for requesting [user] data.
 //! For more information about beatmap endpoints, visit
 //! official osu! API documentation for
-//! [user](https://osu.ppy.sh/docs/index.html#get-user-beatmaps) endpoints.
+//! [user][get_user_beatmaps] endpoints.
 //!
 //! These endpoints require [access tokens](crate::auth).
+//!
+//! [user]: <https://osu.ppy.sh/docs/index.html#user>
+//! [get_user_beatmaps]: <https://osu.ppy.sh/docs/index.html#get-user-beatmaps>
 
 #![allow(dead_code)]
 use reqwest::Client;
@@ -13,11 +16,13 @@ use serde::Deserialize;
 
 use crate::ReqwestError;
 
-/// Contains information about a user.
+/// Information about a user.
 ///
 /// Only the relevant fields are implemented in this crate.
 /// To get information about all of the fields, refer to
-/// [the official osu! API](https://osu.ppy.sh/docs/index.html#user).
+/// [the official osu! API] for more information.
+///
+/// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
 #[derive(Debug, Deserialize)]
 pub struct User {
     /// User's profile picture link
@@ -26,7 +31,7 @@ pub struct User {
     pub id: i64,
     /// Main playmode of the user
     pub playmode: String,
-    /// Title of the user. Titles are rare profile text that is awarded after user does
+    /// Title of the user. Titles are rare profile text that is awarded when the user does
     /// something significant in the community
     pub title: Option<String>,
     pub username: String,
@@ -47,7 +52,9 @@ pub struct User {
 /// implementation for convenience.
 ///
 /// Original field names are different in API and they are shorter in our implementation.
-/// Check [the official osu! API](https://osu.ppy.sh/docs/index.html#user) for more information.
+/// Check [the official osu! API] for more information.
+///
+/// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
 #[derive(Debug, Deserialize)]
 pub struct BeatmapsetStats {
     #[serde(rename = "ranked_beatmapset_count")]
@@ -71,7 +78,7 @@ pub struct Country {
     pub name: String,
 }
 
-/// User profile cover image information.
+/// Profile cover image of a user.
 ///
 /// Profile covers are the big rectengular images on top of a player profile.
 #[derive(Debug, Deserialize)]
@@ -80,15 +87,17 @@ pub struct Cover {
     pub url: String,
 }
 
-/// Contains information about the group the user might be part of.
+/// Information about the group the user might be part of.
 ///
 /// Groups are various official organizations in the osu! community.
 /// They are visible as small icons that are in user profiles.
 /// This struct contains all the essential data to reconstruct these icons.
 ///
 /// Only the relevant fields are implemented in this crate.
-/// For more information about all of the fields, refer to
-/// [the official osu! API](https://osu.ppy.sh/docs/index.html#usergroup).
+/// To get information about all of the fields, refer to
+/// [the official osu! API] for more information.
+///
+/// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
 #[derive(Debug, Deserialize)]
 pub struct UserGroup {
     /// Probationary users don't have small icons in their profiles

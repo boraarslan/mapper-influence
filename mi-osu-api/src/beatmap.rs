@@ -1,27 +1,32 @@
 //! osu! Beatmap API implementation.
 //!
-//! It is used to request [beatmap](https://osu.ppy.sh/wiki/en/Beatmap) data.
+//! It is used to request [beatmap] data.
 //! For more information about beatmap endpoints, visit
-//! official osu! API documentation for [beatmaps](https://osu.ppy.sh/docs/index.html#beatmaps)
-//! and [user](https://osu.ppy.sh/docs/index.html#get-user-beatmaps) endpoints.
+//! official osu! API documentation for [beatmaps]
+//! and [user] endpoints.
 //!
 //! These endpoints require [access tokens](crate::auth).
 //!
 //! The important point is that a `beatmapset` and a `beatmap` are different concepts despite what
-//! is stated in [official osu wiki](https://osu.ppy.sh/wiki/en/Beatmap).
+//! is stated in [official osu wiki][beatmap].
 //! It is especially important if one works with maps on a deep level like we do.
 //! It's because the API docs and wiki are conflicting. To avoid confusion,
 //! we are following API definitions in our implementation.
 //!
 //! * Beatmaps in essence are the core of a beatmap data.
-//! Beatmaps are individual ["difficulties"](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty) of a beatmapset.
+//! Beatmaps are individual ["difficulties"] of a beatmapset.
 //! Beatmaps are the .osu files that contain actual beatmap data, like object positions.
 //!
 //! * Beatmapsets are just a container for the beatmaps.
 //! They contain shared information like name of the song, artist etc.
 //!
 //! In our implementation, [`Beatmapset`] contains shared information and individual
-//! [`Beatmaps`](Beatmap) in a vector.
+//! [`Beatmaps`][Beatmap] in a vector.
+//!
+//! [beatmap]: <https://osu.ppy.sh/wiki/en/Beatmap>
+//! [beatmaps]: <https://osu.ppy.sh/docs/index.html#beatmaps>
+//! [user]: <https://osu.ppy.sh/docs/index.html#get-user-beatmaps>
+//! ["difficulties"]: <https://osu.ppy.sh/wiki/en/Beatmap/Difficulty>
 
 #![allow(dead_code)]
 use std::fmt;
@@ -31,13 +36,16 @@ use serde::Deserialize;
 
 use crate::ReqwestError;
 
-/// Information about a [beatmapset](https://osu.ppy.sh/wiki/en/Beatmap).
+/// Information about a [beatmapset].
 ///
 /// Only the relevant fields are implemented in this crate.
 /// To get information about all of the fields, refer to
-/// [the official osu! API](https://osu.ppy.sh/docs/index.html#beatmapset).
+/// [the official osu! API].
 ///
 /// Refer to the [module docs](crate::beatmap) for more information.
+///
+/// [beatmapset]: <https://osu.ppy.sh/wiki/en/Beatmap>
+/// [the official osu! API]: <Https://osu.ppy.sh/docs/index.html#beatmapset>
 #[derive(Debug, Deserialize)]
 pub struct Beatmapset {
     /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id)
@@ -55,7 +63,8 @@ pub struct Beatmapset {
 
 /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier.
 ///
-/// Unicode fields are for the names with non-ASCII characters. It consists mostly of Japanese characters.
+/// Unicode fields are for the names with non-ASCII characters. It consists mostly of Japanese
+/// characters.
 #[derive(Debug, Deserialize)]
 pub struct BeatmapsetNames {
     pub artist: String,
@@ -64,13 +73,16 @@ pub struct BeatmapsetNames {
     pub title_unicode: String,
 }
 
-/// Information about a [beatmap](https://osu.ppy.sh/wiki/en/Beatmap/Difficulty).
+/// Information about a [beatmap].
 ///
 /// Only the relevant fields are implemented in this crate.
 /// To get information about all of the fields, refer to
-/// [the official osu! API](https://osu.ppy.sh/docs/index.html#beatmap).
+/// [the official osu! API].
 ///
-/// Refer to [module docs](crate::beatmap) for more information.
+/// Refer to the [module docs](crate::beatmap) for more information.
+///
+/// [beatmap]: <https://osu.ppy.sh/wiki/en/Beatmap/Difficulty>
+/// [the official osu! API]: <Https://osu.ppy.sh/docs/index.html#beatmapset>
 #[derive(Debug, Deserialize)]
 pub struct Beatmap {
     /// [Star rating](https://osu.ppy.sh/wiki/en/Beatmap/Star_rating) of the beatmap
@@ -81,13 +93,14 @@ pub struct Beatmap {
     pub url: String,
     /// Difficulty name
     #[serde(rename = "version")]
-    pub diff_name: String,
+    pub name: String,
 }
 
 /// Type of a beatmap.
 pub enum BeatmapType {
     Graveyard,
     Loved,
+    /// Includes both pending and WIP maps.
     Pending,
     Ranked,
 }
