@@ -34,9 +34,14 @@ pub struct User {
     /// Title of the user. Titles are rare profile text that is awarded when the user does
     /// something significant in the community
     pub title: Option<String>,
+    /// Username of the user. Can be changed
     pub username: String,
+    /// Country information of the user
     pub country: Country,
+    /// Cover image information of the user
     pub cover: Cover,
+    /// Information about the group the user might be part of. They are visible as small icons that
+    /// are in user profiles
     pub groups: Vec<UserGroup>,
     /// Count of users that are subscribed to this user's beatmap updates
     #[serde(rename = "mapping_follower_count")]

@@ -80,7 +80,7 @@ pub struct AuthResponseBody {
     pub expires_in: u32,
     /// An access token to authorize requests on endpoints
     pub access_token: String,
-    /// Refresh token. Used to get a new access token without using authorization code grant.
+    /// Refresh token. Used to get a new access token without using authorization code grant
     pub refresh_token: String,
 }
 

@@ -52,11 +52,12 @@ pub struct Beatmapset {
     pub id: i64,
     /// Status of the beatmapset. Ranked, Qualified etc
     pub status: String,
-    /// Name of the mapper of this beatmapset
+    /// Name of the mapper of this beatmapset. The name of the mapper stays the same in beatmapset
+    /// information even if the mapper changed their names.
     pub creator: String,
     /// Listof beatmaps
     pub beatmaps: Vec<Beatmap>,
-    /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier.
+    /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier
     #[serde(flatten)]
     pub names: BeatmapsetNames,
 }
@@ -100,7 +101,7 @@ pub struct Beatmap {
 pub enum BeatmapType {
     Graveyard,
     Loved,
-    /// Includes both pending and WIP maps.
+    /// Includes both pending and WIP maps
     Pending,
     Ranked,
 }
