@@ -92,7 +92,11 @@ pub struct AuthResponseBody {
     pub expires_in: u32,
     /// An access token to authorize requests on endpoints
     pub access_token: String,
-    /// Refresh token. Used to get a new access token without using authorization code grant
+    /// Refresh token. Used to get a new access token without using authorization code grant.
+    /// Wrapped in `Option` because the codes that are obtained from [client credentials grant]
+    /// doesn't include refresh tokens.
+    ///
+    /// [client credentials grant]: <https://osu.ppy.sh/docs/index.html#client-credentials-grant>
     pub refresh_token: Option<String>,
 }
 
@@ -134,8 +138,9 @@ pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseB
 }
 
 /// Authorization code request method for [client credentials grant]. This method doesn't require a
-/// code from [authorization code grant] process. Returns an [`AuthResponseBody`] with fresh codes
-/// to be used like other methods.
+/// code from [authorization code grant] process.
+///
+/// Returns an [`AuthResponseBody`] without refresh token.
 ///
 /// This method returns an authorization code that counts as "guest account".
 /// It belongs to the user that registered the application in osu!.
@@ -156,6 +161,8 @@ pub async fn client_token(client: &Client) -> Result<AuthResponseBody, ReqwestEr
 }
 
 /// Access token revoke method.
+///
+/// Revoked tokens can not be used again.
 pub async fn revoke_token(client: &Client, auth_token: &str) -> Result<(), ReqwestError> {
     client
         .delete("https://osu.ppy.sh/api/v2/oauth/tokens/current")
