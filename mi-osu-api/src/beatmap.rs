@@ -51,7 +51,7 @@ pub struct Beatmapset {
     /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id)
     pub id: i64,
     /// Status of the beatmapset. Ranked, Qualified etc
-    pub status: String,
+    pub status: BeatmapType,
     /// Name of the mapper of this beatmapset. The name of the mapper stays the same in beatmapset
     /// information even if the mapper changed their names.
     pub creator: String,
@@ -100,6 +100,7 @@ pub struct Beatmap {
 /// Type of a beatmap.
 ///
 /// These are the variants of map types that are in users profile.
+#[derive(Debug, Deserialize)]
 pub enum BeatmapType {
     Graveyard,
     Loved,
