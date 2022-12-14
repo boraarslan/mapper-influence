@@ -15,6 +15,7 @@
 //! [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
 
 #![allow(dead_code)]
+
 use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -75,7 +76,7 @@ impl AuthRequest {
             client_id: &MI_CLIENT_ID,
             client_secret: &MI_CLIENT_SECRET,
             redirect_uri: &MI_REDIRECT_URI,
-            grant_type: "refresh_token",
+            grant_type: "client_credentials",
             scope: "public",
             code: None,
             refresh_token: None,
@@ -87,14 +88,12 @@ impl AuthRequest {
 /// [`refresh_token`].
 #[derive(Deserialize, Debug)]
 pub struct AuthResponseBody {
-    /// Bearer token
-    pub token_type: String,
     /// Token validity duration in seconds
     pub expires_in: u32,
     /// An access token to authorize requests on endpoints
     pub access_token: String,
     /// Refresh token. Used to get a new access token without using authorization code grant
-    pub refresh_token: String,
+    pub refresh_token: Option<String>,
 }
 
 async fn request_token(
@@ -106,7 +105,8 @@ async fn request_token(
         .json(&body)
         .send()
         .await?;
-    let response_body = response_result.json::<AuthResponseBody>().await?;
+
+    let response_body: AuthResponseBody = response_result.json().await?;
     Ok(response_body)
 }
 
@@ -153,4 +153,14 @@ pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseB
 pub async fn client_token(client: &Client) -> Result<AuthResponseBody, ReqwestError> {
     let access_request = AuthRequest::client();
     request_token(client, access_request).await
+}
+
+/// Access token revoke method.
+pub async fn revoke_token(client: &Client, auth_token: &str) -> Result<(), ReqwestError> {
+    client
+        .delete("https://osu.ppy.sh/api/v2/oauth/tokens/current")
+        .bearer_auth(auth_token)
+        .send()
+        .await?;
+    Ok(())
 }
