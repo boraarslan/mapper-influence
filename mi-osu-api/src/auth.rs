@@ -68,6 +68,19 @@ impl AuthRequest {
             refresh_token: Some(refresh_token),
         }
     }
+
+    // Client Credentials Grant
+    fn client() -> AuthRequest {
+        AuthRequest {
+            client_id: &MI_CLIENT_ID,
+            client_secret: &MI_CLIENT_SECRET,
+            redirect_uri: &MI_REDIRECT_URI,
+            grant_type: "refresh_token",
+            scope: "public",
+            code: None,
+            refresh_token: None,
+        }
+    }
 }
 
 /// Auth response body. Returned after authentication requests such as [`access_token`] and
@@ -117,5 +130,27 @@ pub async fn refresh_token(
 /// [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
 pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseBody, ReqwestError> {
     let access_request = AuthRequest::access(code);
+    request_token(client, access_request).await
+}
+
+/// Authorization code request method for [client credentials grant]. This method doesn't require a
+/// code from [authorization code grant] process. Returns an [`AuthResponseBody`] with fresh codes
+/// to be used like other methods.
+///
+/// This method returns an authorization code that counts as "guest account".
+/// It belongs to the user that registered the application in osu!.
+/// This is usefull for bypassing [authorization code grant] and getting an access token that can be
+/// used for non-personalised requests like
+/// [the request for a random user](crate::user::request_user).
+///
+/// Returns an [`AuthResponseBody`] with necessary information to
+/// update the code later and authorize other endpoints.
+///
+/// This authorization code can only be used on endpoints with public scope.
+///
+/// [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
+/// [client credentials grant]: <https://osu.ppy.sh/docs/index.html#client-credentials-grant>
+pub async fn client_token(client: &Client) -> Result<AuthResponseBody, ReqwestError> {
+    let access_request = AuthRequest::client();
     request_token(client, access_request).await
 }

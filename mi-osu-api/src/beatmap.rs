@@ -98,12 +98,16 @@ pub struct Beatmap {
 }
 
 /// Type of a beatmap.
+///
+/// These are the variants of map types that are in users profile.
 pub enum BeatmapType {
     Graveyard,
     Loved,
-    /// Includes both pending and WIP maps
+    /// Includes Pending and WIP maps.
     Pending,
     Ranked,
+    Guest,
+    Nominated,
 }
 
 impl fmt::Display for BeatmapType {
@@ -113,6 +117,8 @@ impl fmt::Display for BeatmapType {
             BeatmapType::Loved => write!(f, "loved"),
             BeatmapType::Pending => write!(f, "pending"),
             BeatmapType::Ranked => write!(f, "ranked"),
+            BeatmapType::Guest => write!(f, "guest"),
+            BeatmapType::Nominated => write!(f, "nominated"),
         }
     }
 }
@@ -121,6 +127,8 @@ impl fmt::Display for BeatmapType {
 ///
 /// Since osu! does not expose an API to retrieve all of the maps for a given user,
 /// only way to fetch all maps is to send multiple requests for [each type of beatmap](BeatmapType).
+///
+/// Available variants for this method are Graveyard, Loved, Pending and Ranked.
 pub async fn request_user_beatmapsets(
     client: &Client,
     auth_token: &str,
