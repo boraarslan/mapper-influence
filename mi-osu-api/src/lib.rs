@@ -8,6 +8,7 @@
 
 pub mod auth;
 pub mod beatmap;
+pub mod search;
 pub mod user;
 
 pub type ReqwestError = reqwest::Error;
