@@ -7,7 +7,6 @@ pub type RedisPool = Pool<RedisConnectionManager>;
 pub type AuthResult<T> = Result<T, AuthError>;
 
 const SESSION_TOKEN_TIMEOUT: usize = 85800; // 23 hours 50 minutes
-const REFRESH_TOKEN_TIMEOUT: usize = 86100; // 23 hours 55 minutes
 const ACCESS_TOKEN_TIMEOUT: usize = 43200; // 12 hours
 
 pub async fn get_user_id(session_token: u128, db: &RedisPool) -> AuthResult<i64> {
@@ -88,8 +87,6 @@ pub async fn set_osu_tokens(
     pipe.cmd("SET")
         .arg(&refresh_key)
         .arg(refresh_token)
-        .arg("EX")
-        .arg(REFRESH_TOKEN_TIMEOUT)
         .ignore();
 
     pipe.query_async(&mut *conn).await?;
