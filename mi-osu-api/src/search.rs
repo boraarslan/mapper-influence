@@ -14,6 +14,11 @@ use serde::Deserialize;
 
 use crate::ReqwestError;
 
+#[derive(Debug, Deserialize)]
+struct ResultWrapper {
+    user: SearchResult,
+}
+
 /// Wrapper for UserCompact. This struct also includes the number of possible users for this query.
 ///
 /// For more information, refer to
@@ -52,17 +57,18 @@ pub struct UserCompact {
 ///
 /// This request returns only first 100 users in the query.
 /// Each page has maximum 20 users in it.
-pub async fn request_user(
+pub async fn search_user(
     client: &Client,
     auth_token: &str,
     query: &str,
     page: i64,
 ) -> Result<SearchResult, ReqwestError> {
-    let url = format!(
-        "https://osu.ppy.sh/api/v2/search?mode=user&query={}&page={}",
-        query, page
-    );
-    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_body: SearchResult = response_result.json().await?;
-    Ok(response_body)
+    let response_result = client
+        .get("https://osu.ppy.sh/api/v2/search?mode=user")
+        .bearer_auth(auth_token)
+        .query(&[("query", query), ("page", &page.to_string())])
+        .send()
+        .await?;
+    let response_body: ResultWrapper = response_result.json().await?;
+    Ok(response_body.user)
 }
