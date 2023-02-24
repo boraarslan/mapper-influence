@@ -21,6 +21,7 @@ pub async fn authorize_from_osu_api(
     cookies: Cookies,
     State(state): State<SharedState>,
 ) -> AppResult<Redirect> {
+    info!("Auth request received");
     let auth_response = state.http().get_osu_access_token(params.code).await?;
     info!("Successfully got the auth response");
     let user = state
