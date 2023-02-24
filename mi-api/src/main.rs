@@ -7,6 +7,7 @@ use tower_cookies::CookieManagerLayer;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
+    tracing_subscriber::fmt().init();
     let port = std::env::var("PORT").expect("env var PORT is not set");
     let app_state = SharedState::new().await;
     let app = Router::new()
