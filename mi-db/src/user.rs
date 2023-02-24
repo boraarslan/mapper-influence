@@ -1,9 +1,10 @@
+use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
 
-#[derive(Debug, FromRow, Clone, PartialEq, Eq)]
+#[derive(Debug, FromRow, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     /// Osu user ID of a user
     pub id: i64,
@@ -13,6 +14,17 @@ pub struct User {
     pub profile_picture: String,
     /// User biography
     pub bio: Option<String>,
+}
+
+impl From<mi_osu_api::user::User> for User {
+    fn from(osu_user: mi_osu_api::user::User) -> Self {
+        Self {
+            id: osu_user.id,
+            user_name: osu_user.username,
+            profile_picture: osu_user.avatar_url,
+            bio: None,
+        }
+    }
 }
 
 pub async fn search_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {

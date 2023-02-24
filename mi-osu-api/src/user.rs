@@ -12,7 +12,7 @@
 
 #![allow(dead_code)]
 use reqwest::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::ReqwestError;
 
@@ -23,7 +23,7 @@ use crate::ReqwestError;
 /// [the official osu! API] for more information.
 ///
 /// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     /// User's profile picture link
     pub avatar_url: String,
@@ -60,7 +60,7 @@ pub struct User {
 /// Check [the official osu! API] for more information.
 ///
 /// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BeatmapsetStats {
     #[serde(rename = "ranked_beatmapset_count")]
     pub ranked: i64,
@@ -77,7 +77,7 @@ pub struct BeatmapsetStats {
 }
 
 /// Country information of a user.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Country {
     pub code: String,
     pub name: String,
@@ -86,7 +86,7 @@ pub struct Country {
 /// Profile cover image of a user.
 ///
 /// Profile covers are the big rectengular images on top of a player profile.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Cover {
     pub custom_url: String,
     pub url: String,
@@ -103,7 +103,7 @@ pub struct Cover {
 /// [the official osu! API] for more information.
 ///
 /// [the official osu! API]: <https://osu.ppy.sh/docs/index.html#user>
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserGroup {
     /// Probationary users don't have small icons in their profiles
     pub is_probationary: bool,
