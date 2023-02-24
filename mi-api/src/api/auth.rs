@@ -3,6 +3,7 @@ use axum::extract::{Query, State};
 use axum::response::Redirect;
 use serde::Deserialize;
 use tower_cookies::{Cookie, Cookies};
+use tracing::info;
 
 use super::get_session_cookie;
 use crate::api::COOKIE_NAME;
@@ -21,10 +22,12 @@ pub async fn authorize_from_osu_api(
     State(state): State<SharedState>,
 ) -> AppResult<Redirect> {
     let auth_response = state.http().get_osu_access_token(params.code).await?;
+    info!("Successfully got the auth response");
     let user = state
         .http()
         .request_osu_token_user(&auth_response.access_token)
         .await?;
+    info!("Successfully got the Osu! user");
 
     let session_token = state.generate_session_token();
 
