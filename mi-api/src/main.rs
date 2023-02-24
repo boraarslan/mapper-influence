@@ -7,7 +7,7 @@ use tower_cookies::CookieManagerLayer;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
-    let port = std::env::var("MI_HOST_PORT").expect("env var MI_HOST_PORT is not set");
+    let port = std::env::var("PORT").expect("env var PORT is not set");
     let app_state = SharedState::new().await;
     let app = Router::new()
         .route("/", get(main_page))
