@@ -7,6 +7,7 @@ use tower_cookies::CookieManagerLayer;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().unwrap();
+    let port = std::env::var("MI_HOST_PORT").expect("env var MI_HOST_PORT is not set");
     let app_state = SharedState::new().await;
     let app = Router::new()
         .route("/", get(main_page))
@@ -14,8 +15,8 @@ async fn main() {
         .layer(CookieManagerLayer::new())
         .with_state(app_state);
 
-    println!("Listening on 3000");
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    println!("Listening on {port}");
+    axum::Server::bind(&format!("0.0.0.0:{}", port).parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
