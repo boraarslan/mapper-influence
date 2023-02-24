@@ -25,7 +25,7 @@ impl AppError {
 
 #[derive(Debug)]
 pub enum Kind {
-    Reqwest,
+    Reqwest { msg: String },
     Auth { msg: String },
     User(UserError),
     Influence(InfluenceError),
@@ -37,9 +37,9 @@ pub enum Kind {
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
         match self.0 {
-            Kind::Reqwest => (
+            Kind::Reqwest { msg } => (
                 StatusCode::SERVICE_UNAVAILABLE,
-                "API failed to make the HTTP request.",
+                format!("API failed to make the HTTP request: {}", msg),
             )
                 .into_response(),
             Kind::Auth { msg } => {
@@ -63,8 +63,10 @@ impl IntoResponse for AppError {
 }
 
 impl From<reqwest::Error> for AppError {
-    fn from(_: reqwest::Error) -> Self {
-        AppError(Kind::Reqwest)
+    fn from(err: reqwest::Error) -> Self {
+        AppError(Kind::Reqwest {
+            msg: err.to_string(),
+        })
     }
 }
 
