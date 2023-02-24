@@ -90,11 +90,10 @@ async fn request_token(
 ) -> Result<AuthResponseBody, ReqwestError> {
     let response_result = client
         .post("https://osu.ppy.sh/oauth/token")
-        .json(&body)
+        .form(&body)
         .send()
         .await?;
-    let response_body = response_result.json::<AuthResponseBody>().await?;
-    Ok(response_body)
+    response_result.json::<AuthResponseBody>().await
 }
 
 /// Authorization code refresh method. Returns an [`AuthResponseBody`] with fresh codes to be used.
