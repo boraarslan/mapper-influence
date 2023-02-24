@@ -41,7 +41,7 @@ pub async fn authorize_from_osu_api(
 
     state.postgres().insert_user(user.into()).await?;
 
-    Ok(Redirect::to("/"))
+    Ok(Redirect::to("http://localhost:3000/"))
 }
 
 #[debug_handler]
