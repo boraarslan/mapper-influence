@@ -1,24 +1,23 @@
 use async_trait::async_trait;
-use axum::{extract::FromRequestParts, http::request::Parts};
+use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
 use axum_auth::{AuthBearerCustom, Rejection};
 use tower_cookies::Cookies;
 
 use crate::result::{AppError, AppResult};
 
 pub mod auth;
-pub mod user;
 pub mod influence;
+pub mod user;
 
 const COOKIE_NAME: &str = "mi-session-token";
 
 pub fn get_session_cookie(cookies: &Cookies) -> AppResult<u128> {
     match cookies.get(COOKIE_NAME) {
-        Some(cookie) => Ok(
-            cookie
-                .value()
-                .parse()
-                .map_err(|_| AppError::cookie_error())?,
-        ),
+        Some(cookie) => Ok(cookie
+            .value()
+            .parse()
+            .map_err(|_| AppError::cookie_error())?),
         None => Err(AppError::cookie_error()),
     }
 }
@@ -50,7 +49,6 @@ pub struct BearerAuth(Option<String>);
 
 impl AuthBearerCustom for BearerAuth {
     const ERROR_CODE: hyper::StatusCode = hyper::StatusCode::BAD_REQUEST;
-
     const ERROR_OVERWRITE: Option<&'static str> = None;
 
     fn from_header(contents: &str) -> Self {

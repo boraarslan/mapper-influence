@@ -4,7 +4,7 @@ use mi_db::influence::{
     update_influence_level, Influence, InfluenceError,
 };
 use mi_db::user::{
-    delete_user, insert_user, search_user, update_user_bio, update_user_name, update_user_picture,
+    delete_user, get_user, insert_user, update_user_bio, update_user_name, update_user_picture,
     User, UserError,
 };
 use sqlx::postgres::PgPoolOptions;
@@ -29,8 +29,8 @@ impl PgDb {
         Self { pool }
     }
 
-    pub async fn search_user(&self, user_id: i64) -> Result<User, UserError> {
-        search_user(user_id, &self.pool).await
+    pub async fn get_user(&self, user_id: i64) -> Result<User, UserError> {
+        get_user(user_id, &self.pool).await
     }
 
     pub async fn insert_user(&self, user: User) -> Result<(), UserError> {

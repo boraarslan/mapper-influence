@@ -1,14 +1,13 @@
-use axum::{debug_handler, extract::State};
+use axum::debug_handler;
+use axum::extract::State;
 use mi_db::influence::Influence;
 use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;
 use validator::Validate;
 
-use crate::{
-    api::get_session_cookie,
-    result::{AppResult, Json},
-    state::SharedState,
-};
+use crate::api::get_session_cookie;
+use crate::result::{AppResult, Json};
+use crate::state::SharedState;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetInfluenceRequest {

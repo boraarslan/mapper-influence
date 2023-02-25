@@ -5,10 +5,9 @@ use mi_osu_api::user::User as OsuUser;
 use serde::Deserialize;
 use tower_cookies::Cookies;
 
+use super::get_session_cookie;
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
-
-use super::get_session_cookie;
 
 #[derive(Debug, Deserialize)]
 pub struct GetUserRequest {
@@ -29,7 +28,7 @@ pub async fn get_user(
         None => user_id,
     };
 
-    let user = state.postgres().search_user(user_id).await?;
+    let user = state.postgres().get_user(user_id).await?;
 
     Ok(Json(user))
 }
