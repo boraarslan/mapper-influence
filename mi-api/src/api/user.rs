@@ -29,7 +29,7 @@ pub async fn get_user(
         None => user_id,
     };
 
-    let user = state.postgres().search_user(user_id).await?;
+    let user = state.postgres().get_user(user_id).await?;
 
     Ok(Json(user))
 }

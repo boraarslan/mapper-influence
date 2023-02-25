@@ -1,6 +1,6 @@
 use axum::routing::get;
 use axum::Router;
-use mi_api::api::auth::{authorize_from_osu_api, main_page};
+use mi_api::api::auth::{authorize_from_osu_api, main_page, login};
 use mi_api::state::SharedState;
 use tower_cookies::CookieManagerLayer;
 
@@ -13,6 +13,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(main_page))
         .route("/auth", get(authorize_from_osu_api))
+        .route("/login", get(login))
         .layer(CookieManagerLayer::new())
         .with_state(app_state);
 

@@ -27,7 +27,7 @@ impl From<mi_osu_api::user::User> for User {
     }
 }
 
-pub async fn search_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
+pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
     let search_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
         .fetch_one(db)
         .await;
@@ -168,14 +168,14 @@ mod tests {
         // Test user insert
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(user, db_user);
 
         // Test user insert with optional field
         let mut user = user_for_test(2);
         user.bio = None;
         insert_user(user.clone(), &db).await.unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(user.clone(), db_user);
 
         // Test user insert with duplicate keys
@@ -199,7 +199,7 @@ mod tests {
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
         update_user_name("fursum", user.id, &db).await.unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(db_user.user_name, "fursum".to_string());
         assert_eq!(user.bio, db_user.bio);
         assert_eq!(user.profile_picture, db_user.profile_picture);
@@ -211,7 +211,7 @@ mod tests {
             .await
             .unwrap();
 
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(
             db_user.profile_picture,
             "random.someothersite.com/bora2.jpeg".to_string()
@@ -225,14 +225,14 @@ mod tests {
         update_user_bio(Some("I changed my mind."), user.id, &db)
             .await
             .unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(db_user.bio, Some("I changed my mind.".to_string()));
         assert_eq!(user.profile_picture, db_user.profile_picture);
         assert_eq!(user.user_name, db_user.user_name);
 
         // Test user bio update to none value
         update_user_bio(None, user.id, &db).await.unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(db_user.bio, None);
     }
 
@@ -240,11 +240,11 @@ mod tests {
     async fn test_delete_user(db: PgPool) {
         let user = user_for_test(1);
         insert_user(user.clone(), &db).await.unwrap();
-        let db_user = search_user(user.id, &db).await.unwrap();
+        let db_user = get_user(user.id, &db).await.unwrap();
         assert_eq!(user, db_user);
 
         delete_user(user.id, &db).await.unwrap();
-        let err = search_user(user.id, &db).await.unwrap_err();
+        let err = get_user(user.id, &db).await.unwrap_err();
 
         match err {
             UserError::UserNotFound(db_user_id) => {
@@ -257,7 +257,7 @@ mod tests {
     #[sqlx::test]
     async fn test_non_existent(db: PgPool) {
         // Test search for non-existent user
-        let err = search_user(-100, &db).await.unwrap_err();
+        let err = get_user(-100, &db).await.unwrap_err();
         match err {
             UserError::UserNotFound(-100) => {}
             _ => panic!("{}", NOT_FOUND_ERROR_TEXT),
