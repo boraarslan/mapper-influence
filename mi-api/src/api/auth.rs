@@ -78,7 +78,10 @@ pub async fn main_page(cookies: Cookies, State(state): State<SharedState>) -> Ap
         Ok(session_token) => {
             let user_id = state.redis().get_user_id(session_token).await?;
             let user = state.postgres().get_user(user_id).await?;
-            Ok(format!("This is the main page and your cookie is: {}\nYour user info: {:#?}", session_token, user))
+            Ok(format!(
+                "This is the main page and your cookie is: {}\nYour user info: {:#?}",
+                session_token, user
+            ))
         }
         _ => Ok("This is the main page and you don't have any cookie 🤨".to_string()),
     }
@@ -89,10 +92,10 @@ pub async fn login(cookies: Cookies, State(state): State<SharedState>) -> AppRes
 
     if let Ok(session_token) = cookie {
         let user_id_res = state.redis().get_user_id(session_token).await;
-        
+
         // User already authed and their session tokens are on the redis DB
-        if let Ok(_) = user_id_res {
-            return Ok(Redirect::to(&REDIRECT_URI))
+        if user_id_res.is_ok() {
+            return Ok(Redirect::to(&REDIRECT_URI));
         }
     }
 

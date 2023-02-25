@@ -5,10 +5,9 @@ use mi_osu_api::user::User as OsuUser;
 use serde::Deserialize;
 use tower_cookies::Cookies;
 
+use super::get_session_cookie;
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
-
-use super::get_session_cookie;
 
 #[derive(Debug, Deserialize)]
 pub struct GetUserRequest {
