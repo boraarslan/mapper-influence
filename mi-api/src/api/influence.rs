@@ -40,7 +40,7 @@ pub struct InsertInfluenceRequest {
 }
 
 #[debug_handler]
-pub async fn insert_influence(
+pub async fn create_influence(
     cookies: Cookies,
     State(state): State<SharedState>,
     Json(request): Json<InsertInfluenceRequest>,
