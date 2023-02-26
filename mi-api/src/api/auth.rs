@@ -68,7 +68,9 @@ pub async fn authorize_from_osu_api(
         }
     }
 
-    Ok(Redirect::to(&REDIRECT_URI))
+    let redirect_uri = format!("{}?session={}", *REDIRECT_URI, session_token);
+
+    Ok(Redirect::to(&redirect_uri))
 }
 
 #[debug_handler]
