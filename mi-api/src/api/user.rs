@@ -62,6 +62,9 @@ pub async fn create_user(
 pub struct UpdateUserRequest {
     user_name: Option<String>,
     profile_picture: Option<String>,
+    // Missing value -> None,
+    // Null value -> Some(None)
+    // Existing value -> Some(Some("Value"))
     bio: Option<Option<String>>,
 }
 
