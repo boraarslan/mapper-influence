@@ -38,8 +38,10 @@ fn api_route() -> Router<SharedState> {
 }
 
 fn cors_layer() -> CorsLayer {
-    let localhost =
-        AllowOrigin::predicate(|origin, _| origin.as_bytes().starts_with(b"http://localhost"));
+    let localhost = AllowOrigin::predicate(|origin, _| {
+        origin.as_bytes().starts_with(b"http://localhost")
+            || origin.as_bytes().starts_with(b"localhost")
+    });
 
     CorsLayer::new()
         .allow_origin(
