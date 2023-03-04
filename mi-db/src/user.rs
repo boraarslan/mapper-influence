@@ -39,7 +39,7 @@ pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
     }
 }
 
-pub async fn insert_user(user: User, db: &PgPool) -> Result<(), UserError> {
+pub async fn insert_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_result = sqlx::query!(
         "
         INSERT INTO users (id, user_name, profile_picture, bio) VALUES ($1, $2, $3, $4)",
@@ -52,7 +52,7 @@ pub async fn insert_user(user: User, db: &PgPool) -> Result<(), UserError> {
     .await;
 
     match insert_result {
-        Ok(_) => Ok(()),
+        Ok(_) => Ok(user),
         Err(db_err) if db_err.as_database_error().is_some() => {
             // We check if db_err can be casted to database_error.
             // PgError should always return a valid error code.
