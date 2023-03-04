@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { User } from "@libs/types/user";
 
@@ -14,6 +14,6 @@ export const useSessionStore = create<SessionStore>()(
     persist((set) => ({
       login: (user, key) => set({ user: user, authKey: key }),
       logout: () => set({ user: undefined, authKey: undefined }),
-    }))
+    }), { name: "userStore" })
   )
 );
