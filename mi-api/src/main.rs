@@ -42,7 +42,11 @@ fn cors_layer() -> CorsLayer {
         AllowOrigin::predicate(|origin, _| origin.as_bytes().starts_with(b"http://localhost"));
 
     CorsLayer::new()
-        .allow_origin("https://mapper-influences.vercel.app/".parse::<HeaderValue>().unwrap())
+        .allow_origin(
+            "https://mapper-influences.vercel.app/"
+                .parse::<HeaderValue>()
+                .unwrap(),
+        )
         .allow_origin(localhost)
 }
 
