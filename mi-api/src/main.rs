@@ -38,18 +38,18 @@ fn api_route() -> Router<SharedState> {
 }
 
 fn cors_layer() -> CorsLayer {
-    let localhost = AllowOrigin::predicate(|origin, _| {
-        origin.as_bytes().starts_with(b"http://localhost")
-            || origin.as_bytes().starts_with(b"localhost")
-    });
+    // let localhost = AllowOrigin::predicate(|origin, _| {
+    //     origin.as_bytes().starts_with(b"http://localhost")
+    //         || origin.as_bytes().starts_with(b"localhost")
+    // });
 
-    CorsLayer::new()
-        .allow_origin(
-            "https://mapper-influences.vercel.app/"
-                .parse::<HeaderValue>()
-                .unwrap(),
-        )
-        .allow_origin(localhost)
+    CorsLayer::new().allow_origin(AllowOrigin::any())
+        // .allow_origin(
+        //     "https://mapper-influences.vercel.app/"
+        //         .parse::<HeaderValue>()
+        //         .unwrap(),
+        // )
+        // .allow_origin(localhost)
 }
 
 #[tokio::main]

@@ -6,7 +6,7 @@ export async function getUserBase(userId?: string) {
     headers: {
       'Content-Type': 'application/json'
     },
-    data: {}
+    data: userId ? { user_id: userId } : {}
   });
   return data;
 }
