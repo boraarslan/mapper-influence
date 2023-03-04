@@ -12,6 +12,7 @@ const nextConfig = {
     @import "src/styles/mixins/index.scss";`,
   },
   reactStrictMode: true,
+  assetPrefix: "/assets",
 };
 
 module.exports = nextConfig;

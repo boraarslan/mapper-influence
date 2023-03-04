@@ -14,7 +14,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const router = useRouter();
   const onLogin = () => {
     router.push(
-      `https://osu.ppy.sh/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_AUTH_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_AUTH_CALLBACK_URL}`
+      `/login`
     );
   };
   const LoginButton = (
