@@ -7,6 +7,7 @@ use tower_cookies::Cookies;
 use crate::result::{AppError, AppResult};
 
 pub mod auth;
+pub mod html;
 pub mod influence;
 pub mod user;
 

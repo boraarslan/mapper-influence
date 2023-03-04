@@ -68,24 +68,24 @@ pub async fn authorize_from_osu_api(
         }
     }
 
-    let redirect_uri = format!("{}?session={}", *REDIRECT_URI, session_token);
+    let redirect_uri = format!("{}", *REDIRECT_URI);
 
     Ok(Redirect::to(&redirect_uri))
 }
 
 #[debug_handler]
-pub async fn main_page(cookies: Cookies, State(state): State<SharedState>) -> AppResult<String> {
+pub async fn cookie_page(cookies: Cookies, State(state): State<SharedState>) -> AppResult<String> {
     let cookie = get_session_cookie(&cookies);
     match cookie {
         Ok(session_token) => {
             let user_id = state.redis().get_user_id(session_token).await?;
             let user = state.postgres().get_user(user_id).await?;
             Ok(format!(
-                "This is the main page and your cookie is: {}\nYour user info: {:#?}",
+                "This is the cookie page and your cookie is: {}\nYour user info: {:#?}",
                 session_token, user
             ))
         }
-        _ => Ok("This is the main page and you don't have any cookie 🤨".to_string()),
+        _ => Ok("This is the cookie page and you don't have any cookie 🤨".to_string()),
     }
 }
 
