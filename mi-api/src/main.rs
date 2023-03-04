@@ -1,4 +1,3 @@
-use axum::http::HeaderValue;
 use axum::routing::{delete, get, post};
 use axum::Router;
 use mi_api::api::auth::{authorize_from_osu_api, login, main_page};
@@ -9,7 +8,6 @@ use mi_api::api::influence::{
 use mi_api::api::user::{create_user, get_user, update_user};
 use mi_api::state::SharedState;
 use tower_cookies::CookieManagerLayer;
-use tower_http::cors::{AllowOrigin, CorsLayer};
 
 fn influence_route() -> Router<SharedState> {
     Router::new()
@@ -26,7 +24,7 @@ fn influence_route() -> Router<SharedState> {
 
 fn user_route() -> Router<SharedState> {
     Router::new()
-        .route("/get", get(get_user))
+        .route("/get/:user_id", get(get_user))
         .route("/create", post(create_user))
         .route("/update", post(update_user))
 }
@@ -35,21 +33,6 @@ fn api_route() -> Router<SharedState> {
     Router::new()
         .nest("/user", user_route())
         .nest("/influence", influence_route())
-}
-
-fn cors_layer() -> CorsLayer {
-    // let localhost = AllowOrigin::predicate(|origin, _| {
-    //     origin.as_bytes().starts_with(b"http://localhost")
-    //         || origin.as_bytes().starts_with(b"localhost")
-    // });
-
-    CorsLayer::new().allow_origin(AllowOrigin::any())
-        // .allow_origin(
-        //     "https://mapper-influences.vercel.app/"
-        //         .parse::<HeaderValue>()
-        //         .unwrap(),
-        // )
-        // .allow_origin(localhost)
 }
 
 #[tokio::main]
@@ -64,7 +47,6 @@ async fn main() {
         .route("/login", get(login))
         .nest("/api/v1", api_route())
         .layer(CookieManagerLayer::new())
-        .layer(cors_layer())
         .with_state(app_state);
 
     println!("Listening on {port}");

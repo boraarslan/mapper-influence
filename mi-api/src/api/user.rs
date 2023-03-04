@@ -1,5 +1,5 @@
 use axum::debug_handler;
-use axum::extract::State;
+use axum::extract::{State, Path};
 use mi_db::user::User as DbUser;
 use mi_osu_api::user::User as OsuUser;
 use serde::Deserialize;
@@ -9,21 +9,16 @@ use super::get_session_cookie;
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
 
-#[derive(Debug, Deserialize)]
-pub struct GetUserRequest {
-    user_id: Option<i64>,
-}
-
 #[debug_handler]
 pub async fn get_user(
     cookies: Cookies,
     State(state): State<SharedState>,
-    Json(request): Json<GetUserRequest>,
+    Path(path_user_id): Path<Option<i64>>,
 ) -> AppResult<Json<DbUser>> {
     let token = get_session_cookie(&cookies)?;
     let user_id = state.redis().get_user_id(token).await?;
 
-    let user_id = match request.user_id {
+    let user_id = match path_user_id {
         Some(id) => id,
         None => user_id,
     };
