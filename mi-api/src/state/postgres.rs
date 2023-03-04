@@ -33,7 +33,7 @@ impl PgDb {
         get_user(user_id, &self.pool).await
     }
 
-    pub async fn insert_user(&self, user: User) -> Result<(), UserError> {
+    pub async fn insert_user(&self, user: User) -> Result<User, UserError> {
         insert_user(user, &self.pool).await
     }
 
