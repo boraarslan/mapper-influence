@@ -1,0 +1,80 @@
+.cardWrapper {
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  border-radius: $border-radius;
+  width: $card-width;
+  height: $card-height;
+  min-width: $card-width;
+
+  cursor: pointer;
+
+  @extend %cardShadow;
+
+  .photo {
+    position: relative;
+    width: 4rem;
+    min-width: 3rem;
+    margin-left: $spacing/2;
+    margin-right: $spacing;
+    aspect-ratio: 1;
+    border-radius: 50rem;
+    overflow: hidden;
+    object-fit: contain;
+  }
+
+  .rightSide {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: $spacing / 2;
+    height: 100%;
+
+    flex-grow: 1;
+
+    .name {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      width: calc($card-width - 5rem);
+      padding-right: 0.5rem;
+      height: 1.75rem;
+      text-align: left;
+    }
+
+    .badges {
+      margin-top: 0.1rem;
+      display: flex;
+      justify-content: flex-start;
+      padding-right: 0.5rem;
+      .badge {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: $color-background-card;
+        padding: 0.15rem 0.35rem;
+        padding-top: 0.25rem;
+        border-radius: 50rem;
+
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: capitalize;
+        line-height: 1; //This will properly center the badge
+
+        .tooltip {
+          @extend %tooltip;
+          max-width: 10em;
+          width: max-content;
+        }
+        &:hover {
+          .tooltip {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}
