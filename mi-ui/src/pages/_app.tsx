@@ -6,7 +6,6 @@ import Layout from "@components/Layout";
 import "../styles/globals.scss";
 
 function App({ Component, pageProps }: AppProps) {
-
   return (
     <>
       <Head>
@@ -24,6 +23,8 @@ function App({ Component, pageProps }: AppProps) {
         ></meta>
         <meta name="author" content="Fursum"></meta>
         <link rel="icon" href="/svg/Influences.svg" />
+        <link rel="shortcut icon" href="/svg/Influences.svg" />
+        <link rel="mask-icon" href="/svg/Influences.svg" color="#000000" />
         <title>Mapper Influences</title>
       </Head>
 
