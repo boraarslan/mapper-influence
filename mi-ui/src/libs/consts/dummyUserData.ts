@@ -41,7 +41,7 @@ const exampleMapList = [
 
 export const userData: User = {
   id: 12345,
-  username: "Skytuna",
+  username: "Test username",
   avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
   groups: [
     {
