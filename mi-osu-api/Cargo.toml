@@ -3,13 +3,14 @@ name = "mi-osu-api"
 version = "0.0.0"
 edition = "2021"
 license = "MIT"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 dotenvy = "0.15"
-once_cell = "1.16"
-reqwest = { version = "0.11", features = ["json"] }
-serde = { version = "1.0", features = ["derive"] }
+once_cell = "1.17"
+reqwest = {version = "0.11", features = ["json"]}
 serde_json = "1.0"
+serde = {version = "1.0", features = ["derive"]}
+tokio = {version = "1.23", features = ["macros"]}
 thiserror = "1.0"
-tokio = { version = "1.21", features = ["macros"] }
