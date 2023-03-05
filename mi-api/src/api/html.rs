@@ -1,5 +1,5 @@
 use axum::Router;
-use tower_http::services::{ServeFile, ServeDir};
+use tower_http::services::{ServeDir, ServeFile};
 
 use crate::state::SharedState;
 
