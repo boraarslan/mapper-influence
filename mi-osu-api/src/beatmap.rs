@@ -102,6 +102,7 @@ pub struct Beatmap {
 ///
 /// These are the variants of map types that are in users profile.
 #[derive(Debug, Deserialize)]
+#[serde(rename_all(deserialize = "lowercase"))]
 pub enum BeatmapType {
     Graveyard,
     Loved,
