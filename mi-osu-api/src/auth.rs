@@ -73,9 +73,9 @@ impl AuthRequest {
     // Client Credentials Grant
     fn client() -> AuthRequest {
         AuthRequest {
-            client_id: &MI_CLIENT_ID,
-            client_secret: &MI_CLIENT_SECRET,
-            redirect_uri: &MI_REDIRECT_URI,
+            client_id: &OSU_CLIENT_ID,
+            client_secret: &OSU_CLIENT_SECRET,
+            redirect_uri: &OSU_REDIRECT_URI,
             grant_type: "client_credentials",
             scope: "public",
             code: None,

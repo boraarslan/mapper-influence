@@ -45,14 +45,13 @@ pub async fn authorize_from_osu_api(
     info!("Successfully got the Osu! user");
 
     let session_token = state.generate_session_token();
+    let refresh_token = auth_response.refresh_token.unwrap();
 
     tokio::try_join!(
         state.redis().set_session_token(user.id, session_token),
-        state.redis().set_osu_tokens(
-            user.id,
-            &auth_response.access_token,
-            &auth_response.refresh_token,
-        )
+        state
+            .redis()
+            .set_osu_tokens(user.id, &auth_response.access_token, &refresh_token)
     )?;
 
     cookies.add(Cookie::new(COOKIE_NAME, session_token.to_string()));
