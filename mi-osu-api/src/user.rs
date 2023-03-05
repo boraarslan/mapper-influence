@@ -117,8 +117,6 @@ pub struct UserGroup {
     pub playmodes: Vec<String>,
 }
 
-
-
 #[derive(Debug, Deserialize)]
 struct ResultWrapper {
     user: SearchResult,
@@ -154,7 +152,7 @@ pub struct UserCompact {
     pub country_code: String,
     /// Unique ID of the user
     pub id: i64,
-    /// Username of the user. Can be changed
+    /// Username of the user
     pub username: String,
 }
 
