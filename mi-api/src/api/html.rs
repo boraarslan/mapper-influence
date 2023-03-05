@@ -20,5 +20,5 @@ pub fn html_router() -> Router<SharedState> {
         .route_service("/oauth", serve_file("oauth.html"))
         // Assets
         .nest_service("/assets/_next", serve_dir("_next"))
-        .nest_service("/svg", serve_dir("pages/svg"))
+        .nest_service("/svg", serve_dir("svg"))
 }
