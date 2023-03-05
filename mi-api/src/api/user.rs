@@ -29,9 +29,9 @@ pub async fn get_user(
         Err(err) => {
             if let mi_db::user::UserError::UserNotFound(_) = err {
                 let db_user = init_missing_user(state, auth_user_id, query_user_id).await?;
-                return Ok(Json(db_user));
+                Ok(Json(db_user))
             } else {
-                return Err(err.into());
+                Err(err.into())
             }
         }
     }

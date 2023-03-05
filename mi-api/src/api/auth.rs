@@ -68,7 +68,7 @@ pub async fn authorize_from_osu_api(
         }
     }
 
-    let redirect_uri = format!("{}", *REDIRECT_URI);
+    let redirect_uri = (*REDIRECT_URI).to_string();
 
     Ok(Redirect::to(&redirect_uri))
 }
