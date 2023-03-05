@@ -1,0 +1,28 @@
+.profilePage {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing * 2;
+
+  .doubleCol {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: $spacing;
+
+    > div {
+      @extend %contentBox;
+      height: 40rem;
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+  }
+}
+
+@media screen and (max-width: $responsive-breakpoint) {
+  .profilePage .doubleCol > div {
+    flex-basis: 100%;
+  }
+}

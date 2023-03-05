@@ -1,9 +1,10 @@
+use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
 
-#[derive(Debug, FromRow, Clone)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 pub struct Influence {
     /// Id of the influencer user
     from_id: i64,
@@ -13,6 +14,17 @@ pub struct Influence {
     influence_level: i32,
     /// Extra info/notes about influence
     info: Option<String>,
+}
+
+impl Influence {
+    pub fn new(from_id: i64, to_id: i64, influence_level: i32, info: Option<String>) -> Self {
+        Self {
+            from_id,
+            to_id,
+            influence_level,
+            info,
+        }
+    }
 }
 
 pub async fn get_all_influences_by_from_id(

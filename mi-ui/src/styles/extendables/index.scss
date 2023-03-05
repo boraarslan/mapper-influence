@@ -1,0 +1,121 @@
+@import "../variables/index";
+
+%cardShadow {
+  position: relative;
+  box-shadow: var(--cardShadow);
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    pointer-events: none;
+    border-radius: inherit;
+
+    box-shadow: var(--cardShadowHover);
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+%tooltip {
+  position: absolute;
+  padding: 0.25em 0.5em;
+  border-radius: $border-radius;
+  top: -$spacing / 4;
+  transform: translateY(-100%);
+
+  background-color: $color-background;
+  @extend %cardShadow;
+
+  text-align: center;
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity ease-out 0.15s;
+
+  z-index: 2;
+}
+
+%contentBox {
+  background-color: $color-background-content;
+  box-shadow: var(--contentShadow);
+  border-radius: $border-radius;
+}
+
+%buttonHover {
+  isolation: isolate;
+  position: relative;
+  &::before,
+  &::after {
+    border-radius: inherit;
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transition: opacity 0.1s ease-out;
+  }
+
+  // Used for gradient transitions
+  &::after {
+    background: linear-gradient(
+      to right,
+      $color-secondary 0%,
+      $color-primary 4% 96%,
+      $color-secondary 100%
+    );
+    box-shadow: 0.1rem 0 1rem -0.25rem $color-secondary;
+    opacity: 0;
+  }
+  // Only used for background color
+  &::before {
+    content: "";
+    background-color: $color-primary-bg;
+    z-index: -2;
+  }
+
+  &:hover {
+    --primaryTextColor: var(--textColor);
+    outline-color: $color-secondary;
+    .icon {
+      --primaryTextColor: var(--textColor);
+    }
+    &::after {
+      opacity: 0.4;
+    }
+  }
+}
+
+// Just swapping colors
+%buttonHoverSecondary {
+  @extend %buttonHover;
+  outline-color: $color-secondary;
+  color: $color-text-secondary;
+
+  // Used for gradient transitions
+  &::after {
+    background: linear-gradient(
+      to right,
+      $color-primary 0%,
+      $color-secondary 4% 96%,
+      $color-primary 100%
+    );
+    box-shadow: 0.1rem 0 1rem -0.25rem $color-primary;
+  }
+  // Only used for background color
+  &::before {
+    background-color: $color-secondary-bg;
+  }
+
+  &:hover {
+    outline-color: $color-primary;
+    color: $color-text;
+  }
+}

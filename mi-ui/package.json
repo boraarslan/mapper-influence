@@ -1,0 +1,36 @@
+{
+  "name": "mapper-influences",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "export": "next build && next export -o ../mi-api/pages",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "awesome-debounce-promise": "^2.1.0",
+    "axios": "^1.3.4",
+    "embla-carousel-react": "^7.0.3",
+    "next": "12.1.5",
+    "react": "18.0.0",
+    "react-cookie": "^4.1.1",
+    "react-dom": "18.0.0",
+    "react-hook-form": "^7.34.2",
+    "react-markdown": "^8.0.3",
+    "remark-gfm": "^3.0.1",
+    "sass": "^1.50.0",
+    "textfit": "^2.4.0",
+    "usehooks-ts": "^2.6.0",
+    "zustand": "^4.1.4"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.24",
+    "@types/react": "18.0.5",
+    "@types/react-dom": "18.0.1",
+    "eslint": "8.13.0",
+    "eslint-config-next": "12.1.5",
+    "typescript": "4.8.2"
+  }
+}

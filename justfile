@@ -25,3 +25,12 @@ test-all: docker-compose-up
 update-db-schema: docker-compose-up
 	sqlx migrate run --database-url {{PG_DATABASE_URL}} --source ./mi-db/migrations	
 	cd mi-db && cargo sqlx prepare --database-url {{PG_DATABASE_URL}}
+
+export-ui:
+	cd mi-ui && npm run export
+
+host: export-ui
+	cargo run
+
+host-release: export-ui
+	cargo run --release
