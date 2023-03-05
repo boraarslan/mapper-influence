@@ -58,6 +58,8 @@ pub struct Beatmapset {
     pub creator: String,
     /// Listof beatmaps
     pub beatmaps: Vec<Beatmap>,
+
+    pub covers: Covers,
     /// Beatmapset name data. Seperated from [Beatmapset] struct to make access easier
     #[serde(flatten)]
     pub names: BeatmapsetNames,
@@ -96,6 +98,22 @@ pub struct Beatmap {
     /// Difficulty name
     #[serde(rename = "version")]
     pub name: String,
+}
+
+/// Beatmapset cover data. This struct contains links to the images shown on the official osu!
+/// website. Each field is the same beatmapset background image with different cutouts.
+///
+/// Only contains @2x images that are double resolution.
+#[derive(Debug, Deserialize)]
+pub struct Covers {
+    #[serde(rename = "cover@2x")]
+    pub cover: String,
+    #[serde(rename = "card@2x")]
+    pub card: String,
+    #[serde(rename = "list@2x")]
+    pub list: String,
+    #[serde(rename = "slimcover@2x")]
+    pub slimcover: String,
 }
 
 /// Type of a beatmap.
