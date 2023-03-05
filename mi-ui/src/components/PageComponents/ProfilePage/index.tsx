@@ -1,12 +1,12 @@
 import React, { FC } from "react";
+import { useRouter } from "next/router";
 import { User, UserBase } from "@libs/types/user";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 import MentionList from "./MentionList";
+import { useSessionStore } from "src/states/user";
 
 import styles from "./style.module.scss";
-import { useSessionStore } from "src/states/user";
-import { useRouter } from "next/router";
 
 type Props = { userData: User; editable?: boolean };
 
