@@ -1,4 +1,5 @@
-const path = require("path");
+let assetPrefix;
+if (process.env.NODE_ENV === "production") assetPrefix = "/assets";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -12,7 +13,7 @@ const nextConfig = {
     @import "src/styles/mixins/index.scss";`,
   },
   reactStrictMode: true,
-  assetPrefix: "/assets",
+  assetPrefix,
 };
 
 module.exports = nextConfig;

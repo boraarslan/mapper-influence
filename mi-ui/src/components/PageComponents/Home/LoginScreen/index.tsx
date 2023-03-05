@@ -11,16 +11,10 @@ import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
-  const router = useRouter();
-  const onLogin = () => {
-    router.push(
-      `/login`
-    );
-  };
   const LoginButton = (
-    <button className={styles.login} onClick={onLogin}>
+    <a className={styles.login} href={"/login"}>
       Log In
-    </button>
+    </a>
   );
 
   return (
