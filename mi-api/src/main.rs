@@ -1,6 +1,6 @@
 use axum::routing::{delete, get, post};
 use axum::Router;
-use mi_api::api::auth::{authorize_from_osu_api, login, cookie_page};
+use mi_api::api::auth::{authorize_from_osu_api, cookie_page, login};
 use mi_api::api::html::html_router;
 use mi_api::api::influence::{
     create_influence, delete_influence, get_influences, update_influence_info,

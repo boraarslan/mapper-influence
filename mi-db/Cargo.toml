@@ -28,6 +28,7 @@ sqlx = { version = "0.6", features = [
     "postgres",
     "offline",
 ] }
+
 tokio = { version = "1.22", features = ["macros"] }
 
 [dev-dependencies]
