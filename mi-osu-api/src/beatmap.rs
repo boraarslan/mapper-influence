@@ -176,3 +176,15 @@ pub async fn request_beatmap(
     let response_body: Beatmap = response_result.json().await?;
     Ok(response_body)
 }
+
+/// A request to get individual [`Beatmapset`] data.
+pub async fn request_beatmapset(
+    client: &Client,
+    auth_token: &str,
+    beatmapset_id: i64,
+) -> Result<Beatmapset, ReqwestError> {
+    let url = format!("https://osu.ppy.sh/api/v2/beatmapsets/{}", beatmapset_id);
+    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
+    let response_body: Beatmapset = response_result.json().await?;
+    Ok(response_body)
+}
