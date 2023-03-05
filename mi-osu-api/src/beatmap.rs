@@ -33,6 +33,7 @@ use std::fmt;
 
 use reqwest::Client;
 use serde::Deserialize;
+use thiserror::Error;
 
 use crate::ReqwestError;
 
@@ -51,7 +52,7 @@ pub struct Beatmapset {
     /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id)
     pub id: i64,
     /// Status of the beatmapset. Ranked, Qualified etc
-    pub status: String,
+    pub status: BeatmapType,
     /// Name of the mapper of this beatmapset. The name of the mapper stays the same in beatmapset
     /// information even if the mapper changed their names.
     pub creator: String,
@@ -98,12 +99,18 @@ pub struct Beatmap {
 }
 
 /// Type of a beatmap.
+///
+/// These are the variants of map types that are in users profile.
+#[derive(Debug, Deserialize)]
+#[serde(rename_all(deserialize = "lowercase"))]
 pub enum BeatmapType {
     Graveyard,
     Loved,
-    /// Includes both pending and WIP maps
+    /// Includes Pending and WIP maps.
     Pending,
     Ranked,
+    Guest,
+    Nominated,
 }
 
 impl fmt::Display for BeatmapType {
@@ -113,20 +120,42 @@ impl fmt::Display for BeatmapType {
             BeatmapType::Loved => write!(f, "loved"),
             BeatmapType::Pending => write!(f, "pending"),
             BeatmapType::Ranked => write!(f, "ranked"),
+            BeatmapType::Guest => write!(f, "guest"),
+            BeatmapType::Nominated => write!(f, "nominated"),
         }
     }
+}
+
+#[derive(Error, Debug)]
+pub enum BeatmapError {
+    #[error(
+        "Invalid BeatmapType argument. Available variants for this method are Graveyard, Loved, \
+         Pending and Ranked."
+    )]
+    InvalidBeatmapType,
+    #[error("Request error.")]
+    RequestError(#[from] ReqwestError),
 }
 
 /// A request to get a list of [`Beatmapset`] related to a user.
 ///
 /// Since osu! does not expose an API to retrieve all of the maps for a given user,
 /// only way to fetch all maps is to send multiple requests for [each type of beatmap](BeatmapType).
+///
+/// Available variants for this method are Graveyard, Loved, Pending and Ranked.
 pub async fn request_user_beatmapsets(
     client: &Client,
     auth_token: &str,
     user: i64,
     beatmap_type: BeatmapType,
-) -> Result<Vec<Beatmapset>, ReqwestError> {
+) -> Result<Vec<Beatmapset>, BeatmapError> {
+    match beatmap_type {
+        BeatmapType::Guest | BeatmapType::Nominated => {
+            return Err(BeatmapError::InvalidBeatmapType);
+        }
+        _ => {}
+    }
+
     let url = format!(
         "https://osu.ppy.sh/api/v2/users/{}/beatmapsets/{}",
         user, beatmap_type
