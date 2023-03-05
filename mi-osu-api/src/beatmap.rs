@@ -33,6 +33,7 @@ use std::fmt;
 
 use reqwest::Client;
 use serde::Deserialize;
+use thiserror::Error;
 
 use crate::ReqwestError;
 
@@ -124,6 +125,17 @@ impl fmt::Display for BeatmapType {
     }
 }
 
+#[derive(Error, Debug)]
+pub enum BeatmapError {
+    #[error(
+        "Invalid BeatmapType argument. Available variants for this method are Graveyard, Loved, \
+         Pending and Ranked."
+    )]
+    InvalidBeatmapType,
+    #[error("Request error.")]
+    RequestError(#[from] ReqwestError),
+}
+
 /// A request to get a list of [`Beatmapset`] related to a user.
 ///
 /// Since osu! does not expose an API to retrieve all of the maps for a given user,
@@ -135,7 +147,14 @@ pub async fn request_user_beatmapsets(
     auth_token: &str,
     user: i64,
     beatmap_type: BeatmapType,
-) -> Result<Vec<Beatmapset>, ReqwestError> {
+) -> Result<Vec<Beatmapset>, BeatmapError> {
+    match beatmap_type {
+        BeatmapType::Guest | BeatmapType::Nominated => {
+            return Err(BeatmapError::InvalidBeatmapType);
+        }
+        _ => {}
+    }
+
     let url = format!(
         "https://osu.ppy.sh/api/v2/users/{}/beatmapsets/{}",
         user, beatmap_type
@@ -154,5 +173,17 @@ pub async fn request_beatmap(
     let url = format!("https://osu.ppy.sh/api/v2/beatmaps/{}", beatmap_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
     let response_body: Beatmap = response_result.json().await?;
+    Ok(response_body)
+}
+
+/// A request to get individual [`Beatmapset`] data.
+pub async fn request_beatmapset(
+    client: &Client,
+    auth_token: &str,
+    beatmapset_id: i64,
+) -> Result<Beatmapset, ReqwestError> {
+    let url = format!("https://osu.ppy.sh/api/v2/beatmapsets/{}", beatmapset_id);
+    let response_result = client.get(url).bearer_auth(auth_token).send().await?;
+    let response_body: Beatmapset = response_result.json().await?;
     Ok(response_body)
 }
