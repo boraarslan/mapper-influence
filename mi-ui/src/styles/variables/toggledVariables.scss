@@ -1,0 +1,61 @@
+// This is only imported in globals.scss
+
+html[data-theme="dark"],
+html {
+  --bgColor-1: hsl(252, 10%, 10%);
+  --bgColor-2: hsl(252, 19%, 15%);
+  --bgColor-3: hsl(255, 20%, 20%);
+  --bgColor-3-hover: hsl(255, 20%, 30%);
+  --primaryColor: hsl(205, 50%, 25%);
+  --secondaryColor: hsl(294, 50%, 25%);
+  --primaryColorBg: hsl(205, 50%, 25%);
+  --secondaryColorBg: hsl(294, 50%, 25%);
+  --backgroundGradient: transparent;
+
+  --buttonBg: hsl(306, 86%, 88%);
+  --buttonOutline: var(--buttonBg);
+  --buttonText: var(--bgColor-1);
+  // Alternative button coloring for dark mode
+  --buttonBg-alt: var(--bgColor-1);
+  --buttonText-alt: var(--buttonOutline);
+
+  --textColor: hsl(0, 0%, 90%);
+  // Buttons use these colors over the colored backgrounds
+  --primaryTextColor: hsl(0, 0%, 90%);
+  --secondaryTextColor: hsl(0, 0%, 90%);
+
+  --cardShadow: 0 0 0 0.15rem rgba(150, 150, 150, 0.4);
+  --cardShadowHover: 0 0 0 0.15rem rgba(150, 150, 150, 0.9);
+  --contentShadow: none;
+
+  --white: hsl(0, 0%, 90%);
+}
+html[data-theme="light"] {
+  --bgColor-1: hsl(0, 0%, 100%);
+  --bgColor-2: hsl(310, 100%, 99%);
+  --bgColor-3: hsl(333, 100%, 96%);
+  --bgColor-3-hover: hsl(313, 60%, 90%);
+  --primaryColor: hsl(205, 75%, 50%);
+  --secondaryColor: hsl(294, 75%, 50%);
+  --primaryColorBg: hsla(205, 100%, 50%, 15%);
+  --secondaryColorBg: hsl(294, 100%, 50%, 15%);
+  --loginScreenBg: hsla(0, 100%, 100%, 20%);
+
+  --buttonBg: hsl(293, 100%, 95%);
+  --buttonOutline: var(--secondaryColor);
+  --buttonText: var(--secondaryColor);
+  // Alternative button coloring for dark mode
+  --buttonBg-alt: var(--buttonBg);
+  --buttonText-alt: var(--buttonOutline);
+
+  --textColor: hsl(0, 0%, 10%);
+  // Buttons use these colors over the colored backgrounds
+  --primaryTextColor: var(--primaryColor);
+  --secondaryTextColor: var(--secondaryColor);
+
+  --cardShadow: 0 0.05rem 0.2rem 0.05rem rgba(0, 0, 0, 0.15);
+  --cardShadowHover: 0 0.1rem 0.5rem 0.15rem rgba(0, 0, 0, 0.2);
+  --contentShadow: 0 0.1rem 1.5rem -0.25rem rgba(0, 0, 0, 0.1);
+
+  --white: white;
+}

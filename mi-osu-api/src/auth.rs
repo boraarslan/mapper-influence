@@ -22,14 +22,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::ReqwestError;
 
-static MI_CLIENT_ID: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_CLIENT_ID").expect("Environment variable MI_CLIENT_ID is not set.")
+static OSU_CLIENT_ID: Lazy<String> = Lazy::new(|| {
+    std::env::var("OSU_CLIENT_ID").expect("Environment variable OSU_CLIENT_ID is not set.")
 });
-static MI_CLIENT_SECRET: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_CLIENT_SECRET").expect("Environment variable MI_CLIENT_SECRET is not set.")
+static OSU_CLIENT_SECRET: Lazy<String> = Lazy::new(|| {
+    std::env::var("OSU_CLIENT_SECRET").expect("Environment variable OSU_CLIENT_SECRET is not set.")
 });
-static MI_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
-    std::env::var("MI_REDIRECT_URI").expect("Environment variable MI_REDIRECT_URI is not set.")
+static OSU_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
+    std::env::var("OSU_REDIRECT_URI").expect("Environment variable OSU_REDIRECT_URI is not set.")
 });
 
 #[derive(Serialize, Debug)]
@@ -48,9 +48,9 @@ struct AuthRequest {
 impl AuthRequest {
     fn access(code: String) -> AuthRequest {
         AuthRequest {
-            client_id: &MI_CLIENT_ID,
-            client_secret: &MI_CLIENT_SECRET,
-            redirect_uri: &MI_REDIRECT_URI,
+            client_id: &OSU_CLIENT_ID,
+            client_secret: &OSU_CLIENT_SECRET,
+            redirect_uri: &OSU_REDIRECT_URI,
             grant_type: "authorization_code",
             scope: "public, identify",
             code: Some(code),
@@ -60,9 +60,9 @@ impl AuthRequest {
 
     fn refresh(refresh_token: String) -> AuthRequest {
         AuthRequest {
-            client_id: &MI_CLIENT_ID,
-            client_secret: &MI_CLIENT_SECRET,
-            redirect_uri: &MI_REDIRECT_URI,
+            client_id: &OSU_CLIENT_ID,
+            client_secret: &OSU_CLIENT_SECRET,
+            redirect_uri: &OSU_REDIRECT_URI,
             grant_type: "refresh_token",
             scope: "public, identify",
             code: None,
@@ -106,12 +106,10 @@ async fn request_token(
 ) -> Result<AuthResponseBody, ReqwestError> {
     let response_result = client
         .post("https://osu.ppy.sh/oauth/token")
-        .json(&body)
+        .form(&body)
         .send()
         .await?;
-
-    let response_body: AuthResponseBody = response_result.json().await?;
-    Ok(response_body)
+    response_result.json::<AuthResponseBody>().await
 }
 
 /// Authorization code refresh method. Returns an [`AuthResponseBody`] with fresh codes to be used.
