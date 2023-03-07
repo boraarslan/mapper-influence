@@ -4,11 +4,11 @@ use tower_http::services::{ServeDir, ServeFile};
 use crate::state::SharedState;
 
 fn serve_file(name: &str) -> ServeFile {
-    ServeFile::new("mi-api/pages/".to_string() + name)
+    ServeFile::new("pages/".to_string() + name)
 }
 
 fn serve_dir(name: &str) -> ServeDir {
-    ServeDir::new("mi-api/pages/".to_string() + name)
+    ServeDir::new("pages/".to_string() + name)
 }
 
 pub fn html_router() -> Router<SharedState> {
