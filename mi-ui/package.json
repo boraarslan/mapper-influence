@@ -7,7 +7,8 @@
     "build": "next build",
     "export": "next build && next export -o ../mi-api/pages",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typescript": "tsc --noEmit"
   },
   "dependencies": {
     "awesome-debounce-promise": "^2.1.0",

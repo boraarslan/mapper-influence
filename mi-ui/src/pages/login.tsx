@@ -15,7 +15,16 @@ const DevLoginPage = () => {
 
   useEffect(() => {
     setCookie("mi-session-token", session);
-    getUserBase().then((user) => login(user, session.toString()));
+    getUserBase().then(({ data }) =>
+      login(
+        {
+          avatarUrl: data.profile_picture,
+          id: data.id,
+          username: data.user_name,
+        },
+        session.toString()
+      )
+    );
     //router.replace("/");
   }, [session, setCookie, login]);
 
