@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 use tower_cookies::Cookies;
 use validator::Validate;
 
-use crate::api::get_session_cookie;
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
 
@@ -20,8 +19,7 @@ pub async fn get_influences(
     State(state): State<SharedState>,
     Json(request): Json<GetInfluenceRequest>,
 ) -> AppResult<Json<Vec<Influence>>> {
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     let influences = state
         .postgres()
@@ -46,8 +44,7 @@ pub async fn create_influence(
     Json(request): Json<InsertInfluenceRequest>,
 ) -> AppResult<()> {
     request.validate()?;
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     let influence = Influence::new(request.from_id, user_id, request.level, request.info);
     state.postgres().insert_influence(influence).await?;
@@ -66,8 +63,7 @@ pub async fn delete_influence(
     State(state): State<SharedState>,
     Json(request): Json<DeleteInfluenceRequest>,
 ) -> AppResult<()> {
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     state
         .postgres()
@@ -91,8 +87,7 @@ pub async fn update_influence_level(
     Json(request): Json<UpdateInfluenceLevelRequest>,
 ) -> AppResult<()> {
     request.validate()?;
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     state
         .postgres()
@@ -114,8 +109,7 @@ pub async fn update_influence_info(
     State(state): State<SharedState>,
     Json(request): Json<UpdateInfluenceInfoRequest>,
 ) -> AppResult<()> {
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     state
         .postgres()

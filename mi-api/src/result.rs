@@ -21,6 +21,12 @@ impl AppError {
     pub fn cookie_error() -> Self {
         AppError(Kind::Cookie)
     }
+
+    pub fn session_expired() -> Self {
+        AppError(Kind::Auth {
+            msg: "Session token is expired".to_string(),
+        })
+    }
 }
 
 #[derive(Debug)]

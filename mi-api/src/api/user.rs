@@ -4,7 +4,6 @@ use mi_db::user::User as DbUser;
 use serde::Deserialize;
 use tower_cookies::Cookies;
 
-use super::get_session_cookie;
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
 
@@ -14,8 +13,7 @@ pub async fn get_user(
     State(state): State<SharedState>,
     Path(path_user_id_opt): Path<Option<i64>>,
 ) -> AppResult<Json<DbUser>> {
-    let token = get_session_cookie(&cookies)?;
-    let auth_user_id = state.redis().get_user_id(token).await?;
+    let auth_user_id = state.auth_user(&cookies).await?;
 
     let query_user_id = match path_user_id_opt {
         Some(path_user_id) => path_user_id,
@@ -48,8 +46,7 @@ pub async fn create_user(
     State(state): State<SharedState>,
     Json(request): Json<CreateUserRequest>,
 ) -> AppResult<Json<DbUser>> {
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     let user = init_missing_user(state, user_id, request.user_id).await?;
 
@@ -92,8 +89,7 @@ pub async fn update_user(
     State(state): State<SharedState>,
     Json(request): Json<UpdateUserRequest>,
 ) -> AppResult<()> {
-    let token = get_session_cookie(&cookies)?;
-    let user_id = state.redis().get_user_id(token).await?;
+    let user_id = state.auth_user(&cookies).await?;
 
     if let Some(user_name) = request.user_name {
         state
