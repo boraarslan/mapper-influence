@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
-import { User, UserBase } from "@libs/types/user";
+import { UserProfile, UserBase } from "@libs/types/user";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 import MentionList from "./MentionList";
@@ -8,7 +8,7 @@ import { useSessionStore } from "src/states/user";
 
 import styles from "./style.module.scss";
 
-type Props = { userData: User; editable?: boolean };
+type Props = { userData: UserProfile; editable?: boolean };
 
 const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
   const { logout } = useSessionStore();

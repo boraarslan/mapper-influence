@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { User, UserBase } from "@libs/types/user";
+import { UserProfile, UserBase } from "@libs/types/user";
 
 type SessionStore = {
   authKey?: string;
