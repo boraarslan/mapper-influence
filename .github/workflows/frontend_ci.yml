@@ -1,8 +1,12 @@
 name: ui-typecheck
 on:
-  push:
+  workflow_dispatch:
+  pull_request:
     paths:
       - mi-ui/**
+  push:
+    branches:
+      - main
 
 jobs:
   Check-TypeScript:
