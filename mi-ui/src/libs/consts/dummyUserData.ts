@@ -1,5 +1,5 @@
 import { InfluenceTypeEnum } from "@libs/types/influence";
-import { User } from "@libs/types/user";
+import { UserProfile } from "@libs/types/user";
 
 const exampleMapList = [
   {
@@ -39,7 +39,7 @@ const exampleMapList = [
   },
 ];
 
-export const userData: User = {
+export const userData: UserProfile = {
   id: 12345,
   username: "Test username",
   avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",

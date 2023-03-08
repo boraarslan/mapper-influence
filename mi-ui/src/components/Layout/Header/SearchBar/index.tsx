@@ -1,5 +1,5 @@
 import { Magnify } from "@components/SvgComponents";
-import { MaxNameLength } from "@libs/consts/sizes";
+import { MaxNameLength } from "@libs/consts";
 import { UserBase } from "@libs/types/user";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useRouter } from "next/router";

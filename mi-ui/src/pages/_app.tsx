@@ -1,6 +1,5 @@
 import Head from "next/head";
 import type { AppProps } from "next/app";
-import { useEffect } from "react";
 import { CookiesProvider } from "react-cookie";
 import Layout from "@components/Layout";
 import "../styles/globals.scss";

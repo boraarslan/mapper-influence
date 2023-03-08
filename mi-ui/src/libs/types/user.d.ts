@@ -6,9 +6,10 @@ export interface UserBase {
   username: string;
   avatarUrl: string;
   groups?: Group[];
+  title?: string;
 }
 
-export interface User extends UserBase {
+export interface UserProfile extends UserBase {
   details: UserDetails;
   description: string;
   maps: MapInfo[];
