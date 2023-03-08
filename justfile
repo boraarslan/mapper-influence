@@ -1,4 +1,5 @@
 # https://cheatography.com/linux-china/cheat-sheets/justfile/
+set dotenv-load
 
 PG_DATABASE_URL := "postgres://mi-dev:mi-dev@localhost:5432/mapper-influence-dev"
 REDIS_URL := "redis://localhost:6379"
@@ -37,3 +38,15 @@ host: export-ui
 
 host-release: export-ui
 	cd mi-api && cargo run --release
+
+# Builds the docker image using the .env file
+docker-build:
+	docker build -t mi-api . \
+	--build-arg DATABASE_URL=$DATABASE_URL \
+	--build-arg MI_REDIS_URL=$MI_REDIS_URL \
+	--build-arg MI_AUTH_REDIRECT_URi=$MI_AUTH_REDIRECT_URI \
+	--build-arg PORT=$PORT \
+	--build-arg OSU_CLIENT_ID=$OSU_CLIENT_ID \
+	--build-arg OSU_CLIENT_SECRET=$OSU_CLIENT_SECRET \
+	--build-arg OSU_REDIRECT_URI=$OSU_REDIRECT_URI \
+	--build-arg RUST_LOG=$RUST_LOG
