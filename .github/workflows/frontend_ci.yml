@@ -1,5 +1,9 @@
 name: Typecheck
-on: [push]
+on:
+  push:
+    paths:
+      - mi-ui/**
+
 jobs:
   Check-TypeScript:
     runs-on: ubuntu-latest
