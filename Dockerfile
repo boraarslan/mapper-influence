@@ -8,6 +8,7 @@ ARG PORT
 ARG RUST_LOG
 ARG MAPPER_INFLUENCE_CI_ENV
 
+
 FROM clux/muslrust:stable AS chef
 USER root
 RUN curl -L https://github.com/LukeMathWalker/cargo-chef/releases/download/v0.1.51/cargo-chef-x86_64-unknown-linux-musl.tar.gz | \
@@ -29,6 +30,10 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash 
 RUN just export-ui 
 
 FROM chef AS planner
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV MAPPER_INFLUENCE_CI_ENV=${MAPPER_INFLUENCE_CI_ENV}
+
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
@@ -38,8 +43,6 @@ COPY --from=planner /usr/src/mapper-influence/recipe.json recipe.json
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 # Build application
 
-ENV DATABASE_URL=${DATABASE_URL}
-ENV MAPPER_INFLUENCE_CI_ENV=${MAPPER_INFLUENCE_CI_ENV}
 
 COPY . .
 RUN rustup target add x86_64-unknown-linux-musl
