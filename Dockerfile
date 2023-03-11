@@ -6,6 +6,7 @@ ARG OSU_CLIENT_SECRET
 ARG OSU_REDIRECT_URI
 ARG PORT
 ARG RUST_LOG
+ARG MAPPER_INFLUENCE_CI_ENV
 
 FROM clux/muslrust:stable AS chef
 USER root
@@ -36,6 +37,10 @@ COPY --from=planner /usr/src/mapper-influence/recipe.json recipe.json
 # Build dependencies - this is the caching Docker layer!
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 # Build application
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV MAPPER_INFLUENCE_CI_ENV=${MAPPER_INFLUENCE_CI_ENV}
+
 COPY . .
 RUN rustup target add x86_64-unknown-linux-musl
 RUN cargo build --release --target x86_64-unknown-linux-musl
