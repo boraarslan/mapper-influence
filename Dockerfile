@@ -9,12 +9,20 @@ ARG RUST_LOG
 
 FROM clux/muslrust:stable AS chef
 USER root
-RUN cargo install cargo-chef
+RUN curl -L https://github.com/LukeMathWalker/cargo-chef/releases/download/v0.1.51/cargo-chef-x86_64-unknown-linux-musl.tar.gz | \
+    tar -xz -C $HOME/.cargo/bin/
+
+# Temporary addition to use sparse protocol
+# https://blog.rust-lang.org/2023/03/09/Rust-1.68.0.html#cargos-sparse-protocol
+# Remove when it becomes the default
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+
 WORKDIR /usr/src/mapper-influence
 
 FROM node:16 as ui-builder
 WORKDIR /usr/src/mapper-influence
-COPY . .
+COPY ./mi-ui ./mi-ui
+COPY ./justfile ./justfile
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
 RUN just export-ui 
