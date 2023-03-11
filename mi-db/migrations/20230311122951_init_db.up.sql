@@ -13,11 +13,11 @@ create table if not exists user_profiles(
 
 create table if not exists users_osu_data(
     user_id bigserial references users(id),
-    ranked_count int not null,
-    loved_count int not null,
-    nominated_count int not null,
-    graveyard_count int not null,
-    guest_count int not null,
+    ranked_count int not null default 0,
+    loved_count int not null default 0,
+    nominated_count int not null default 0,
+    graveyard_count int not null default 0,
+    guest_count int not null default 0,
     modified_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
