@@ -32,8 +32,9 @@
 use std::fmt;
 
 use reqwest::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use utoipa::ToSchema;
 
 use crate::ReqwestError;
 
@@ -47,7 +48,7 @@ use crate::ReqwestError;
 ///
 /// [beatmapset]: <https://osu.ppy.sh/wiki/en/Beatmap>
 /// [the official osu! API]: <Https://osu.ppy.sh/docs/index.html#beatmapset>
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct Beatmapset {
     /// Unique ID of a beatmapset. Different from [beatmap ID](Beatmap::id)
     pub id: i64,
@@ -69,7 +70,7 @@ pub struct Beatmapset {
 ///
 /// Unicode fields are for the names with non-ASCII characters. It consists mostly of Japanese
 /// characters.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct BeatmapsetNames {
     pub artist: String,
     pub artist_unicode: String,
@@ -87,7 +88,7 @@ pub struct BeatmapsetNames {
 ///
 /// [beatmap]: <https://osu.ppy.sh/wiki/en/Beatmap/Difficulty>
 /// [the official osu! API]: <Https://osu.ppy.sh/docs/index.html#beatmapset>
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct Beatmap {
     /// [Star rating](https://osu.ppy.sh/wiki/en/Beatmap/Star_rating) of the beatmap
     pub difficulty_rating: f64,
@@ -104,7 +105,7 @@ pub struct Beatmap {
 /// website. Each field is the same beatmapset background image with different cutouts.
 ///
 /// Only contains @2x images that are double resolution.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 pub struct Covers {
     #[serde(rename = "cover@2x")]
     pub cover: String,
@@ -119,7 +120,7 @@ pub struct Covers {
 /// Type of a beatmap.
 ///
 /// These are the variants of map types that are in users profile.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all(deserialize = "lowercase"))]
 pub enum BeatmapType {
     Graveyard,
