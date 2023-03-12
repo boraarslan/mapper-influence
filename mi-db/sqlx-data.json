@@ -156,6 +156,19 @@
     },
     "query": "SELECT * FROM users WHERE id = $1"
   },
+  "8558e50e3ec076a0724e43cdd00c1e2b4ffdb56861ad5e76e05f59edc4f4d465": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Json",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2\n        "
+  },
   "8cdda88cc181541f72fc905f0444da40e8165750a8c27db6da174f0cc2bcac22": {
     "describe": {
       "columns": [
@@ -258,6 +271,23 @@
       }
     },
     "query": "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
+  },
+  "c84c66286a50e498d37559f48cc79cdc4e9855a19ca317b4deac1a7b4a4dc3cc": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4"
+        ]
+      }
+    },
+    "query": "\n        UPDATE \n            users_osu_data \n                SET (ranked_count, loved_count, nominated_count, graveyard_count, guest_count, modified_at) = \n                ($2 , $3, $4, $5, $6, DEFAULT) \n        WHERE \n            user_id = $1 "
   },
   "d1c902858f58a9589001a9b7e21e9569254aa4ad45eedfb5ae5023a0a0a783da": {
     "describe": {
