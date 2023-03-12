@@ -1,10 +1,12 @@
 use chrono::Utc;
-use mi_osu_api::beatmap::Beatmapset;
+use mi_osu_api::Beatmapset;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Json;
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
+use tokio::try_join;
 use utoipa::ToSchema;
+use futures::FutureExt;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
 
@@ -84,8 +86,8 @@ pub struct FullUser {
     pub guest_count: i32,
 }
 
-impl From<mi_osu_api::user::User> for User {
-    fn from(osu_user: mi_osu_api::user::User) -> Self {
+impl From<mi_osu_api::User> for User {
+    fn from(osu_user: mi_osu_api::User) -> Self {
         Self {
             id: osu_user.id,
             user_name: osu_user.username,
@@ -128,6 +130,49 @@ pub async fn get_full_user(user_id: i64, db: &PgPool) -> Result<FullUser, UserEr
     }
 }
 
+pub async fn update_user_osu_data(
+    user_osu_data: mi_osu_api::User,
+    db: &PgPool,
+) -> Result<(), UserError> {
+    let query_result = sqlx::query!(
+        r#"
+        UPDATE 
+            users_osu_data 
+                SET (ranked_count, loved_count, nominated_count, graveyard_count, guest_count, modified_at) = 
+                ($2 , $3, $4, $5, $6, DEFAULT) 
+        WHERE 
+            user_id = $1 "#,
+        user_osu_data.id,
+        user_osu_data.stats.ranked,
+        user_osu_data.stats.loved,
+        user_osu_data.stats.nominated,
+        user_osu_data.stats.graveyard,
+        user_osu_data.stats.guest,
+    ).execute(db).await;
+
+    match query_result {
+        Ok(_) => Ok(()),
+        Err(sqlx::Error::RowNotFound) => Err(UserError::UserNotFound(user_osu_data.id)),
+        Err(db_err) => Err(UserError::from(db_err)),
+    }
+}
+
+pub async fn update_user_featured_maps(user_id: i64, maps: FeaturedMaps, db: &PgPool) -> Result<(), UserError> {
+    let query_result = sqlx::query!(
+        r#"
+            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2
+        "#,
+        serde_json::to_value(&maps)?,
+        user_id
+    ).execute(db).await;
+
+    match query_result {
+        Ok(_) => Ok(()),
+        Err(sqlx::Error::RowNotFound) => Err(UserError::UserNotFound(user_id)),
+        Err(db_err) => Err(UserError::from(db_err)),
+    }
+}
+
 pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_user = sqlx::query!(
         r#"
@@ -137,6 +182,7 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
         user.profile_picture,
     )
     .execute(db);
+
     let insert_profile = sqlx::query!(
         r#"
         INSERT INTO user_profiles (user_id) VALUES ($1)"#,
@@ -149,9 +195,11 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     )
     .execute(db);
 
-    let insert_result = tokio::try_join!(insert_user, insert_profile, insert_osu_data);
+    let insert_result = insert_user.then(|_user_res| async move {
+        try_join!(insert_profile, insert_osu_data)
+    });
 
-    match insert_result {
+    match insert_result.await {
         Ok(_) => Ok(user),
         Err(db_err) if db_err.as_database_error().is_some() => {
             // We check if db_err can be casted to database_error.
@@ -246,6 +294,8 @@ pub enum UserError {
     UserAlreadyExists(i64),
     #[error("Internal database error: {0}")]
     DatabaseError(#[from] sqlx::Error),
+    #[error("Failed to serialize Json: {0}")]
+    SerdeError(#[from] serde_json::Error),
 }
 
 #[cfg(all(test, feature = "db-tests"))]
