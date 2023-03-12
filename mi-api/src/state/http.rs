@@ -1,6 +1,6 @@
 use axum::extract::FromRef;
 use mi_osu_api::auth::{access_token, refresh_token, AuthResponseBody};
-use mi_osu_api::user::{request_token_user, request_user, User};
+use mi_osu_api::{request_token_user, request_user, User};
 use mi_osu_api::ReqwestError;
 
 use super::SharedState;

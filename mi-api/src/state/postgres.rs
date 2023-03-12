@@ -3,7 +3,7 @@ use mi_db::influence::{
     delete_influence, get_all_influences_by_to_id, insert_influence, update_influence_info,
     update_influence_level, Influence, InfluenceError,
 };
-use mi_db::user::{
+use mi_db::{
     get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_picture,
     FullUser, User, UserError,
 };

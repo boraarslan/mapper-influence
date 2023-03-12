@@ -3,8 +3,8 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum_macros::FromRequest;
 use mi_db::auth::AuthError;
-use mi_db::influence::InfluenceError;
-use mi_db::user::UserError;
+use mi_db::InfluenceError;
+use mi_db::UserError;
 use serde::Serialize;
 use validator::ValidationErrors;
 

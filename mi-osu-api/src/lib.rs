@@ -10,4 +10,7 @@ pub mod auth;
 pub mod beatmap;
 pub mod user;
 
+pub use crate::user::*;
+pub use crate::beatmap::*;
+
 pub type ReqwestError = reqwest::Error;

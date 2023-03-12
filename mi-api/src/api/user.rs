@@ -1,6 +1,6 @@
 use axum::debug_handler;
 use axum::extract::{Path, State};
-use mi_db::user::{FullUser, User};
+use mi_db::{FullUser, User};
 use serde::Deserialize;
 use tower_cookies::Cookies;
 use utoipa::ToSchema;
@@ -32,7 +32,7 @@ pub async fn get_user(
     match db_user_res {
         Ok(db_user) => Ok(Json(db_user)),
         Err(err) => {
-            if let mi_db::user::UserError::UserNotFound(_) = err {
+            if let mi_db::UserError::UserNotFound(_) = err {
                 let db_user = init_missing_user(&state, auth_user_id, query_user_id).await?;
                 Ok(Json(db_user))
             } else {
@@ -66,7 +66,7 @@ pub async fn get_full_user(
     match db_user_res {
         Ok(db_user) => Ok(Json(db_user)),
         Err(err) => {
-            if let mi_db::user::UserError::UserNotFound(_) = err {
+            if let mi_db::UserError::UserNotFound(_) = err {
                 init_missing_user(&state, auth_user_id, query_user_id).await?;
                 let full_user = state.postgres().get_full_user(query_user_id).await?;
                 Ok(Json(full_user))
