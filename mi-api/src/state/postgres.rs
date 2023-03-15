@@ -5,7 +5,7 @@ use mi_db::influence::{
 };
 use mi_db::{
     get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_picture,
-    FullUser, User, UserError,
+    FullUser, User, UserError, update_user_osu_data,
 };
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -92,6 +92,10 @@ impl PgDb {
 
     pub async fn delete_influence(&self, from_id: i64, to_id: i64) -> Result<(), InfluenceError> {
         delete_influence(from_id, to_id, &self.pool).await
+    }
+
+    pub async fn update_user_osu_data(&self, user: mi_osu_api::User) -> Result<(), UserError> {
+        update_user_osu_data(user, &self.pool).await
     }
 }
 

@@ -12,17 +12,17 @@ use crate::state::SharedState;
     get,
     path = "/user/get/{user_id}",
     responses((status = 200, description = "User info found", body = User)),
-    params(("user_id" = Option<i64>, Path, description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
+    params(("user_id", description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
 )]
 #[debug_handler]
 pub async fn get_user(
     cookies: Cookies,
     State(state): State<SharedState>,
-    Path(path_user_id_opt): Path<Option<i64>>,
+    Path(user_id): Path<Option<i64>>,
 ) -> AppResult<Json<User>> {
     let auth_user_id = state.auth_user(&cookies).await?;
 
-    let query_user_id = match path_user_id_opt {
+    let query_user_id = match user_id {
         Some(path_user_id) => path_user_id,
         None => auth_user_id,
     };
@@ -46,17 +46,17 @@ pub async fn get_user(
     get,
     path = "/user/get/{user_id}/full",
     responses((status = 200, description = "User info found", body = FullUser)),
-    params(("user_id" = Option<i64>, Path, description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
+    params(("user_id", description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
 )]
 #[debug_handler]
 pub async fn get_full_user(
     cookies: Cookies,
     State(state): State<SharedState>,
-    Path(path_user_id_opt): Path<Option<i64>>,
+    Path(user_id): Path<Option<i64>>,
 ) -> AppResult<Json<FullUser>> {
     let auth_user_id = state.auth_user(&cookies).await?;
 
-    let query_user_id = match path_user_id_opt {
+    let query_user_id = match user_id {
         Some(path_user_id) => path_user_id,
         None => auth_user_id,
     };
@@ -117,6 +117,8 @@ async fn init_missing_user(
         .postgres()
         .insert_user(osu_user.clone().into())
         .await?;
+
+    state.postgres().update_user_osu_data(osu_user).await?;
 
     Ok(user)
 }
