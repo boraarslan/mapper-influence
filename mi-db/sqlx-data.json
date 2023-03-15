@@ -112,6 +112,86 @@
     },
     "query": "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id"
   },
+  "748bdf9d00896ea93e1d4dca31c20f873c4b0ae0e2a1e4ebf68943e8e63c8fe4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "bio",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "featured_maps: Json<FeaturedMaps>",
+          "ordinal": 4,
+          "type_info": "Json"
+        },
+        {
+          "name": "ranked_count",
+          "ordinal": 5,
+          "type_info": "Int4"
+        },
+        {
+          "name": "loved_count",
+          "ordinal": 6,
+          "type_info": "Int4"
+        },
+        {
+          "name": "nominated_count",
+          "ordinal": 7,
+          "type_info": "Int4"
+        },
+        {
+          "name": "graveyard_count",
+          "ordinal": 8,
+          "type_info": "Int4"
+        },
+        {
+          "name": "guest_count",
+          "ordinal": 9,
+          "type_info": "Int4"
+        },
+        {
+          "name": "osu_data_modified_at",
+          "ordinal": 10,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        SELECT \n            id, user_name, profile_picture, \n            profile.bio, \n            profile.featured_maps as \"featured_maps: Json<FeaturedMaps>\", \n            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,\n            osu.modified_at as osu_data_modified_at\n        FROM users \n        INNER JOIN user_profiles profile ON profile.user_id = $1 \n        INNER JOIN users_osu_data osu ON osu.user_id = $1"
+  },
   "82936ca170aef076e016acefd68b8b007064eb599ef9821ce2024534baace85f": {
     "describe": {
       "columns": [],
@@ -288,80 +368,6 @@
       }
     },
     "query": "\n        UPDATE \n            users_osu_data \n                SET (ranked_count, loved_count, nominated_count, graveyard_count, guest_count, modified_at) = \n                ($2 , $3, $4, $5, $6, DEFAULT) \n        WHERE \n            user_id = $1 "
-  },
-  "d1c902858f58a9589001a9b7e21e9569254aa4ad45eedfb5ae5023a0a0a783da": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "user_name",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "profile_picture",
-          "ordinal": 2,
-          "type_info": "Text"
-        },
-        {
-          "name": "bio",
-          "ordinal": 3,
-          "type_info": "Text"
-        },
-        {
-          "name": "featured_maps: Json<FeaturedMaps>",
-          "ordinal": 4,
-          "type_info": "Json"
-        },
-        {
-          "name": "ranked_count",
-          "ordinal": 5,
-          "type_info": "Int4"
-        },
-        {
-          "name": "loved_count",
-          "ordinal": 6,
-          "type_info": "Int4"
-        },
-        {
-          "name": "nominated_count",
-          "ordinal": 7,
-          "type_info": "Int4"
-        },
-        {
-          "name": "graveyard_count",
-          "ordinal": 8,
-          "type_info": "Int4"
-        },
-        {
-          "name": "guest_count",
-          "ordinal": 9,
-          "type_info": "Int4"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        true,
-        true,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "\n        SELECT \n            id, user_name, profile_picture, \n            profile.bio, \n            profile.featured_maps as \"featured_maps: Json<FeaturedMaps>\", \n            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count \n        FROM users \n        INNER JOIN user_profiles profile ON profile.user_id = $1 \n        INNER JOIN users_osu_data osu ON osu.user_id = $1"
   },
   "f749cbfc1f240abd5f0b804c7a567e84730e6dbc4f444da645450f275c1d8c15": {
     "describe": {

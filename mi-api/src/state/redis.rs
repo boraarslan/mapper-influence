@@ -1,8 +1,9 @@
 use axum::extract::FromRef;
 use mi_db::auth::{
-    get_access_token, get_refresh_token, get_user_id, set_osu_tokens, set_session_token,
-    AuthResult, RedisPool,
+    get_access_token, get_refresh_token, get_user_id, set_osu_tokens, set_session_token, AuthResult,
 };
+use mi_db::user_lock::{is_user_locked, lock_user, unlock_user, LockError};
+use mi_db::RedisPool;
 
 use super::SharedState;
 
@@ -47,6 +48,18 @@ impl RedisDb {
         refresh_token: &str,
     ) -> AuthResult<()> {
         set_osu_tokens(user_id, access_token, refresh_token, &self.pool).await
+    }
+
+    pub async fn lock_user(&self, user_id: i64) -> Result<(), LockError> {
+        lock_user(user_id, &self.pool).await
+    }
+
+    pub async fn is_user_locked(&self, user_id: i64) -> Result<bool, LockError> {
+        is_user_locked(user_id, &self.pool).await
+    }
+
+    pub async fn unlock_user(&self, user_id: i64) -> Result<(), LockError> {
+        unlock_user(user_id, &self.pool).await
     }
 }
 

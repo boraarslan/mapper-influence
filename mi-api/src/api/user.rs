@@ -64,7 +64,23 @@ pub async fn get_full_user(
     let db_user_res = state.postgres().get_full_user(query_user_id).await;
 
     match db_user_res {
-        Ok(db_user) => Ok(Json(db_user)),
+        Ok(db_user) => {
+            if db_user.is_outdated() && !state.redis().is_user_locked(query_user_id).await? {
+                state.redis().lock_user(query_user_id).await?;
+
+                let osu_token = state.redis().get_access_token(auth_user_id).await?;
+
+                let osu_user = state
+                    .http()
+                    .request_osu_user(&osu_token, query_user_id)
+                    .await?;
+
+                state.postgres().update_user_osu_data(osu_user).await?;
+
+                state.redis().unlock_user(query_user_id).await?;
+            }
+            Ok(Json(db_user))
+        }
         Err(err) => {
             if let mi_db::UserError::UserNotFound(_) = err {
                 init_missing_user(&state, auth_user_id, query_user_id).await?;

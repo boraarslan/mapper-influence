@@ -4,8 +4,8 @@ use mi_db::influence::{
     update_influence_level, Influence, InfluenceError,
 };
 use mi_db::{
-    get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_picture,
-    FullUser, User, UserError, update_user_osu_data,
+    get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_osu_data,
+    update_user_picture, FullUser, User, UserError,
 };
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;

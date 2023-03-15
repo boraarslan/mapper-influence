@@ -1,4 +1,5 @@
 use chrono::Utc;
+use futures::FutureExt;
 use mi_osu_api::Beatmapset;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Json;
@@ -6,7 +7,6 @@ use sqlx::{FromRow, PgPool};
 use thiserror::Error;
 use tokio::try_join;
 use utoipa::ToSchema;
-use futures::FutureExt;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
 
@@ -84,6 +84,16 @@ pub struct FullUser {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
+    /// Last Osu! data modified timestamp
+    pub osu_data_modified_at: chrono::DateTime<Utc>,
+}
+
+impl FullUser {
+    pub fn is_outdated(&self) -> bool {
+        let now = Utc::now();
+        let diff = now - self.osu_data_modified_at;
+        diff.num_hours() > 3
+    }
 }
 
 impl From<mi_osu_api::User> for User {
@@ -116,7 +126,8 @@ pub async fn get_full_user(user_id: i64, db: &PgPool) -> Result<FullUser, UserEr
             id, user_name, profile_picture, 
             profile.bio, 
             profile.featured_maps as "featured_maps: Json<FeaturedMaps>", 
-            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count 
+            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,
+            osu.modified_at as osu_data_modified_at
         FROM users 
         INNER JOIN user_profiles profile ON profile.user_id = $1 
         INNER JOIN users_osu_data osu ON osu.user_id = $1"#,
@@ -157,14 +168,20 @@ pub async fn update_user_osu_data(
     }
 }
 
-pub async fn update_user_featured_maps(user_id: i64, maps: FeaturedMaps, db: &PgPool) -> Result<(), UserError> {
+pub async fn update_user_featured_maps(
+    user_id: i64,
+    maps: FeaturedMaps,
+    db: &PgPool,
+) -> Result<(), UserError> {
     let query_result = sqlx::query!(
         r#"
             UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2
         "#,
         serde_json::to_value(&maps)?,
         user_id
-    ).execute(db).await;
+    )
+    .execute(db)
+    .await;
 
     match query_result {
         Ok(_) => Ok(()),
@@ -195,9 +212,8 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     )
     .execute(db);
 
-    let insert_result = insert_user.then(|_user_res| async move {
-        try_join!(insert_profile, insert_osu_data)
-    });
+    let insert_result =
+        insert_user.then(|_user_res| async move { try_join!(insert_profile, insert_osu_data) });
 
     match insert_result.await {
         Ok(_) => Ok(user),
