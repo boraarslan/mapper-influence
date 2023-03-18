@@ -1,6 +1,11 @@
 # https://cheatography.com/linux-china/cheat-sheets/justfile/
 set dotenv-load
 
+# Temporary addition to use sparse protocol
+# https://blog.rust-lang.org/2023/03/09/Rust-1.68.0.html#cargos-sparse-protocol
+# Remove when it becomes the default
+export CARGO_REGISTRIES_CRATES_IO_PROTOCOL := "sparse"
+
 PG_DATABASE_URL := "postgres://mi-dev:mi-dev@localhost:5432/mapper-influence-dev"
 REDIS_URL := "redis://localhost:6379"
 
