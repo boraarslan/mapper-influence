@@ -3,8 +3,8 @@ use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum_macros::FromRequest;
 use mi_db::auth::AuthError;
-use mi_db::influence::InfluenceError;
-use mi_db::user::UserError;
+use mi_db::user_lock::LockError;
+use mi_db::{InfluenceError, UserError};
 use serde::Serialize;
 use validator::ValidationErrors;
 
@@ -87,6 +87,19 @@ impl From<AuthError> for AppError {
             }),
             AuthError::ValueNotFound => AppError(Kind::Auth {
                 msg: "Value is not found.".to_string(),
+            }),
+        }
+    }
+}
+
+impl From<LockError> for AppError {
+    fn from(err: LockError) -> Self {
+        match err {
+            LockError::ConnectionTimedOut => AppError(Kind::Auth {
+                msg: "Database connection timed out.".to_string(),
+            }),
+            LockError::RedisError(_) => AppError(Kind::Auth {
+                msg: "Redis connection returned an error.".to_string(),
             }),
         }
     }

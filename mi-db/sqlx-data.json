@@ -1,5 +1,31 @@
 {
   "db": "PostgreSQL",
+  "1a2f084f2c424994f43fdd10485169e7cb5635d18b1be1d5b2298f3a525760ba": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3)"
+  },
+  "3218b6fc70e46c329ae7ba4a313bcb9a40d5eb7713de7c7ee884dd9db41dda34": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "INSERT INTO users_osu_data (user_id) VALUES ($1)"
+  },
   "51530a1a06b0ae31e99258c59fd819580d9993fd23ee08f9df65ef7924a21275": {
     "describe": {
       "columns": [
@@ -21,26 +47,6 @@
     },
     "query": "UPDATE users SET user_name = $1 WHERE id = $2 RETURNING id"
   },
-  "58327aa90726e98d2f31a5178c611b22b3177ea71f812c9f53e4164f22cd1f8a": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "DELETE FROM users WHERE id = $1 RETURNING id"
-  },
   "60fd0e0da707e92b214adef7489778fe11cf20e0090c17a1492a7b341e9304e5": {
     "describe": {
       "columns": [
@@ -61,6 +67,27 @@
       }
     },
     "query": "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id"
+  },
+  "6880dd42e3f4c19b6e694693c4cfebc92066460c49fc11d960d3f7b784e9389f": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE user_profiles SET bio = $1 WHERE user_id = $2 RETURNING user_id"
   },
   "689ccc8a2c47be7848241b7a600220ae40f9b5e42e6db5c65303b2d227412dab": {
     "describe": {
@@ -85,7 +112,7 @@
     },
     "query": "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id"
   },
-  "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
+  "748bdf9d00896ea93e1d4dca31c20f873c4b0ae0e2a1e4ebf68943e8e63c8fe4": {
     "describe": {
       "columns": [
         {
@@ -107,13 +134,99 @@
           "name": "bio",
           "ordinal": 3,
           "type_info": "Text"
+        },
+        {
+          "name": "featured_maps: Json<FeaturedMaps>",
+          "ordinal": 4,
+          "type_info": "Json"
+        },
+        {
+          "name": "ranked_count",
+          "ordinal": 5,
+          "type_info": "Int4"
+        },
+        {
+          "name": "loved_count",
+          "ordinal": 6,
+          "type_info": "Int4"
+        },
+        {
+          "name": "nominated_count",
+          "ordinal": 7,
+          "type_info": "Int4"
+        },
+        {
+          "name": "graveyard_count",
+          "ordinal": 8,
+          "type_info": "Int4"
+        },
+        {
+          "name": "guest_count",
+          "ordinal": 9,
+          "type_info": "Int4"
+        },
+        {
+          "name": "osu_data_modified_at",
+          "ordinal": 10,
+          "type_info": "Timestamptz"
         }
       ],
       "nullable": [
         false,
         false,
         false,
-        true
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        SELECT \n            id, user_name, profile_picture, \n            profile.bio, \n            profile.featured_maps as \"featured_maps: Json<FeaturedMaps>\", \n            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,\n            osu.modified_at as osu_data_modified_at\n        FROM users \n        INNER JOIN user_profiles profile ON profile.user_id = $1 \n        INNER JOIN users_osu_data osu ON osu.user_id = $1"
+  },
+  "82936ca170aef076e016acefd68b8b007064eb599ef9821ce2024534baace85f": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO user_profiles (user_id) VALUES ($1)"
+  },
+  "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
       ],
       "parameters": {
         "Left": [
@@ -122,6 +235,19 @@
       }
     },
     "query": "SELECT * FROM users WHERE id = $1"
+  },
+  "8558e50e3ec076a0724e43cdd00c1e2b4ffdb56861ad5e76e05f59edc4f4d465": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Json",
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2\n        "
   },
   "8cdda88cc181541f72fc905f0444da40e8165750a8c27db6da174f0cc2bcac22": {
     "describe": {
@@ -226,41 +352,22 @@
     },
     "query": "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
   },
-  "d6588d3396369e752d050dbc206a0a2fcfeae1edf84e7445c5a00f9598356619": {
+  "c84c66286a50e498d37559f48cc79cdc4e9855a19ca317b4deac1a7b4a4dc3cc": {
     "describe": {
       "columns": [],
       "nullable": [],
       "parameters": {
         "Left": [
           "Int8",
-          "Text",
-          "Text",
-          "Text"
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4",
+          "Int4"
         ]
       }
     },
-    "query": "\n        INSERT INTO users (id, user_name, profile_picture, bio) VALUES ($1, $2, $3, $4)"
-  },
-  "f31147e2bf34fbff116b7aee015121b433c592434e66ac2a4d35e7c4f6a967c0": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Text",
-          "Int8"
-        ]
-      }
-    },
-    "query": "UPDATE users SET bio = $1 WHERE id = $2 RETURNING id"
+    "query": "\n        UPDATE \n            users_osu_data \n                SET (ranked_count, loved_count, nominated_count, graveyard_count, guest_count, modified_at) = \n                ($2 , $3, $4, $5, $6, DEFAULT) \n        WHERE \n            user_id = $1 "
   },
   "f749cbfc1f240abd5f0b804c7a567e84730e6dbc4f444da645450f275c1d8c15": {
     "describe": {

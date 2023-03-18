@@ -6,20 +6,34 @@ ARG OSU_CLIENT_SECRET
 ARG OSU_REDIRECT_URI
 ARG PORT
 ARG RUST_LOG
+ARG MAPPER_INFLUENCE_CI_ENV
+
 
 FROM clux/muslrust:stable AS chef
 USER root
-RUN cargo install cargo-chef
+RUN curl -L https://github.com/LukeMathWalker/cargo-chef/releases/download/v0.1.51/cargo-chef-x86_64-unknown-linux-musl.tar.gz | \
+    tar -xz -C $HOME/.cargo/bin/
+
+# Temporary addition to use sparse protocol
+# https://blog.rust-lang.org/2023/03/09/Rust-1.68.0.html#cargos-sparse-protocol
+# Remove when it becomes the default
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
+
 WORKDIR /usr/src/mapper-influence
 
 FROM node:16 as ui-builder
 WORKDIR /usr/src/mapper-influence
-COPY . .
+COPY ./mi-ui ./mi-ui
+COPY ./justfile ./justfile
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
 RUN just export-ui 
 
 FROM chef AS planner
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV MAPPER_INFLUENCE_CI_ENV=${MAPPER_INFLUENCE_CI_ENV}
+
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
@@ -28,6 +42,8 @@ COPY --from=planner /usr/src/mapper-influence/recipe.json recipe.json
 # Build dependencies - this is the caching Docker layer!
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json
 # Build application
+
+
 COPY . .
 RUN rustup target add x86_64-unknown-linux-musl
 RUN cargo build --release --target x86_64-unknown-linux-musl

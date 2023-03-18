@@ -1,9 +1,9 @@
-use bb8::{Pool, RunError};
-use bb8_redis::RedisConnectionManager;
+use bb8::RunError;
 use redis::RedisError;
 use thiserror::Error;
 
-pub type RedisPool = Pool<RedisConnectionManager>;
+use crate::RedisPool;
+
 pub type AuthResult<T> = Result<T, AuthError>;
 
 const SESSION_TOKEN_TIMEOUT: usize = 85800; // 23 hours 50 minutes

@@ -9,6 +9,7 @@ use crate::result::{AppError, AppResult};
 pub mod auth;
 pub mod html;
 pub mod influence;
+pub mod redoc;
 pub mod user;
 
 const COOKIE_NAME: &str = "mi-session-token";

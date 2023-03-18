@@ -63,17 +63,17 @@ pub struct User {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BeatmapsetStats {
     #[serde(rename = "ranked_beatmapset_count")]
-    pub ranked: i64,
+    pub ranked: i32,
     #[serde(rename = "loved_beatmapset_count")]
-    pub loved: i64,
+    pub loved: i32,
     #[serde(rename = "nominated_beatmapset_count")]
-    pub nominated: i64,
+    pub nominated: i32,
     #[serde(rename = "pending_beatmapset_count")]
-    pub pending: i64,
+    pub pending: i32,
     #[serde(rename = "graveyard_beatmapset_count")]
-    pub graveyard: i64,
+    pub graveyard: i32,
     #[serde(rename = "guest_beatmapset_count")]
-    pub guest: i64,
+    pub guest: i32,
 }
 
 /// Country information of a user.

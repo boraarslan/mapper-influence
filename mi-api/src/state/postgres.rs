@@ -3,9 +3,9 @@ use mi_db::influence::{
     delete_influence, get_all_influences_by_to_id, insert_influence, update_influence_info,
     update_influence_level, Influence, InfluenceError,
 };
-use mi_db::user::{
-    delete_user, get_user, insert_user, update_user_bio, update_user_name, update_user_picture,
-    User, UserError,
+use mi_db::{
+    get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_osu_data,
+    update_user_picture, FullUser, User, UserError,
 };
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -33,8 +33,12 @@ impl PgDb {
         get_user(user_id, &self.pool).await
     }
 
+    pub async fn get_full_user(&self, user_id: i64) -> Result<FullUser, UserError> {
+        get_full_user(user_id, &self.pool).await
+    }
+
     pub async fn insert_user(&self, user: User) -> Result<User, UserError> {
-        insert_user(user, &self.pool).await
+        init_user(user, &self.pool).await
     }
 
     pub async fn update_user_name(&self, user_name: &str, user_id: i64) -> Result<(), UserError> {
@@ -55,10 +59,6 @@ impl PgDb {
         user_id: i64,
     ) -> Result<(), UserError> {
         update_user_bio(user_bio, user_id, &self.pool).await
-    }
-
-    pub async fn delete_user(&self, user_id: i64) -> Result<(), UserError> {
-        delete_user(user_id, &self.pool).await
     }
 
     pub async fn get_user_influencers(
@@ -92,6 +92,10 @@ impl PgDb {
 
     pub async fn delete_influence(&self, from_id: i64, to_id: i64) -> Result<(), InfluenceError> {
         delete_influence(from_id, to_id, &self.pool).await
+    }
+
+    pub async fn update_user_osu_data(&self, user: mi_osu_api::User) -> Result<(), UserError> {
+        update_user_osu_data(user, &self.pool).await
     }
 }
 
