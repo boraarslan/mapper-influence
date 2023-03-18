@@ -1,5 +1,7 @@
 # mapper-influence
 
+Api docs are at `/api-docs/`
+
 ## Contributing
 
 ### Test dependencies
