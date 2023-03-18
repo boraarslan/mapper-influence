@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import { getUserBase } from "src/services/userBase";
 import { useSessionStore } from "src/states/user";
 
-//! THIS PAGE WILL BE OWERRIDDEN IN PRODUCTION
+//! THIS PAGE WILL NOT BE ROUTED TO IN PRODUCTION
 
 const DevLoginPage = () => {
   const router = useRouter();
