@@ -2,6 +2,8 @@
 
 Api docs are at `/api-docs/`
 
+Earlier UI commits are [over here](https://github.com/Fursum/Mapper-Influences-Frontend/commits/main) if you're curious.
+
 ## Contributing
 
 ### Test dependencies
