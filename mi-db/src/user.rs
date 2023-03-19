@@ -209,6 +209,24 @@ pub async fn get_user_mapsets(user_id: i64, db: &PgPool) -> Result<Vec<Beatmapse
     }
 }
 
+pub async fn upsert_user_mapsets(
+    user_id: i64,
+    mapsets: Vec<Beatmapset>,
+    db: &PgPool,
+) -> Result<(), UserError> {
+    let result = sqlx::query!(
+        r#"INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"#,
+        user_id,
+        serde_json::to_value(&mapsets)?,
+    ).execute(db).await;
+
+    match result {
+        Ok(_) => Ok(()),
+        Err(sqlx::Error::RowNotFound) => Err(UserError::UserNotFound(user_id)),
+        Err(db_err) => Err(UserError::from(db_err)),
+    }
+}
+
 pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_user = sqlx::query!(
         r#"
