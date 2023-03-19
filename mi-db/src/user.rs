@@ -190,6 +190,25 @@ pub async fn update_user_featured_maps(
     }
 }
 
+pub async fn get_user_mapsets(user_id: i64, db: &PgPool) -> Result<Vec<Beatmapset>, UserError> {
+    let result = sqlx::query!(
+        r#"SELECT mapsets as "mapsets: Json<Vec<Beatmapset>>" FROM user_osu_maps WHERE user_id = $1"#,
+        user_id
+    )
+    .fetch_optional(db)
+    .await;
+
+    match result {
+        Ok(Some(row)) => match row.mapsets {
+            Some(mapsets) => Ok(mapsets.0),
+            None => Ok(vec![]),
+        },
+        Ok(None) => Ok(vec![]),
+        Err(sqlx::Error::RowNotFound) => Err(UserError::UserNotFound(user_id)),
+        Err(db_err) => Err(UserError::from(db_err)),
+    }
+}
+
 pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_user = sqlx::query!(
         r#"
