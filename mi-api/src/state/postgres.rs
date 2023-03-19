@@ -4,8 +4,9 @@ use mi_db::influence::{
     update_influence_level, Influence, InfluenceError,
 };
 use mi_db::{
-    get_full_user, get_user, init_user, update_user_bio, update_user_name, update_user_osu_data,
-    update_user_picture, FullUser, User, UserError,
+    get_full_user, get_user, init_user, update_user_bio, update_user_featured_maps,
+    update_user_name, update_user_osu_data, update_user_picture, FeaturedMaps, FullUser, User,
+    UserError,
 };
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -96,6 +97,14 @@ impl PgDb {
 
     pub async fn update_user_osu_data(&self, user: mi_osu_api::User) -> Result<(), UserError> {
         update_user_osu_data(user, &self.pool).await
+    }
+
+    pub async fn update_user_featured_maps(
+        &self,
+        user_id: i64,
+        maps: FeaturedMaps,
+    ) -> Result<(), UserError> {
+        update_user_featured_maps(user_id, maps, &self.pool).await
     }
 }
 
