@@ -308,6 +308,19 @@
     },
     "query": "SELECT * FROM influences WHERE to_id = $1"
   },
+  "91243710a9aeaf94e627d2d904f7d61c6c4063631fd5aac87b518a69d434a21e": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Json"
+        ]
+      }
+    },
+    "query": "INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"
+  },
   "b20516efd17ee210d247e5b55deafcfaa3b754906bfdce8252ca90dfa015a213": {
     "describe": {
       "columns": [
@@ -368,6 +381,26 @@
       }
     },
     "query": "\n        UPDATE \n            users_osu_data \n                SET (ranked_count, loved_count, nominated_count, graveyard_count, guest_count, modified_at) = \n                ($2 , $3, $4, $5, $6, DEFAULT) \n        WHERE \n            user_id = $1 "
+  },
+  "dc60518a1dc0cfbd05f6737de7724381b2b218004b27ecae3d5e2b139b92479b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "mapsets: Json<Vec<Beatmapset>>",
+          "ordinal": 0,
+          "type_info": "Json"
+        }
+      ],
+      "nullable": [
+        true
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "SELECT mapsets as \"mapsets: Json<Vec<Beatmapset>>\" FROM user_osu_maps WHERE user_id = $1"
   },
   "f749cbfc1f240abd5f0b804c7a567e84730e6dbc4f444da645450f275c1d8c15": {
     "describe": {
