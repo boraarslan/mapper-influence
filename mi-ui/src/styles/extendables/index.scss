@@ -1,27 +1,10 @@
 @import "../variables/index";
 
 %cardShadow {
-  position: relative;
   box-shadow: var(--cardShadow);
 
-  &::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-
-    pointer-events: none;
-    border-radius: inherit;
-
+  &:hover {
     box-shadow: var(--cardShadowHover);
-    opacity: 0;
-    transition: opacity 0.15s ease-in-out;
-  }
-
-  &:hover::after {
-    opacity: 1;
   }
 }
 
