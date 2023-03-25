@@ -1,7 +1,6 @@
+import { FC } from "react";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
-import { useRouter } from "next/router";
-import { FC } from "react";
 import ContributeButtons from "../Shared/ContributeButtons";
 import Leaderboard from "../Shared/Leaderboard";
 import News from "../Shared/News";
@@ -28,9 +27,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
         <h4>Most features are locked to guests.</h4>
         <h4>To continue, {LoginButton}</h4>
       </section>
-
       <CoolCards />
-
       <section>
         <h2>What is this site?</h2>
         <p>
@@ -58,12 +55,10 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
           There is also a leaderboard of top influencers down below.
         </p>
       </section>
-
       <section className={styles.fullSection}>
         <Leaderboard topList={topList} />
         <News newsList={newsList} className={styles.news} />
       </section>
-
       <ContributeButtons />
     </div>
   );

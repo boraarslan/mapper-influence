@@ -21,6 +21,7 @@ const DevLoginPage = () => {
           avatarUrl: data.profile_picture,
           id: data.id,
           username: data.user_name,
+          flag: { code: "TR", name: "Türkiye" },
         },
         session.toString()
       )

@@ -82,6 +82,7 @@ const influenceData: Influence = {
     avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
     username: "Fursum",
     id: 1234,
+    flag: { code: "TR", name: "Türkiye" },
   },
   maps: [],
   strength: 1,

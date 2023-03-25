@@ -1,10 +1,11 @@
+import { FC, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { useOnClickOutside } from "usehooks-ts";
+
 import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts";
 import { UserBase } from "@libs/types/user";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { useRouter } from "next/router";
-import { FC, useRef, useState } from "react";
-import { useOnClickOutside } from "usehooks-ts";
 import Results from "./Results";
 
 import styles from "./styles.module.scss";
@@ -27,6 +28,7 @@ const SearchBar: FC<Props> = ({ className }) => {
         username: query,
         avatarUrl: "https://picsum.photos/200",
         id: index,
+        flag: { code: "TR", name: "Türkiye" },
       }))
     );
     // TODO: Search user service
