@@ -10,6 +10,10 @@
   padding-inline: $spacing / 2;
   padding-bottom: $spacing;
 
+  > h2 {
+    margin-bottom: $spacing / 2;
+  }
+
   .list {
     padding: $spacing / 2;
     padding-bottom: 0;
@@ -24,6 +28,7 @@
       margin-bottom: $spacing;
 
       .number {
+        margin-top: 1.25rem;
         position: relative;
         > span {
           &:first-of-type {

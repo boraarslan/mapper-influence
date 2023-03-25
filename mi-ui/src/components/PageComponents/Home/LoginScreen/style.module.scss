@@ -42,13 +42,13 @@
     }
 
     > p,
-    a {
+    .a {
       position: relative;
       font-size: 1.5rem;
       line-height: 140%;
     }
 
-    a {
+    .a {
       .tooltip {
         @extend %tooltip;
         left: 0;
