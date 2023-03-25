@@ -21,8 +21,10 @@ export async function getUserBase(userId?: string) {
       1000
     );
 
-  const constructedUrl = new URL("/api/v1/user/get");
-  if (userId) constructedUrl.searchParams.set("user_id", userId);
+  let searchUrl = "/api/v1/user/get";
+  // Add query when using with an id
+  if (userId)
+    searchUrl += "?" + new URLSearchParams({ user_id: userId }).toString();
 
-  return await axios.get<ServiceReturn>(constructedUrl.toString());
+  return await axios.get<ServiceReturn>(searchUrl);
 }
