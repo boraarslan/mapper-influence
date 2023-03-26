@@ -8,8 +8,8 @@ html {
   --bgColor-3-hover: hsl(255, 20%, 30%);
   --primaryColor: hsl(205, 50%, 25%);
   --secondaryColor: hsl(294, 50%, 25%);
-  --primaryColorBg: hsl(205, 50%, 25%);
-  --secondaryColorBg: hsl(294, 50%, 25%);
+  --primaryColorBg: hsla(205, 50%, 25%, 0.25);
+  --secondaryColorBg: hsla(294, 50%, 25%, 0.25);
   --backgroundGradient: transparent;
 
   --buttonBg: hsl(306, 86%, 88%);
@@ -20,6 +20,7 @@ html {
   --buttonText-alt: var(--buttonOutline);
 
   --textColor: hsl(0, 0%, 90%);
+  --textColor-faded: hsla(0, 0%, 90%, 0.5);
   // Buttons use these colors over the colored backgrounds
   --primaryTextColor: hsl(0, 0%, 90%);
   --secondaryTextColor: hsl(0, 0%, 90%);
@@ -49,6 +50,7 @@ html[data-theme="light"] {
   --buttonText-alt: var(--buttonOutline);
 
   --textColor: hsl(0, 0%, 10%);
+  --textColor-faded: hsla(0, 0%, 10%, 0.5);
   // Buttons use these colors over the colored backgrounds
   --primaryTextColor: var(--primaryColor);
   --secondaryTextColor: var(--secondaryColor);

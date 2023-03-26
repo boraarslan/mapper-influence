@@ -18,6 +18,10 @@ body {
   @media screen and (max-width: $responsive-breakpoint) {
     font-size: 0.75rem;
   }
+
+  &::-webkit-scrollbar-track {
+    margin: $spacing;
+  }
 }
 
 h1 {
@@ -71,13 +75,15 @@ button {
 
 *::-webkit-scrollbar {
   color: transparent;
-  width: 0.25rem;
-  height: 0.25rem;
-  margin: 0.25rem;
+  width: 0.6rem;
 }
 *::-webkit-scrollbar-thumb {
-  background-color: $color-primary;
-  border-radius: 5rem;
+  background: linear-gradient(to top, $color-primary, $color-secondary);
+  border-radius: 999rem;
+}
+*::-webkit-scrollbar-track {
+  background: linear-gradient(to top, $color-primary-bg, $color-secondary-bg);
+  border-radius: 999rem;
 }
 
 input,
