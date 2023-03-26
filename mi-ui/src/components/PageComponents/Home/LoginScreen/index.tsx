@@ -11,7 +11,7 @@ import styles from "./style.module.scss";
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
   const LoginButton = (
-    <a className={styles.login} href={"/login"}>
+    <a className={`${styles.login} ${styles.a}`} href={"/login"}>
       Log In
     </a>
   );
@@ -36,6 +36,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
             href="https://pishifat.github.io/"
             target={"_blank"}
             rel={"noreferrer"}
+            className={styles.a}
           >
             pishifat’s Mapper Influences
             <span className={styles.tooltip}>Opens in new tab</span>
