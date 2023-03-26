@@ -1,9 +1,8 @@
 .mentionList {
-  height: 100%;
+  height: var(--height);
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: max-content;
   padding: $spacing;
   padding-top: 0;
 

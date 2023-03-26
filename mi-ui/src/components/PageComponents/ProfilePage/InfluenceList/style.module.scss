@@ -3,8 +3,7 @@
   flex-direction: column;
   align-items: center;
 
-  height: 100%;
-  min-width: 20em;
+  height: var(--height);
   padding: $spacing / 2;
   padding-top: 0;
 

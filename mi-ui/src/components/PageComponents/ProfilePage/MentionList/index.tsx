@@ -8,8 +8,6 @@ type Props = { mentions: UserBase[] };
 const MentionList: FC<Props> = ({ mentions }) => {
   return (
     <div className={styles.mentionList}>
-      <h2>Mentioned In</h2>
-
       <div className={styles.mentionGrid}>
         {mentions.map((user) => (
           <BaseProfileCard key={user.id} userData={user} />

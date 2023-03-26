@@ -18,7 +18,6 @@ const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
 
   return (
     <div className={styles.mapperInfluences}>
-      <h2>Influenced By</h2>
       <div className={styles.scrollWrapper}>
         {InfluenceCards}
         {influences.length === 0 && (
