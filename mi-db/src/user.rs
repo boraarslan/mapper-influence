@@ -130,7 +130,8 @@ pub async fn get_full_user(user_id: i64, db: &PgPool) -> Result<FullUser, UserEr
             osu.modified_at as osu_data_modified_at
         FROM users 
         INNER JOIN user_profiles profile ON profile.user_id = $1 
-        INNER JOIN users_osu_data osu ON osu.user_id = $1"#,
+        INNER JOIN users_osu_data osu ON osu.user_id = $1
+        WHERE id = $1"#,
         user_id
     ).fetch_one(db).await;
 
