@@ -7,7 +7,7 @@ use mi_api::api::influence::{
     update_influence_level,
 };
 use mi_api::api::redoc::redoc;
-use mi_api::api::user::{create_user, get_full_user, get_user, update_user};
+use mi_api::api::user::{create_user, get_full_user, get_user, update_user, get_user_by_id, get_full_user_by_id};
 use mi_api::state::SharedState;
 use mi_api::ApiDoc;
 use tower_cookies::CookieManagerLayer;
@@ -30,8 +30,10 @@ fn influence_route() -> Router<SharedState> {
 
 fn user_route() -> Router<SharedState> {
     Router::new()
-        .route("/get/:user_id", get(get_user))
-        .route("/get/:user_id/full", get(get_full_user))
+        .route("/get", get(get_user))
+        .route("/get/full", get(get_full_user))
+        .route("/get/:user_id", get(get_user_by_id))
+        .route("/get/:user_id/full", get(get_full_user_by_id))
         .route("/create", post(create_user))
         .route("/update", post(update_user))
 }
