@@ -78,7 +78,7 @@ pub async fn get_full_user(
     match db_user_res {
         Ok(db_user) => {
             if db_user.is_outdated() {
-                update_user_profile(&state, user_id, db_user.id).await?;
+                update_user_profile(&state, user_id, user_id).await?;
             }
             Ok(Json(db_user))
         }
@@ -113,7 +113,7 @@ pub async fn get_full_user_by_id(
     match db_user_res {
         Ok(db_user) => {
             if db_user.is_outdated() {
-                update_user_profile(&state, auth_user_id, db_user.id).await?;
+                update_user_profile(&state, auth_user_id, query_user_id).await?;
             }
             Ok(Json(db_user))
         }
@@ -137,6 +137,7 @@ async fn update_user_profile(
     if state.redis().is_user_locked(user_id_to_update).await? {
         return Ok(());
     }
+
     state.redis().lock_user(user_id_to_update).await?;
 
     let osu_token = state.redis().get_access_token(requester_user_id).await?;
