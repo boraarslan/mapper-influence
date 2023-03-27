@@ -4,9 +4,9 @@ use mi_db::influence::{
     update_influence_level, Influence, InfluenceError,
 };
 use mi_db::{
-    get_full_user, get_user, init_user, update_user_bio, update_user_featured_maps,
-    update_user_name, update_user_osu_data, update_user_picture, FeaturedMaps, FullUser, User,
-    UserError, get_user_mapsets, upsert_user_mapsets,
+    get_full_user, get_user, get_user_mapsets, init_user, update_user_bio,
+    update_user_featured_maps, update_user_name, update_user_osu_data, update_user_picture,
+    upsert_user_mapsets, FeaturedMaps, FullUser, User, UserError,
 };
 use mi_osu_api::Beatmapset;
 use sqlx::postgres::PgPoolOptions;
@@ -112,7 +112,11 @@ impl PgDb {
         get_user_mapsets(user_id, &self.pool).await
     }
 
-    pub async fn upsert_user_mapsets(&self, user_id: i64, mapsets: Vec<Beatmapset>) -> Result<(), UserError> {
+    pub async fn upsert_user_mapsets(
+        &self,
+        user_id: i64,
+        mapsets: Vec<Beatmapset>,
+    ) -> Result<(), UserError> {
         upsert_user_mapsets(user_id, mapsets, &self.pool).await
     }
 }

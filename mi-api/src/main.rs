@@ -7,7 +7,9 @@ use mi_api::api::influence::{
     update_influence_level,
 };
 use mi_api::api::redoc::redoc;
-use mi_api::api::user::{create_user, get_full_user, get_user, update_user, get_user_by_id, get_full_user_by_id};
+use mi_api::api::user::{
+    create_user, get_full_user, get_full_user_by_id, get_user, get_user_by_id, update_user,
+};
 use mi_api::state::SharedState;
 use mi_api::ApiDoc;
 use tower_cookies::CookieManagerLayer;
