@@ -102,7 +102,7 @@ pub async fn login(cookies: Cookies, State(state): State<SharedState>) -> AppRes
     }
 
     let redirect_uri = format!(
-        "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id={}&redirect_uri={}",
+        "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id={}&redirect_uri={}&scope=public+identify",
         *OSU_CLIENT_ID, *OSU_REDIRECT_URI
     );
 
