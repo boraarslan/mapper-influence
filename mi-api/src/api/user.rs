@@ -2,11 +2,11 @@ use axum::debug_handler;
 use axum::extract::{Path, State};
 use mi_db::{FullUser, User};
 use serde::Deserialize;
-use tower_cookies::Cookies;
 use utoipa::ToSchema;
 
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
+use crate::AuthUserId;
 
 #[utoipa::path(
     get,
@@ -14,9 +14,10 @@ use crate::state::SharedState;
     responses((status = 200, description = "User info found", body = User)),
 )]
 #[debug_handler]
-pub async fn get_user(cookies: Cookies, State(state): State<SharedState>) -> AppResult<Json<User>> {
-    let user_id = state.auth_user(&cookies).await?;
-
+pub async fn get_user(
+    AuthUserId(user_id): AuthUserId,
+    State(state): State<SharedState>,
+) -> AppResult<Json<User>> {
     let db_user_res = state.postgres().get_user(user_id).await;
 
     match db_user_res {
@@ -40,12 +41,10 @@ pub async fn get_user(cookies: Cookies, State(state): State<SharedState>) -> App
 )]
 #[debug_handler]
 pub async fn get_user_by_id(
-    cookies: Cookies,
+    AuthUserId(auth_user_id): AuthUserId,
     State(state): State<SharedState>,
     Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<User>> {
-    let auth_user_id = state.auth_user(&cookies).await?;
-
     let db_user_res = state.postgres().get_user(query_user_id).await;
 
     match db_user_res {
@@ -68,11 +67,9 @@ pub async fn get_user_by_id(
 )]
 #[debug_handler]
 pub async fn get_full_user(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
 ) -> AppResult<Json<FullUser>> {
-    let user_id = state.auth_user(&cookies).await?;
-
     let db_user_res = state.postgres().get_full_user(user_id).await;
 
     match db_user_res {
@@ -102,12 +99,10 @@ pub async fn get_full_user(
 )]
 #[debug_handler]
 pub async fn get_full_user_by_id(
-    cookies: Cookies,
+    AuthUserId(auth_user_id): AuthUserId,
     State(state): State<SharedState>,
     Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<FullUser>> {
-    let auth_user_id = state.auth_user(&cookies).await?;
-
     let db_user_res = state.postgres().get_full_user(query_user_id).await;
 
     match db_user_res {
@@ -167,12 +162,10 @@ pub struct CreateUserRequest {
 )]
 #[debug_handler]
 pub async fn create_user(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<CreateUserRequest>,
 ) -> AppResult<Json<User>> {
-    let user_id = state.auth_user(&cookies).await?;
-
     let user = init_missing_user(&state, user_id, request.user_id).await?;
 
     Ok(Json(user))
@@ -218,12 +211,10 @@ pub struct UpdateUserRequest {
 )]
 #[debug_handler]
 pub async fn update_user(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<UpdateUserRequest>,
 ) -> AppResult<()> {
-    let user_id = state.auth_user(&cookies).await?;
-
     if let Some(user_name) = request.user_name {
         state
             .postgres()
