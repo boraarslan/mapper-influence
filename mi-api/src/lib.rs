@@ -2,6 +2,7 @@ use axum::extract::FromRequestParts;
 use axum::http;
 use axum::http::request::Parts;
 use hyper::StatusCode;
+use result::{AppResult, AppError};
 use state::AuthUser;
 use tower_cookies::Cookies;
 use utoipa::openapi::security::{ApiKeyValue, SecurityScheme};
@@ -10,6 +11,8 @@ use utoipa::{Modify, OpenApi};
 pub mod api;
 pub mod result;
 pub mod state;
+
+const COOKIE_NAME: &str = "mi-session-token";
 
 #[derive(OpenApi)]
 #[openapi(
@@ -62,6 +65,16 @@ impl Modify for SecurityAddon {
     }
 }
 
+
+pub fn get_session_cookie(cookies: &Cookies) -> AppResult<u128> {
+    match cookies.get(COOKIE_NAME) {
+        Some(cookie) => Ok(cookie
+            .value()
+            .parse()
+            .map_err(|_| AppError::cookie_error())?),
+        None => Err(AppError::cookie_error()),
+    }
+}
 pub struct AuthUserId(i64);
 
 #[async_trait::async_trait]

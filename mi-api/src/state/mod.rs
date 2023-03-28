@@ -12,7 +12,7 @@ use tower_cookies::Cookies;
 pub use self::http::HttpClient;
 pub use self::postgres::PgDb;
 pub use self::redis::RedisDb;
-use crate::api::get_session_cookie;
+use crate::get_session_cookie;
 use crate::result::{AppError, AppResult};
 
 #[derive(Debug, Clone)]

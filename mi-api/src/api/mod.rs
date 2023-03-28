@@ -2,7 +2,6 @@ use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
 use axum_auth::{AuthBearerCustom, Rejection};
-use tower_cookies::Cookies;
 
 use crate::result::{AppError, AppResult};
 
@@ -12,17 +11,6 @@ pub mod influence;
 pub mod redoc;
 pub mod user;
 
-const COOKIE_NAME: &str = "mi-session-token";
-
-pub fn get_session_cookie(cookies: &Cookies) -> AppResult<u128> {
-    match cookies.get(COOKIE_NAME) {
-        Some(cookie) => Ok(cookie
-            .value()
-            .parse()
-            .map_err(|_| AppError::cookie_error())?),
-        None => Err(AppError::cookie_error()),
-    }
-}
 
 pub fn get_bearer_auth(bearer_auth: BearerAuth) -> AppResult<Option<u128>> {
     match bearer_auth.0 {

@@ -7,8 +7,7 @@ use serde::Deserialize;
 use tower_cookies::{Cookie, Cookies};
 use tracing::info;
 
-use super::get_session_cookie;
-use crate::api::COOKIE_NAME;
+use crate::{COOKIE_NAME, get_session_cookie};
 use crate::result::{AppError, AppResult};
 use crate::state::SharedState;
 
