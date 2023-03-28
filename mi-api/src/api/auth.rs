@@ -7,9 +7,9 @@ use serde::Deserialize;
 use tower_cookies::{Cookie, Cookies};
 use tracing::info;
 
-use crate::{COOKIE_NAME, get_session_cookie};
 use crate::result::{AppError, AppResult};
 use crate::state::SharedState;
+use crate::{get_session_cookie, COOKIE_NAME};
 
 static REDIRECT_URI: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_AUTH_REDIRECT_URI")

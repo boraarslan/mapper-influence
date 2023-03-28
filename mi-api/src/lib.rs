@@ -2,7 +2,7 @@ use axum::extract::FromRequestParts;
 use axum::http;
 use axum::http::request::Parts;
 use hyper::StatusCode;
-use result::{AppResult, AppError};
+use result::{AppError, AppResult};
 use state::AuthUser;
 use tower_cookies::Cookies;
 use utoipa::openapi::security::{ApiKeyValue, SecurityScheme};
@@ -65,7 +65,6 @@ impl Modify for SecurityAddon {
     }
 }
 
-
 pub fn get_session_cookie(cookies: &Cookies) -> AppResult<u128> {
     match cookies.get(COOKIE_NAME) {
         Some(cookie) => Ok(cookie
@@ -89,5 +88,4 @@ impl<S: AuthUser + Sync + Send> FromRequestParts<S> for AuthUserId {
             Err((StatusCode::UNAUTHORIZED, "Unauthorized"))
         }
     }
-
 }

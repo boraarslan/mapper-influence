@@ -11,7 +11,6 @@ pub mod influence;
 pub mod redoc;
 pub mod user;
 
-
 pub fn get_bearer_auth(bearer_auth: BearerAuth) -> AppResult<Option<u128>> {
     match bearer_auth.0 {
         Some(token) => Ok(Some(token.parse().map_err(|_| AppError::cookie_error())?)),
