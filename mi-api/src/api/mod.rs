@@ -31,22 +31,6 @@ pub fn get_bearer_auth(bearer_auth: BearerAuth) -> AppResult<Option<u128>> {
     }
 }
 
-// pub fn get_auth_token(cookies: &Cookies, bearer_auth: BearerAuth) -> AppResult<u128> {
-//     let bearer_token_opt = get_bearer_auth(bearer_auth)?;
-//     let auth_token = match bearer_token_opt {
-//         Some(bearer_token) => bearer_token,
-//         None => {
-//             let session_token = get_session_cookie(cookies)?;
-//             match session_token {
-//                 Some(token) => token,
-//                 None => return Err(AppError::cookie_error()),
-//             }
-//         }
-//     };
-
-//     Ok(auth_token)
-// }
-
 pub struct BearerAuth(Option<String>);
 
 impl AuthBearerCustom for BearerAuth {
