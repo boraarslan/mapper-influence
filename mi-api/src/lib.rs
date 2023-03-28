@@ -1,3 +1,9 @@
+use axum::extract::FromRequestParts;
+use axum::http;
+use axum::http::request::Parts;
+use hyper::StatusCode;
+use state::AuthUser;
+use tower_cookies::Cookies;
 use utoipa::openapi::security::{ApiKeyValue, SecurityScheme};
 use utoipa::{Modify, OpenApi};
 
@@ -54,4 +60,21 @@ impl Modify for SecurityAddon {
             )
         }
     }
+}
+
+pub struct AuthUserId(i64);
+
+#[async_trait::async_trait]
+impl<S: AuthUser + Sync + Send> FromRequestParts<S> for AuthUserId {
+    type Rejection = (http::StatusCode, &'static str);
+
+    async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+        let cookies = Cookies::from_request_parts(parts, state).await?;
+        if let Ok(user_id) = state.auth_user(cookies).await {
+            Ok(AuthUserId(user_id))
+        } else {
+            Err((StatusCode::UNAUTHORIZED, "Unauthorized"))
+        }
+    }
+
 }
