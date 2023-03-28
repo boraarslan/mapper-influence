@@ -9,7 +9,7 @@ use tracing::info;
 
 use super::get_session_cookie;
 use crate::api::COOKIE_NAME;
-use crate::result::AppResult;
+use crate::result::{AppError, AppResult};
 use crate::state::SharedState;
 
 static REDIRECT_URI: Lazy<String> = Lazy::new(|| {
@@ -28,6 +28,7 @@ static OSU_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
 #[derive(Debug, Deserialize)]
 pub struct OsuAuthResponseParams {
     code: String,
+    error: Option<String>,
 }
 
 pub async fn authorize_from_osu_api(
@@ -35,6 +36,11 @@ pub async fn authorize_from_osu_api(
     cookies: Cookies,
     State(state): State<SharedState>,
 ) -> AppResult<Redirect> {
+    if let Some(err) = params.error {
+        // TODO: Better error handling
+        return Err(AppError::osu_auth_error(&err));
+    }
+
     info!("Auth request received");
     let auth_response = state.http().get_osu_access_token(params.code).await?;
     info!("Successfully got the auth response");
