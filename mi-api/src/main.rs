@@ -14,6 +14,7 @@ use mi_api::state::SharedState;
 use mi_api::ApiDoc;
 use tower_cookies::CookieManagerLayer;
 use tower_http::compression::CompressionLayer;
+use tower_http::trace::TraceLayer;
 use tracing::info;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -63,6 +64,7 @@ async fn main() {
         .nest("/api/v1", api_route())
         .layer(CookieManagerLayer::new())
         .layer(CompressionLayer::new())
+        .layer(TraceLayer::new_for_http())
         .with_state(app_state);
 
     info!("Listening on {port}");
