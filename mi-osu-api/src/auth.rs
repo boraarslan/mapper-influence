@@ -120,13 +120,3 @@ pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseB
     let access_request = AuthRequest::access(code);
     request_token(client, access_request).await
 }
-
-#[tokio::test]
-async fn test() {
-    dotenvy::dotenv().unwrap();
-    let code = "def50200d88187735e783a74c0670915bac8ed6430161fff4dd73601dcdc0bc601ef36d7ec98153e6a1e98e41a231a83b46c61d37477356eb35761702274aabb21e21c0104e8a2b3b14658ed41b971871caec7971bc49bd3d362d58238c1cbb7ccdd888e03925baa56bb0642365efa3d2499990d6e2ee0782849ba8d846c74f69112e5d8a7b50ba50e4c4f88d4f233bdfdc18d4fea01e067d37b1679b2311a8a7513ea4559b3ff9367ac860613724b6411ed4646e0af2d15daeda32830ea3a750786c0a1d3207efcbe227d84c72b40f93ffa66ef54948fda3a85d9405b59722db6dea17c72344ca759150375e51650999fb047e495c721d34f04d3432c9cbb1dbb6a469b43c171b3d211b1884ec8f7a80d9362c7b69be04768592428737f55da5d2bbd74151c9283cb82d2ab0a2a33ea1048f978bd3cfb90b95ed2450614d6c126cf6f1d25fd1f69c472bfc60759306ef27dfd8551e803c90296782739bf01443a396af7481a1e59c1dd50b58b7fcc659d6035705d89ad27a4f97f256a59c8e4f06bc9a44f04a3";
-    let client = reqwest::Client::new();
-    let result = access_token(&client, code.to_string()).await;
-
-    dbg!(result.unwrap());
-}
