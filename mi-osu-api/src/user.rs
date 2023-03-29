@@ -14,7 +14,7 @@
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::ReqwestError;
+use crate::{OsuApiError, ResponseWithBody};
 
 /// Information about a user.
 ///
@@ -118,7 +118,7 @@ pub struct UserGroup {
 }
 
 #[derive(Debug, Deserialize)]
-struct ResultWrapper {
+pub struct SearchResultWrapper {
     user: SearchResult,
 }
 
@@ -157,15 +157,14 @@ pub struct UserCompact {
 }
 
 /// A request to get [`User`] data with an authorization token that belongs to the user.
-pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, ReqwestError> {
+pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<User, OsuApiError> {
     let response_result = client
         .get("https://osu.ppy.sh/api/v2/me/")
         .bearer_auth(auth_token)
         .send()
         .await?;
-
-    let response_body: User = response_result.json().await?;
-    Ok(response_body)
+    let response_result: Result<User, OsuApiError> = response_result.try_deserialising().await;
+    response_result
 }
 
 /// A request to get [`User`] data with their ID.
@@ -173,11 +172,11 @@ pub async fn request_user(
     client: &Client,
     auth_token: &str,
     user_id: i64,
-) -> Result<User, ReqwestError> {
+) -> Result<User, OsuApiError> {
     let url = format!("https://osu.ppy.sh/api/v2/users/{}", user_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_body: User = response_result.json().await?;
-    Ok(response_body)
+    let response_result: Result<User, OsuApiError> = response_result.try_deserialising().await;
+    response_result
 }
 
 /// A request to get [`SearchResult`] data.
@@ -189,13 +188,14 @@ pub async fn search_user(
     auth_token: &str,
     query: &str,
     page: i64,
-) -> Result<SearchResult, ReqwestError> {
+) -> Result<SearchResultWrapper, OsuApiError> {
     let response_result = client
         .get("https://osu.ppy.sh/api/v2/search?mode=user")
         .bearer_auth(auth_token)
         .query(&[("query", query), ("page", &page.to_string())])
         .send()
         .await?;
-    let response_body: ResultWrapper = response_result.json().await?;
-    Ok(response_body.user)
+    let response_result: Result<SearchResultWrapper, OsuApiError> =
+        response_result.try_deserialising().await;
+    response_result
 }

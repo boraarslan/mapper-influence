@@ -14,3 +14,4 @@ serde_json = "1.0.95"
 thiserror = "1.0.40"
 tokio = { version = "1.27.0", features = ["macros"] }
 utoipa = { version = "3.1.2", features = ["axum_extras"] }
+async-trait = "0.1.68"
