@@ -50,7 +50,7 @@ where
                 let status = err.status().unwrap();
                 let body = self.text().await?;
                 Err(OsuApiError::HTTPError {
-                    body: body,
+                    body,
                     error: status,
                 })
             }
