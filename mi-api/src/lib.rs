@@ -1,9 +1,12 @@
+use std::future::Future;
+
 use axum::extract::FromRequestParts;
 use axum::http;
 use axum::http::request::Parts;
 use hyper::StatusCode;
 use result::{AppError, AppResult};
 use state::AuthUser;
+use tokio::time::Instant;
 use tower_cookies::Cookies;
 use utoipa::openapi::security::{ApiKeyValue, SecurityScheme};
 use utoipa::{Modify, OpenApi};
@@ -88,4 +91,12 @@ impl<S: AuthUser + Sync + Send> FromRequestParts<S> for AuthUserId {
             Err((StatusCode::UNAUTHORIZED, "Unauthorized"))
         }
     }
+}
+
+pub async fn call_and_log_elapsed<T, E>(func: impl Future<Output = Result<T, E>>) -> Result<T, E> {
+    let time = Instant::now();
+    let res = func.await;
+    let elapsed = time.elapsed();
+    tracing::Span::current().record("elapsed", format!("{:.3?}", elapsed));
+    res
 }

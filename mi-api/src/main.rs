@@ -16,6 +16,8 @@ use tower_cookies::CookieManagerLayer;
 use tower_http::compression::CompressionLayer;
 use tower_http::trace::TraceLayer;
 use tracing::info;
+use tracing::metadata::LevelFilter;
+use tracing_subscriber::EnvFilter;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -48,11 +50,22 @@ fn api_route() -> Router<SharedState> {
         .nest("/influence", influence_route())
 }
 
+fn init_tracer() {
+    let env_filter = EnvFilter::builder()
+        .with_default_directive(LevelFilter::INFO.into())
+        .from_env_lossy()
+        .add_directive("tower_http=debug".parse().unwrap())
+        .add_directive("sqlx::query=debug".parse().unwrap());
+    tracing_subscriber::fmt::Subscriber::builder()
+        .with_env_filter(env_filter)
+        .init();
+}
+
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
-    tracing_subscriber::fmt().init();
     let port = std::env::var("PORT").expect("env var PORT is not set");
+    init_tracer();
     let app_state = SharedState::new().await;
     let app = Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
