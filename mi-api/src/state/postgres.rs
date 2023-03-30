@@ -13,9 +13,8 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use tracing::instrument;
 
-use crate::call_and_log_elapsed;
-
 use super::SharedState;
+use crate::call_and_log_elapsed;
 
 #[derive(Debug, Clone)]
 pub struct PgDb {

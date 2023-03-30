@@ -6,9 +6,8 @@ use mi_osu_api::{
 };
 use tracing::instrument;
 
-use crate::call_and_log_elapsed;
-
 use super::SharedState;
+use crate::call_and_log_elapsed;
 
 #[derive(Debug, Clone)]
 pub struct HttpClient {

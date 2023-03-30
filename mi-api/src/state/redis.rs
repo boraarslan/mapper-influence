@@ -6,9 +6,8 @@ use mi_db::user_lock::{is_user_locked, lock_user, unlock_user, LockError};
 use mi_db::RedisPool;
 use tracing::instrument;
 
-use crate::call_and_log_elapsed;
-
 use super::SharedState;
+use crate::call_and_log_elapsed;
 
 #[derive(Debug, Clone)]
 pub struct RedisDb {
