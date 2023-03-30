@@ -12,6 +12,7 @@ use utoipa::openapi::security::{ApiKeyValue, SecurityScheme};
 use utoipa::{Modify, OpenApi};
 
 pub mod api;
+pub mod request_id;
 pub mod result;
 pub mod state;
 
