@@ -1,4 +1,3 @@
-use axum::http::HeaderName;
 use axum::routing::{delete, get, post};
 use axum::Router;
 use hyper::{Body, Request};
@@ -15,10 +14,12 @@ use mi_api::api::user::{
 use mi_api::request_id::RequestIdGenerator;
 use mi_api::state::SharedState;
 use mi_api::ApiDoc;
+use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
-use tower_http::compression::CompressionLayer;
-use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
+
+
 use tower_http::trace::TraceLayer;
+use tower_http::ServiceBuilderExt;
 use tracing::metadata::LevelFilter;
 use tracing::{info, info_span};
 use tracing_subscriber::EnvFilter;
@@ -74,8 +75,6 @@ async fn main() {
 
     let app_state = SharedState::new().await;
 
-    let x_request_id = HeaderName::from_static("x-request-id");
-
     let app = Router::new()
         .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
         .route("/api-docs/", get(redoc))
@@ -84,28 +83,28 @@ async fn main() {
         .route("/auth", get(authorize_from_osu_api))
         .route("/login", get(login))
         .nest("/api/v1", api_route())
-        .layer(CookieManagerLayer::new())
-        .layer(CompressionLayer::new())
-        .layer(PropagateRequestIdLayer::new(x_request_id.clone()))
         .layer(
-            TraceLayer::new_for_http().make_span_with(|req: &Request<Body>| {
-                info_span!(
-                    "http",
-                    method = %req.method(),
-                    path = %req.uri(),
-                    version = ?req.version(),
-                    req_id = %req
-                                .headers()
-                                .get("x-request-id")
-                                .map(|v| v.to_str().unwrap_or("Not parsable"))
-                                .unwrap_or("None"),
+            ServiceBuilder::new()
+                .set_x_request_id(RequestIdGenerator::default())
+                .layer(
+                    TraceLayer::new_for_http().make_span_with(|req: &Request<Body>| {
+                        info_span!(
+                            "http",
+                            method = %req.method(),
+                            path = %req.uri(),
+                            version = ?req.version(),
+                            req_id = %req
+                                        .headers()
+                                        .get("x-request-id")
+                                        .map(|v| v.to_str().unwrap_or("Not parsable"))
+                                        .unwrap_or("None"),
+                        )
+                    }),
                 )
-            }),
+                .propagate_x_request_id()
+                .compression()
+                .layer(CookieManagerLayer::new()),
         )
-        .layer(SetRequestIdLayer::new(
-            x_request_id.clone(),
-            RequestIdGenerator::default(),
-        ))
         .with_state(app_state);
 
     info!("Listening on {port}");
