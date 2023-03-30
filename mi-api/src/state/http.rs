@@ -7,7 +7,7 @@ use mi_osu_api::{
 use tracing::instrument;
 
 use super::SharedState;
-use crate::call_and_log_elapsed;
+use crate::{FutureLogExt};
 
 #[derive(Debug, Clone)]
 pub struct HttpClient {
@@ -25,7 +25,9 @@ impl HttpClient {
         &self,
         osu_refresh_token: String,
     ) -> Result<AuthResponseBody, ReqwestError> {
-        call_and_log_elapsed(refresh_token(&self.client, osu_refresh_token)).await
+        refresh_token(&self.client, osu_refresh_token)
+            .log_elapsed()
+            .await
     }
 
     #[instrument(skip(self), fields(elapsed), err, ret)]
@@ -33,12 +35,14 @@ impl HttpClient {
         &self,
         code: String,
     ) -> Result<AuthResponseBody, ReqwestError> {
-        call_and_log_elapsed(access_token(&self.client, code)).await
+        access_token(&self.client, code).log_elapsed().await
     }
 
     #[instrument(skip(self), fields(elapsed), err, ret)]
     pub async fn request_osu_token_user(&self, auth_token: &str) -> Result<User, ReqwestError> {
-        call_and_log_elapsed(request_token_user(&self.client, auth_token)).await
+        request_token_user(&self.client, auth_token)
+            .log_elapsed()
+            .await
     }
 
     #[instrument(skip(self), fields(elapsed), err, ret)]
@@ -47,7 +51,9 @@ impl HttpClient {
         auth_token: &str,
         user_id: i64,
     ) -> Result<User, ReqwestError> {
-        call_and_log_elapsed(request_user(&self.client, auth_token, user_id)).await
+        request_user(&self.client, auth_token, user_id)
+            .log_elapsed()
+            .await
     }
 
     #[instrument(skip(self), fields(elapsed), err, ret)]
@@ -77,7 +83,7 @@ impl HttpClient {
             }
         };
 
-        call_and_log_elapsed(func).await
+        func.log_elapsed().await
     }
 }
 

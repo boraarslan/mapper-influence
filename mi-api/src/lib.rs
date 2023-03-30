@@ -1,8 +1,6 @@
-use std::{
-    future::Future,
-    pin::Pin,
-    task::{ready, Context, Poll},
-};
+use std::future::Future;
+use std::pin::Pin;
+use std::task::{ready, Context, Poll};
 
 use axum::extract::FromRequestParts;
 use axum::http;
@@ -67,9 +65,7 @@ pub trait FutureLogExt: Future {
     where
         Self: Sized,
     {
-        LogElapsed {
-            future: self,
-        }
+        LogElapsed { future: self }
     }
 }
 
