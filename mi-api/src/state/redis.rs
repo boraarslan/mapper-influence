@@ -7,7 +7,7 @@ use mi_db::RedisPool;
 use tracing::instrument;
 
 use super::SharedState;
-use crate::{FutureLogExt};
+use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct RedisDb {

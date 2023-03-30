@@ -7,7 +7,7 @@ use mi_osu_api::{
 use tracing::instrument;
 
 use super::SharedState;
-use crate::{FutureLogExt};
+use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct HttpClient {
