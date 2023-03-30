@@ -11,13 +11,11 @@ use mi_api::api::redoc::redoc;
 use mi_api::api::user::{
     create_user, get_full_user, get_full_user_by_id, get_user, get_user_by_id, update_user,
 };
+use mi_api::api_docs::ApiDoc;
 use mi_api::request_id::RequestIdGenerator;
 use mi_api::state::SharedState;
-use mi_api::ApiDoc;
 use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
-
-
 use tower_http::trace::TraceLayer;
 use tower_http::ServiceBuilderExt;
 use tracing::metadata::LevelFilter;
