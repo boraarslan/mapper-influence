@@ -32,12 +32,12 @@ impl RedisDb {
         call_and_log_elapsed(get_user_id(session_token, &self.pool)).await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self), fields(elapsed), err)]
     pub async fn get_access_token(&self, user_id: i64) -> AuthResult<String> {
         call_and_log_elapsed(get_access_token(user_id, &self.pool)).await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self), fields(elapsed), err)]
     pub async fn get_refresh_token(&self, user_id: i64) -> AuthResult<String> {
         call_and_log_elapsed(get_refresh_token(user_id, &self.pool)).await
     }
