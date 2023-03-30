@@ -1089,6 +1089,7 @@ dependencies = [
  "mi-osu-api",
  "once_cell",
  "parking_lot 0.12.1",
+ "pin-project-lite",
  "rand_chacha",
  "redis",
  "reqwest",
