@@ -26,7 +26,7 @@ static OSU_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
 
 #[derive(Debug, Deserialize)]
 pub struct OsuAuthResponseParams {
-    code: String,
+    code: Option<String>,
     error: Option<String>,
 }
 
@@ -40,8 +40,12 @@ pub async fn authorize_from_osu_api(
         return Err(AppError::osu_auth_error(&err));
     }
 
+    let Some(code) = params.code else {
+        return Err(AppError::osu_auth_error("No code provided"));
+    };
+
     info!("Auth request received");
-    let auth_response = state.http().get_osu_access_token(params.code).await?;
+    let auth_response = state.http().get_osu_access_token(code).await?;
     info!("Successfully got the auth response");
     let user = state
         .http()

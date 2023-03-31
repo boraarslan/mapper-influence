@@ -4,8 +4,10 @@ use mi_db::auth::{
 };
 use mi_db::user_lock::{is_user_locked, lock_user, unlock_user, LockError};
 use mi_db::RedisPool;
+use tracing::instrument;
 
 use super::SharedState;
+use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct RedisDb {
@@ -25,41 +27,53 @@ impl RedisDb {
         Self { pool }
     }
 
+    #[instrument(skip(self, session_token), fields(elapsed), err, ret)]
     pub async fn get_user_id(&self, session_token: u128) -> AuthResult<i64> {
-        get_user_id(session_token, &self.pool).await
+        get_user_id(session_token, &self.pool).log_elapsed().await
     }
 
+    #[instrument(skip(self), fields(elapsed), err)]
     pub async fn get_access_token(&self, user_id: i64) -> AuthResult<String> {
-        get_access_token(user_id, &self.pool).await
+        get_access_token(user_id, &self.pool).log_elapsed().await
     }
 
+    #[instrument(skip(self), fields(elapsed), err)]
     pub async fn get_refresh_token(&self, user_id: i64) -> AuthResult<String> {
-        get_refresh_token(user_id, &self.pool).await
+        get_refresh_token(user_id, &self.pool).log_elapsed().await
     }
 
+    #[instrument(skip(self, session_token), fields(elapsed), err, ret)]
     pub async fn set_session_token(&self, user_id: i64, session_token: u128) -> AuthResult<()> {
-        set_session_token(user_id, session_token, &self.pool).await
+        set_session_token(user_id, session_token, &self.pool)
+            .log_elapsed()
+            .await
     }
 
+    #[instrument(skip(self, access_token, refresh_token), fields(elapsed), err, ret)]
     pub async fn set_osu_tokens(
         &self,
         user_id: i64,
         access_token: &str,
         refresh_token: &str,
     ) -> AuthResult<()> {
-        set_osu_tokens(user_id, access_token, refresh_token, &self.pool).await
+        set_osu_tokens(user_id, access_token, refresh_token, &self.pool)
+            .log_elapsed()
+            .await
     }
 
+    #[instrument(skip(self), fields(elapsed), err, ret)]
     pub async fn lock_user(&self, user_id: i64) -> Result<(), LockError> {
-        lock_user(user_id, &self.pool).await
+        lock_user(user_id, &self.pool).log_elapsed().await
     }
 
+    #[instrument(skip(self), fields(elapsed), err, ret)]
     pub async fn is_user_locked(&self, user_id: i64) -> Result<bool, LockError> {
-        is_user_locked(user_id, &self.pool).await
+        is_user_locked(user_id, &self.pool).log_elapsed().await
     }
 
+    #[instrument(skip(self), fields(elapsed), err, ret)]
     pub async fn unlock_user(&self, user_id: i64) -> Result<(), LockError> {
-        unlock_user(user_id, &self.pool).await
+        unlock_user(user_id, &self.pool).log_elapsed().await
     }
 }
 
