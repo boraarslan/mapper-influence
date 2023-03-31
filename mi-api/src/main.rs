@@ -16,10 +16,10 @@ use mi_api::request_id::RequestIdGenerator;
 use mi_api::state::SharedState;
 use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
-use tower_http::trace::TraceLayer;
+use tower_http::trace::{DefaultOnResponse, TraceLayer};
 use tower_http::ServiceBuilderExt;
 use tracing::metadata::LevelFilter;
-use tracing::{info, info_span};
+use tracing::{info, info_span, Level};
 use tracing_subscriber::EnvFilter;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -57,7 +57,7 @@ fn init_tracer() {
     let env_filter = EnvFilter::builder()
         .with_default_directive(LevelFilter::INFO.into())
         .from_env_lossy()
-        .add_directive("tower_http=debug".parse().unwrap())
+        .add_directive("tower_http=info".parse().unwrap())
         .add_directive("sqlx::query=debug".parse().unwrap());
     tracing_subscriber::fmt::Subscriber::builder()
         .with_env_filter(env_filter)
@@ -85,19 +85,21 @@ async fn main() {
             ServiceBuilder::new()
                 .set_x_request_id(RequestIdGenerator::default())
                 .layer(
-                    TraceLayer::new_for_http().make_span_with(|req: &Request<Body>| {
-                        info_span!(
-                            "http",
-                            method = %req.method(),
-                            path = %req.uri(),
-                            version = ?req.version(),
-                            req_id = %req
-                                        .headers()
-                                        .get("x-request-id")
-                                        .map(|v| v.to_str().unwrap_or("Not parsable"))
-                                        .unwrap_or("None"),
-                        )
-                    }),
+                    TraceLayer::new_for_http()
+                        .make_span_with(|req: &Request<Body>| {
+                            info_span!(
+                                "http",
+                                method = %req.method(),
+                                path = %req.uri().path(),
+                                version = ?req.version(),
+                                req_id = %req
+                                            .headers()
+                                            .get("x-request-id")
+                                            .map(|v| v.to_str().unwrap_or("Not parsable"))
+                                            .unwrap_or("None"),
+                            )
+                        })
+                        .on_response(DefaultOnResponse::new().level(Level::INFO)),
                 )
                 .propagate_x_request_id()
                 .compression()
