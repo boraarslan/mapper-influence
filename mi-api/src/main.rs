@@ -90,7 +90,7 @@ async fn main() {
                             info_span!(
                                 "http",
                                 method = %req.method(),
-                                path = %req.uri(),
+                                path = %req.uri().path(),
                                 version = ?req.version(),
                                 req_id = %req
                                             .headers()
