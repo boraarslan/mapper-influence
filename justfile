@@ -17,9 +17,10 @@ fix: fmt
 	@echo "Running cargo clippy --fix"
 	cargo clippy --fix --all-features --allow-dirty --allow-staged
 
-docker-compose-up DOCKER_SERVICES="all":
+docker-compose-up DOCKER_SERVICES="all": docker-build-grafana-agent
 	@echo "Launching {{DOCKER_SERVICES}} Docker service(s)"
 	COMPOSE_PROFILES={{DOCKER_SERVICES}} docker compose -f docker-compose.yml up -d --remove-orphans --wait
+	sqlx migrate run --database-url {{PG_DATABASE_URL}} --source ./mi-db/migrations	
 
 docker-compose-down:
 	docker compose -f docker-compose.yml down --remove-orphans
@@ -44,8 +45,14 @@ host: export-ui
 host-release: export-ui
 	cd mi-api && cargo run --release
 
-# Builds the docker image using the .env file
-docker-build:
+docker-build-grafana-agent:
+	docker build -t mi-grafana-agent -f Dockerfile.grafana_agent . \
+	--build-arg TEMPO_ENDPOINT=$TEMPO_ENDPOINT \
+	--build-arg TEMPO_API_KEY=$TEMPO_API_KEY \
+	--build-arg TEMPO_USERNAME=$TEMPO_USERNAME 
+
+# Builds the docker images using the .env file
+docker-build: docker-build-grafana-agent
 	docker build -t mi-api . \
 	--build-arg DATABASE_URL=$DATABASE_URL \
 	--build-arg MI_REDIS_URL=$MI_REDIS_URL \
