@@ -21,4 +21,9 @@ COPY ./grafana-agent-config.yaml /etc/agent/agent.yaml
 
 EXPOSE ${PORT}
 
+ENV TEMPO_ENDPOINT=${TEMPO_ENDPOINT}
+ENV TEMPO_USERNAME=${TEMPO_USERNAME}
+ENV TEMPO_API_KEY=${TEMPO_API_KEY}
+ENV PORT=${PORT}
+
 CMD ./grafana-agent-linux-amd64 --config.file=/etc/agent/agent.yaml -config.expand-env -server.grpc.address=0.0.0.0:$PORT
