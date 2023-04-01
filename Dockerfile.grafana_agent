@@ -3,6 +3,7 @@ FROM debian:bullseye-slim
 ARG TEMPO_ENDPOINT
 ARG TEMPO_USERNAME
 ARG TEMPO_API_KEY
+ARG PORT
 
 ENV TEMPO_ENDPOINT=${TEMPO_ENDPOINT}
 ENV TEMPO_USERNAME=${TEMPO_USERNAME}
@@ -18,6 +19,6 @@ RUN chmod a+x "grafana-agent-linux-amd64"
 
 COPY ./grafana-agent-config.yaml /etc/agent/agent.yaml
 
-EXPOSE 4317
+EXPOSE ${PORT}
 
-CMD [ "./grafana-agent-linux-amd64", "--config.file=/etc/agent/agent.yaml", "-config.expand-env" ]
+CMD ./grafana-agent-linux-amd64 --config.file=/etc/agent/agent.yaml -config.expand-env -server.grpc.address=0.0.0.0:$PORT
