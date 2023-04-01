@@ -2,11 +2,12 @@ import { FC, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
 import { MapInfo } from "@libs/types/user";
-import MapCard from "../MapCard";
+import MapCard from "@components/SharedComponents/MapCard";
+
 
 import styles from "./style.module.scss";
 
-const MapCarousel: FC<{ mapList: MapInfo[] }> = ({ mapList }) => {
+const SliderCarousel: FC<{ mapList: MapInfo[] }> = ({ mapList }) => {
   const [emblaRef, embla] = useEmblaCarousel({
     skipSnaps: true,
     inViewThreshold: 1,
@@ -48,4 +49,4 @@ const MapCarousel: FC<{ mapList: MapInfo[] }> = ({ mapList }) => {
   );
 };
 
-export default MapCarousel;
+export default SliderCarousel;

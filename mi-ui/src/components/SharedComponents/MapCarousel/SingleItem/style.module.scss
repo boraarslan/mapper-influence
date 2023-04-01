@@ -1,0 +1,32 @@
+.carousel {
+  height: $card-height;
+  width: $card-width + $spacing;
+  overflow: visible !important;
+
+  * {
+    transition: all 0.2s ease-out !important;
+  }
+
+  :global(.carousel-slider){
+    overflow: visible !important;
+  }
+
+  :global(.control-dots) {
+    bottom: -2.5rem !important;
+
+    :global(.dot) {
+      background-color: var(--textColor) !important;
+      width: 1rem !important;
+      height: 1rem !important;
+    }
+  }
+
+  :global(.slide) {
+    display: flex;
+    justify-content: center;
+    > div {
+      width: $card-width;
+      margin-inline: $spacing/2;
+    }
+  }
+}
