@@ -15,6 +15,7 @@ pub mod future_log_ext;
 pub mod request_id;
 pub mod result;
 pub mod state;
+pub mod traces;
 
 const COOKIE_NAME: &str = "mi-session-token";
 

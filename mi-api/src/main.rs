@@ -14,13 +14,12 @@ use mi_api::api::user::{
 use mi_api::api_docs::ApiDoc;
 use mi_api::request_id::RequestIdGenerator;
 use mi_api::state::SharedState;
+use mi_api::traces::init_tracer;
 use tower::ServiceBuilder;
 use tower_cookies::CookieManagerLayer;
 use tower_http::trace::{DefaultOnResponse, TraceLayer};
 use tower_http::ServiceBuilderExt;
-use tracing::metadata::LevelFilter;
 use tracing::{info, info_span, Level};
-use tracing_subscriber::EnvFilter;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -51,17 +50,6 @@ fn api_route() -> Router<SharedState> {
     Router::new()
         .nest("/user", user_route())
         .nest("/influence", influence_route())
-}
-
-fn init_tracer() {
-    let env_filter = EnvFilter::builder()
-        .with_default_directive(LevelFilter::INFO.into())
-        .from_env_lossy()
-        .add_directive("tower_http=info".parse().unwrap())
-        .add_directive("sqlx::query=debug".parse().unwrap());
-    tracing_subscriber::fmt::Subscriber::builder()
-        .with_env_filter(env_filter)
-        .init();
 }
 
 #[tokio::main]
