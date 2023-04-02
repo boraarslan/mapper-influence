@@ -5,10 +5,6 @@ ARG TEMPO_USERNAME
 ARG TEMPO_API_KEY
 ARG PORT
 
-ENV TEMPO_ENDPOINT=${TEMPO_ENDPOINT}
-ENV TEMPO_USERNAME=${TEMPO_USERNAME}
-ENV TEMPO_API_KEY=${TEMPO_API_KEY}
-
 RUN apt-get update && apt-get install -y curl unzip
 
 RUN curl -O -L "https://github.com/grafana/agent/releases/download/v0.32.1/grafana-agent-linux-amd64.zip"
@@ -20,6 +16,7 @@ RUN chmod a+x "grafana-agent-linux-amd64"
 COPY ./grafana-agent-config.yaml /etc/agent/agent.yaml
 
 EXPOSE ${PORT}
+EXPOSE 4317
 
 ENV TEMPO_ENDPOINT=${TEMPO_ENDPOINT}
 ENV TEMPO_USERNAME=${TEMPO_USERNAME}
