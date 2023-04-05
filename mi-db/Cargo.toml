@@ -9,7 +9,7 @@ license = "MIT"
 [dependencies]
 bb8 = "0.8"
 bb8-redis = "0.12"
-redis = { version = "0.22", features = ["tokio-comp"] }
+redis = { version = "0.23", features = ["tokio-comp"] }
 sqlx = { version = "0.6", features = [
     "default",
     "runtime-tokio-rustls",

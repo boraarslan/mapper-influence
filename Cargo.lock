@@ -66,7 +66,7 @@ checksum = "8310da711a26fa0326202261abd73a414340f3ec957f63927a055511a01d7fb2"
 dependencies = [
  "async-trait",
  "bb8",
- "redis",
+ "redis 0.22.3",
 ]
 
 [[package]]
@@ -682,7 +682,7 @@ dependencies = [
  "dotenvy",
  "futures",
  "once_cell",
- "redis",
+ "redis 0.23.0",
  "sqlx",
  "thiserror",
  "tokio",
@@ -958,9 +958,28 @@ dependencies = [
 
 [[package]]
 name = "redis"
-version = "0.22.1"
+version = "0.22.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "513b3649f1a111c17954296e4a3b9eecb108b766c803e2b99f179ebe27005985"
+checksum = "aa8455fa3621f6b41c514946de66ea0531f57ca017b2e6c7cc368035ea5b46df"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "combine",
+ "futures-util",
+ "itoa",
+ "percent-encoding",
+ "pin-project-lite",
+ "ryu",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "redis"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ea8c51b5dc1d8e5fd3350ec8167f464ec0995e79f2e90a075b63371500d557f"
 dependencies = [
  "async-trait",
  "bytes",
