@@ -12,7 +12,7 @@ const SingleItemCarousel: FC<{
   editable?: boolean;
 }> = ({ mapList, editable }) => {
   return (
-    <Carousel className={styles.carousel} showStatus={false} showArrows={false}>
+    <Carousel className={styles.carousel} showStatus={false} showArrows={false} transitionTime={0} >
       {mapList.map((item) => (
         <div key={item.mapUrl} className={styles.slide}>
           <MapCard {...item} />

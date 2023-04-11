@@ -3,11 +3,7 @@
   width: $card-width + $spacing;
   overflow: visible !important;
 
-  * {
-    transition: all 0.2s ease-out !important;
-  }
-
-  :global(.carousel-slider){
+  :global(.carousel-slider) {
     overflow: visible !important;
   }
 
@@ -26,7 +22,6 @@
     justify-content: center;
     > div {
       width: $card-width;
-      margin-inline: $spacing/2;
     }
   }
 }

@@ -6,7 +6,7 @@ import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
 
 import styles from "./style.module.scss";
-import MapCarousel from "@components/SharedComponents/MapCarousel";
+import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
 
 type Props = {
   profileData: UserBase;
