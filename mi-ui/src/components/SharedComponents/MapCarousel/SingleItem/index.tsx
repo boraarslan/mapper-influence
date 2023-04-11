@@ -9,10 +9,16 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const SingleItemCarousel: FC<{
   mapList: MapInfo[];
+  className?: string;
   editable?: boolean;
-}> = ({ mapList, editable }) => {
+}> = ({ mapList, editable, className = "" }) => {
   return (
-    <Carousel className={styles.carousel} showStatus={false} showArrows={false} transitionTime={0} >
+    <Carousel
+      className={`${styles.carousel} ${className}`}
+      showStatus={false}
+      showArrows={false}
+      transitionTime={0}
+    >
       {mapList.map((item) => (
         <div key={item.mapUrl} className={styles.slide}>
           <MapCard {...item} />
