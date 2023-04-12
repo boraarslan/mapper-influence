@@ -14,7 +14,7 @@
 
   > h2 {
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: $spacing/2;
   }
 
   .scrollWrapper {
@@ -54,9 +54,15 @@
 
       .description {
         min-height: 100%;
+        max-width: 70ch;
       }
 
       .maps {
+        > h4 {
+          width: 100%;
+          text-align: center;
+          margin-block: $spacing/2;
+        }
       }
     }
 
@@ -66,7 +72,7 @@
         flex-wrap: wrap;
 
         &:not(:last-child) {
-          margin-bottom: 1rem;
+          margin-bottom: $spacing;
         }
 
         .description {

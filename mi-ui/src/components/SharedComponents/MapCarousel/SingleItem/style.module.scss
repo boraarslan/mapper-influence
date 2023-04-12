@@ -3,12 +3,14 @@
   width: $card-width + $spacing;
   overflow: visible !important;
 
+  margin-bottom: 2.5rem;
+
   :global(.carousel-slider) {
     overflow: visible !important;
   }
 
   :global(.control-dots) {
-    bottom: -2.5rem !important;
+    bottom: -2.5rem - 0.25rem !important;
 
     :global(.dot) {
       background-color: var(--textColor) !important;
