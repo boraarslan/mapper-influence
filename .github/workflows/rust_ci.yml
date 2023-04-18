@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install protoc
-        run: apt-get install protobuf-compiler -y
+        run: sudo update && apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -56,7 +56,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install protoc
-        run: apt-get install protobuf-compiler -y
+        run: sudo update && apt-get install protobuf-compiler -y
       - uses: Swatinem/rust-cache@v2  
       - name: cargo deny
         uses: EmbarkStudios/cargo-deny-action@v1
@@ -71,7 +71,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install protoc
-        run: apt-get install protobuf-compiler -y
+        run: sudo update && apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -91,7 +91,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install protoc
-        run: apt-get install protobuf-compiler -y
+        run: sudo update && apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -135,7 +135,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install protoc
-        run: apt-get install protobuf-compiler -y
+        run: sudo update && apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
