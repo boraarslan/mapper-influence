@@ -5,6 +5,7 @@ use axum_macros::FromRequest;
 use mi_db::auth::AuthError;
 use mi_db::user_lock::LockError;
 use mi_db::{InfluenceError, UserError};
+use mi_osu_api::OsuApiError;
 use serde::Serialize;
 use validator::ValidationErrors;
 
@@ -74,8 +75,8 @@ impl IntoResponse for AppError {
     }
 }
 
-impl From<reqwest::Error> for AppError {
-    fn from(err: reqwest::Error) -> Self {
+impl From<OsuApiError> for AppError {
+    fn from(err: OsuApiError) -> Self {
         AppError(Kind::Reqwest {
             msg: err.to_string(),
         })
