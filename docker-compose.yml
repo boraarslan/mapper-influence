@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mi-dev}
       POSTGRES_DB: ${POSTGRES_DB:-mapper-influence-dev}
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: [ "CMD", "pg_isready" ]
   redis:
     image: redis:7.0.5-alpine
     container_name: redis-mi
@@ -23,7 +23,20 @@ services:
       - all
       - redis
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 1s
       timeout: 3s
       retries: 5
+  agent:
+    image: mi-grafana-agent
+    container_name: agent-mi
+    ports:
+      - "4317:4317"
+    profiles:
+      - all
+      - agent
+    environment:
+      TEMPO_API_KEY: ${TEMPO_API_KEY}
+      TEMPO_ENDPOINT: ${TEMPO_ENDPOINT}
+      TEMPO_USERNAME: ${TEMPO_USERNAME}
+      PORT: ${PORT}

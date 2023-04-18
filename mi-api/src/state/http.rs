@@ -20,7 +20,7 @@ impl HttpClient {
         Self { client }
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self, osu_refresh_token), fields(elapsed), err)]
     pub async fn get_osu_refresh_token(
         &self,
         osu_refresh_token: String,
@@ -30,7 +30,7 @@ impl HttpClient {
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self, code), fields(elapsed), err)]
     pub async fn get_osu_access_token(
         &self,
         code: String,
@@ -38,14 +38,14 @@ impl HttpClient {
         access_token(&self.client, code).log_elapsed().await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self, auth_token), fields(elapsed), err)]
     pub async fn request_osu_token_user(&self, auth_token: &str) -> Result<User, ReqwestError> {
         request_token_user(&self.client, auth_token)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self, auth_token), fields(elapsed), err)]
     pub async fn request_osu_user(
         &self,
         auth_token: &str,
@@ -56,7 +56,7 @@ impl HttpClient {
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self, auth_token), fields(elapsed), err)]
     pub async fn get_all_user_mapsets(
         &self,
         user_id: i64,
