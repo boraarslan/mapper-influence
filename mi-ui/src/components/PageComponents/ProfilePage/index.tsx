@@ -1,0 +1,40 @@
+import React, { FC } from "react";
+import { useRouter } from "next/router";
+import { UserProfile, UserBase } from "@libs/types/user";
+import InfluenceList from "./InfluenceList";
+import MapperDetails from "./MapperDetails";
+import MentionList from "./MentionList";
+import { useSessionStore } from "src/states/user";
+
+import styles from "./style.module.scss";
+
+type Props = { userData: UserProfile; editable?: boolean };
+
+const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
+  const { logout } = useSessionStore();
+  const router = useRouter();
+
+  function onSignOut() {
+    logout();
+    router.push("/");
+  }
+
+  return (
+    <div className={styles.profilePage}>
+      <MapperDetails
+        description={userData.description}
+        mapList={userData.maps}
+        details={userData.details}
+        profileData={userData as UserBase}
+        editable={editable}
+      />
+      <div className={styles.doubleCol}>
+        <InfluenceList influences={userData.influences} editable={editable} />
+        <MentionList mentions={userData.mentions} />
+      </div>
+      <button onClick={onSignOut}>Sign out</button>
+    </div>
+  );
+};
+
+export default ProfilePage;

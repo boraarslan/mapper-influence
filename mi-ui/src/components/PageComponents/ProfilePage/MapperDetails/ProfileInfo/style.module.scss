@@ -1,0 +1,57 @@
+.profileInfo {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  width: max-content;
+
+  // Right side of avatar
+  .rightSide {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing / 2;
+    margin-left: $spacing;
+
+    .mapperName {
+      position: relative;
+      display: flex;
+      font-weight: 700;
+      font-size: 4rem;
+      margin-left: -0.25rem;
+      margin-top: 0.5rem;
+      line-height: 75%;
+      width: 21rem;
+    }
+
+    .mapperName:hover {
+      text-decoration: underline;
+    }
+
+    .title {
+      text-align: center;
+    }
+  }
+
+  .avatar:hover {
+    outline: 0.15rem solid $color-text;
+  }
+
+  @media screen and (max-width: ($responsive-breakpoint / 2)) {
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+
+    .rightSide {
+      align-items: center;
+      justify-content: center;
+      margin-left: 0;
+
+      .mapperName {
+        align-items: center;
+        justify-content: center;
+        margin-top: $spacing;
+      }
+    }
+  }
+}

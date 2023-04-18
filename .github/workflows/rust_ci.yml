@@ -10,7 +10,7 @@ env:
   CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: 1
   RUSTFLAGS: -Dwarnings
-  MAPPER_INFLUENCE_CI_ENV: 1
+  MAPPER_INFLUENCE_CI_ENV: BUILD
   DATABASE_URL: postgres://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
   MI_TEST_REDIS_URL: redis://localhost:6379
 
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -53,6 +55,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
       - uses: Swatinem/rust-cache@v2  
       - name: cargo deny
         uses: EmbarkStudios/cargo-deny-action@v1
@@ -66,6 +70,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -84,6 +90,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -126,6 +134,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:

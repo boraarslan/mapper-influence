@@ -1,9 +1,11 @@
+use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
+use utoipa::ToSchema;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
 
-#[derive(Debug, FromRow, Clone)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
 pub struct Influence {
     /// Id of the influencer user
     from_id: i64,
@@ -13,6 +15,17 @@ pub struct Influence {
     influence_level: i32,
     /// Extra info/notes about influence
     info: Option<String>,
+}
+
+impl Influence {
+    pub fn new(from_id: i64, to_id: i64, influence_level: i32, info: Option<String>) -> Self {
+        Self {
+            from_id,
+            to_id,
+            influence_level,
+            info,
+        }
+    }
 }
 
 pub async fn get_all_influences_by_from_id(
@@ -176,14 +189,13 @@ mod tests {
     use sqlx::PgPool;
 
     use super::*;
-    use crate::user::{insert_user, User};
+    use crate::user::{init_user, User};
 
     fn user_for_test(user_id: i64) -> User {
         User {
             id: user_id,
             user_name: "boraarslan".to_string(),
             profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
-            bio: Some("I am tired.".to_string()),
         }
     }
 
@@ -207,8 +219,8 @@ mod tests {
 
         let first_user = user_for_test(1);
         let second_user = user_for_test(2);
-        insert_user(first_user.clone(), &db).await.unwrap();
-        insert_user(second_user.clone(), &db).await.unwrap();
+        init_user(first_user.clone(), &db).await.unwrap();
+        init_user(second_user.clone(), &db).await.unwrap();
 
         let influence = influence_for_test(first_user.id, second_user.id);
 

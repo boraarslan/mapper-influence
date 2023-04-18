@@ -1,0 +1,11 @@
+@import "../mixins/index";
+
+$screen-size: rem(1366);
+$mobile-size: rem(428);
+$border-radius: 0.5rem;
+$spacing: 1rem;
+
+$responsive-breakpoint: 60rem;
+
+$card-height: 6rem;
+$card-width: 18rem;

@@ -1,2 +1,2 @@
 [workspace]
-members = ["mi-db", "mi-osu-api"]
+members = ["mi-api", "mi-db", "mi-osu-api"]
