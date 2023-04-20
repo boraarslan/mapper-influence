@@ -11,3 +11,4 @@ mi-ui/build
 
 mi-api/pages
 signoz
+.github/workflows/new_rust_ci.yml
