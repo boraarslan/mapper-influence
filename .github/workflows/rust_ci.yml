@@ -1,4 +1,4 @@
-name: new-rust-ci
+name: rust-ci
 on:
   workflow_dispatch:
     pull_request:
