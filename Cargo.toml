@@ -43,3 +43,6 @@ tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 utoipa = { version = "3.3.0", features = ["axum_extras", "chrono"] }
 utoipa-swagger-ui = { version = "3.1.3", features = ["axum"] }
 validator = { version = "0.16.0", features = ["derive"] }
+
+mi-db = { version = "0.0.0", path = "./mi-db" }
+mi-osu-api = { version = "0.0.0", path = "./mi-osu-api" }
