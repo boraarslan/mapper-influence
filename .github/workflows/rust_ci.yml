@@ -50,7 +50,6 @@ jobs:
           command: ${{ matrix.command.name }}
           args: ${{ matrix.command.args }}
     services:
-      # PostgreSQL service container
       postgres:
         image: postgres:latest
         ports:
@@ -59,7 +58,6 @@ jobs:
           POSTGRES_USER: mapper-influence
           POSTGRES_PASSWORD: mi-dev
           POSTGRES_DB: mapper-influence-dev
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -73,7 +71,7 @@ jobs:
           --health-cmd "redis-cli ping"
           --health-interval 1s
           --health-timeout 3s
-          --health-retries 5s
+          --health-retries 5
 
   cargo-deny:
     runs-on: ubuntu-latest
