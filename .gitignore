@@ -11,5 +11,3 @@ mi-ui/build
 
 mi-api/pages
 signoz
-bin/act
-.github/workflows/old_rust_ci.yml
