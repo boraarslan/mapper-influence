@@ -31,9 +31,6 @@ sqlx = { version = "0.6.3", features = [
     "default",
     "runtime-tokio-rustls",
     "postgres",
-    "json",
-    "chrono",
-    "offline",
 ] }
 thiserror = "1.0.40"
 tokio = { version = "1.27.0", features = ["macros"] }
