@@ -47,7 +47,8 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.command.toolchain }}
-          override: true
+          if: ${{ matrix.command.toolchain }} == 'nightly'
+          components: rustfmt
       - uses: Swatinem/rust-cache@v2
       - name: cargo ${{ matrix.command.name }}
         uses: actions-rs/cargo@v1
