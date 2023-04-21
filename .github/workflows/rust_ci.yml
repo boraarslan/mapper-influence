@@ -22,13 +22,18 @@ jobs:
       matrix:
         command:
           [
-            { name: clippy, args: --workspace --tests --all-features },
-            { name: fmt, args: --all -- --check },
+            {
+              name: clippy,
+              args: --workspace --tests --all-features,
+              toolchain: stable,
+            },
+            { name: fmt, args: --all -- --check, toolchain: nightly },
             {
               name: doc,
               args: --no-deps --all-features --document-private-items,
+              toolchain: stable,
             },
-            { name: test, args: --all-features },
+            { name: test, args: --all-features, toolchain: stable },
           ]
     name: cargo-${{ matrix.command.name }}
 
@@ -41,13 +46,14 @@ jobs:
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.command.toolchain }}
           override: true
       - uses: Swatinem/rust-cache@v2
       - name: cargo ${{ matrix.command.name }}
         uses: actions-rs/cargo@v1
         with:
           command: ${{ matrix.command.name }}
+          toolchain: ${{ matrix.command.toolchain }}
           args: ${{ matrix.command.args }}
     services:
       postgres:
