@@ -41,22 +41,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      
       - name: Install protoc
         run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
 
-        if: contains(${{ matrix.command.toolchain }}, 'nightly')
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.command.toolchain }}
-          components: rustfmt
-
-        if: contains(${{ matrix.command.toolchain }}, 'stable')
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.command.toolchain }}
           override: true
+          if: contains(${{ matrix.command.toolchain }}, 'nightly')
+          components: rustfmt
 
       - uses: Swatinem/rust-cache@v2
 
