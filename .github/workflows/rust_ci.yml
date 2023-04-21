@@ -50,8 +50,6 @@ jobs:
         with:
           toolchain: ${{ matrix.command.toolchain }}
           override: true
-          # logic check can be removed as rustfmt install is lightweight
-          if: contains(${{ matrix.command.name }}, 'fmt')
           components: rustfmt
 
       - uses: Swatinem/rust-cache@v2
