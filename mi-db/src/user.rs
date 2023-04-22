@@ -1,11 +1,9 @@
 use chrono::Utc;
-use futures::FutureExt;
 use mi_osu_api::Beatmapset;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Json;
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
-use tokio::try_join;
 use utoipa::ToSchema;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
@@ -229,50 +227,55 @@ pub async fn upsert_user_mapsets(
 }
 
 pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
-    let insert_user = sqlx::query_as!(
+    let mut transaction = db.begin().await?;
+
+    // Only the first query is required to be error handled explicityl because of unique key
+    // violation. Other queries return transaction error if the first execution fails.
+    // Therefore, error handle for the first query is done right after the execution.
+
+    let insert_user_result = sqlx::query_as!(
         User,
         "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING *",
         user.id,
         user.user_name,
         user.profile_picture,
     )
-    .fetch_one(db);
+    .fetch_one(&mut transaction)
+    .await;
 
-    let insert_profile = sqlx::query!(
-        r#"
-        INSERT INTO user_profiles (user_id) VALUES ($1)"#,
-        user.id,
-    )
-    .execute(db);
-
-    let insert_osu_data = sqlx::query!(
-        r#"INSERT INTO users_osu_data (user_id) VALUES ($1)"#,
-        user.id
-    )
-    .execute(db);
-
-    let insert_result = insert_user
-        .then(|user_res| async move {
-            try_join!(insert_profile, insert_osu_data)?;
-            user_res
-        })
-        .await;
-
-    match insert_result {
-        Ok(inserted_user) => Ok(inserted_user),
+    let inserted_user = match insert_user_result {
+        Ok(inserted_user) => inserted_user,
         Err(db_err) if db_err.as_database_error().is_some() => {
             // We check if db_err can be casted to database_error.
             // PgError should always return a valid error code.
             let pg_db_error_code = db_err.as_database_error().unwrap().code().unwrap();
 
             if pg_db_error_code.eq(PG_UNIQUE_KEY_VIOLATION) {
-                Err(UserError::UserAlreadyExists(user.id))
+                return Err(UserError::UserAlreadyExists(user.id));
             } else {
-                Err(UserError::from(db_err))
+                return Err(UserError::from(db_err));
             }
         }
-        Err(db_err) => Err(UserError::from(db_err)),
-    }
+        Err(db_err) => return Err(UserError::from(db_err)),
+    };
+
+    sqlx::query!(
+        r#"
+        INSERT INTO user_profiles (user_id) VALUES ($1)"#,
+        user.id,
+    )
+    .execute(&mut transaction)
+    .await?;
+
+    sqlx::query!(
+        r#"INSERT INTO users_osu_data (user_id) VALUES ($1)"#,
+        user.id
+    )
+    .execute(&mut transaction)
+    .await?;
+
+    transaction.commit().await?;
+    Ok(inserted_user)
 }
 
 pub async fn update_user_name(user_name: &str, user_id: i64, db: &PgPool) -> Result<(), UserError> {
