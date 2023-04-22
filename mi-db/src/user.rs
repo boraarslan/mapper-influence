@@ -229,7 +229,7 @@ pub async fn upsert_user_mapsets(
 pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let mut transaction = db.begin().await?;
 
-    // Only the first query is required to be error handled explicityl because of unique key
+    // Only the first query is required to be error handled explicitly because of unique key
     // violation. Other queries return transaction error if the first execution fails.
     // Therefore, error handle for the first query is done right after the execution.
 
