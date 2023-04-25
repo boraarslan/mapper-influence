@@ -38,7 +38,7 @@ impl AppError {
 
 #[derive(Debug)]
 pub enum Kind {
-    Reqwest { msg: String },
+    OsuApi { code: StatusCode, msg: String },
     Auth { msg: String },
     User(UserError),
     Influence(InfluenceError),
@@ -50,9 +50,9 @@ pub enum Kind {
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
         match self.0 {
-            Kind::Reqwest { msg } => (
-                StatusCode::SERVICE_UNAVAILABLE,
-                format!("API failed to make the HTTP request: {}", msg),
+            Kind::OsuApi { code, msg } => (
+                code,
+                format!("osu! API failed to make the HTTP request: {}", msg),
             )
                 .into_response(),
             Kind::Auth { msg } => {
@@ -77,9 +77,25 @@ impl IntoResponse for AppError {
 
 impl From<OsuApiError> for AppError {
     fn from(err: OsuApiError) -> Self {
-        AppError(Kind::Reqwest {
-            msg: err.to_string(),
-        })
+        match err {
+            OsuApiError::HTTPError { body, error } => AppError(Kind::OsuApi {
+                code: StatusCode::SERVICE_UNAVAILABLE,
+                msg: format!(
+                    "Response returned with error code {} and body: {}",
+                    error, body
+                ),
+            }),
+            OsuApiError::InternalError(reqwest_error) => AppError(Kind::OsuApi {
+                code: StatusCode::INTERNAL_SERVER_ERROR,
+                msg: reqwest_error.to_string(),
+            }),
+            OsuApiError::InvalidBeatmapType => AppError(Kind::OsuApi {
+                code: StatusCode::INTERNAL_SERVER_ERROR,
+                msg: "Invalid beatmap type used in one of the internal osu! API calls.".to_string(),
+            }),
+        };
+
+        unimplemented!();
     }
 }
 
