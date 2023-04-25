@@ -59,10 +59,7 @@ impl IntoResponse for AppError {
                             error, body
                         ),
                     ),
-                    OsuApiError::InternalError(reqwest_error) => {
-                        (StatusCode::INTERNAL_SERVER_ERROR, reqwest_error.to_string())
-                    }
-                    OsuApiError::InvalidBeatmapType => {
+                    OsuApiError::InternalError(_) | OsuApiError::InvalidBeatmapType => {
                         (StatusCode::INTERNAL_SERVER_ERROR, osu_api_error.to_string())
                     }
                 };
