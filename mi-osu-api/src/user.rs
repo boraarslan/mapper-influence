@@ -88,8 +88,8 @@ pub struct Country {
 /// Profile covers are the big rectengular images on top of a player profile.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Cover {
-    pub custom_url: String,
-    pub url: String,
+    pub custom_url: Option<String>,
+    pub url: Option<String>,
 }
 
 /// Information about the group the user might be part of.

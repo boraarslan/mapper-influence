@@ -27,6 +27,12 @@ impl AppError {
             msg: "Session token is expired".to_string(),
         })
     }
+
+    pub fn osu_auth_error(msg: &str) -> Self {
+        AppError(Kind::Auth {
+            msg: format!("Osu! auth failed: {}", msg),
+        })
+    }
 }
 
 #[derive(Debug)]

@@ -1,102 +1,66 @@
 name: rust-ci
-
 on:
   workflow_dispatch:
   pull_request:
+    paths-ignore:
+      - mi-ui/**
   push:
     branches:
       - main
+
 env:
   CARGO_INCREMENTAL: 0
   RUST_BACKTRACE: 1
   RUSTFLAGS: -Dwarnings
-  MAPPER_INFLUENCE_CI_ENV: 1
+  MAPPER_INFLUENCE_CI_ENV: BUILD
   DATABASE_URL: postgres://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
   MI_TEST_REDIS_URL: redis://localhost:6379
 
 jobs:
-  cargo-clippy:
+  cargo-checks:
+    strategy:
+      matrix:
+        command:
+          [
+            {
+              name: clippy,
+              args: --workspace --tests --all-features,
+              toolchain: stable,
+            },
+            { name: fmt, args: --all -- --check, toolchain: nightly },
+            {
+              name: doc,
+              args: --no-deps --all-features --document-private-items,
+              toolchain: stable,
+            },
+            { name: test, args: --all-features, toolchain: stable },
+          ]
+    name: cargo-${{ matrix.command.name }}
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.command.toolchain }}
           override: true
-      - uses: Swatinem/rust-cache@v2  
-      - name: cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: "--workspace --tests --all-features"
-    services:
-      # PostgreSQL service container
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: mapper-influence
-          POSTGRES_PASSWORD: mi-dev
-          POSTGRES_DB: mapper-influence-dev
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-  cargo-deny:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - uses: Swatinem/rust-cache@v2  
-      - name: cargo deny
-        uses: EmbarkStudios/cargo-deny-action@v1
-        with:
-          rust-version: "1.65.0"
-          log-level: warn
-          command: check  
-
-  cargo-fmt:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
           components: rustfmt
-      - uses: Swatinem/rust-cache@v2  
-      - name: cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          toolchain: nightly
-          args: --all -- --check
 
-  cargo-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2  
-      - name: cargo test
+      - uses: Swatinem/rust-cache@v2
+
+      - name: cargo ${{ matrix.command.name }}
         uses: actions-rs/cargo@v1
         with:
-          command: test
-          args: --all-features
+          command: ${{ matrix.command.name }}
+          toolchain: ${{ matrix.command.toolchain }}
+          args: ${{ matrix.command.args }}
     services:
-      # PostgreSQL service container
       postgres:
         image: postgres:latest
         ports:
@@ -105,7 +69,6 @@ jobs:
           POSTGRES_USER: mapper-influence
           POSTGRES_PASSWORD: mi-dev
           POSTGRES_DB: mapper-influence-dev
-        # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -121,35 +84,17 @@ jobs:
           --health-timeout 3s
           --health-retries 5
 
-  cargo-doc:
+  cargo-deny:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo deny
+        uses: EmbarkStudios/cargo-deny-action@v1
         with:
-          toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v2  
-      - name: cargo doc
-        uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          args: --no-deps --all-features --document-private-items
-    services:
-      # PostgreSQL service container
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: mapper-influence
-          POSTGRES_PASSWORD: mi-dev
-          POSTGRES_DB: mapper-influence-dev
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          rust-version: "1.65.0"
+          log-level: warn
+          command: check

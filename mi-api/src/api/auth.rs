@@ -7,10 +7,9 @@ use serde::Deserialize;
 use tower_cookies::{Cookie, Cookies};
 use tracing::info;
 
-use super::get_session_cookie;
-use crate::api::COOKIE_NAME;
-use crate::result::AppResult;
+use crate::result::{AppError, AppResult};
 use crate::state::SharedState;
+use crate::{get_session_cookie, COOKIE_NAME};
 
 static REDIRECT_URI: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_AUTH_REDIRECT_URI")
@@ -27,7 +26,8 @@ static OSU_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
 
 #[derive(Debug, Deserialize)]
 pub struct OsuAuthResponseParams {
-    code: String,
+    code: Option<String>,
+    error: Option<String>,
 }
 
 pub async fn authorize_from_osu_api(
@@ -35,14 +35,20 @@ pub async fn authorize_from_osu_api(
     cookies: Cookies,
     State(state): State<SharedState>,
 ) -> AppResult<Redirect> {
-    info!("Auth request received");
-    let auth_response = state.http().get_osu_access_token(params.code).await?;
-    info!("Successfully got the auth response");
+    if let Some(err) = params.error {
+        // TODO: Better error handling
+        return Err(AppError::osu_auth_error(&err));
+    }
+
+    let Some(code) = params.code else {
+        return Err(AppError::osu_auth_error("No code provided"));
+    };
+
+    let auth_response = state.http().get_osu_access_token(code).await?;
     let user = state
         .http()
         .request_osu_token_user(&auth_response.access_token)
         .await?;
-    info!("Successfully got the Osu! user");
 
     let session_token = state.generate_session_token();
 
@@ -102,7 +108,7 @@ pub async fn login(cookies: Cookies, State(state): State<SharedState>) -> AppRes
     }
 
     let redirect_uri = format!(
-        "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id={}&redirect_uri={}",
+        "https://osu.ppy.sh/oauth/authorize?response_type=code&client_id={}&redirect_uri={}&scope=public+identify",
         *OSU_CLIENT_ID, *OSU_REDIRECT_URI
     );
 

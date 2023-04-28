@@ -2,12 +2,12 @@ use axum::debug_handler;
 use axum::extract::State;
 use mi_db::influence::Influence;
 use serde::{Deserialize, Serialize};
-use tower_cookies::Cookies;
 use utoipa::ToSchema;
 use validator::Validate;
 
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
+use crate::AuthUserId;
 
 #[derive(Debug, Serialize, Deserialize, ToSchema)]
 pub struct GetInfluenceRequest {
@@ -22,11 +22,10 @@ pub struct GetInfluenceRequest {
 )]
 #[debug_handler]
 pub async fn get_influences(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<Option<GetInfluenceRequest>>,
 ) -> AppResult<Json<Vec<Influence>>> {
-    let user_id = state.auth_user(&cookies).await?;
     let user_id = match request {
         Some(req) => req.user_id,
         None => user_id,
@@ -53,12 +52,11 @@ pub struct InsertInfluenceRequest {
 )]
 #[debug_handler]
 pub async fn create_influence(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<InsertInfluenceRequest>,
 ) -> AppResult<()> {
     request.validate()?;
-    let user_id = state.auth_user(&cookies).await?;
 
     let influence = Influence::new(request.from_id, user_id, request.level, request.info);
     state.postgres().insert_influence(influence).await?;
@@ -79,12 +77,10 @@ pub struct DeleteInfluenceRequest {
 )]
 #[debug_handler]
 pub async fn delete_influence(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<DeleteInfluenceRequest>,
 ) -> AppResult<()> {
-    let user_id = state.auth_user(&cookies).await?;
-
     state
         .postgres()
         .delete_influence(request.from_id, user_id)
@@ -109,12 +105,11 @@ pub struct UpdateInfluenceLevelRequest {
 )]
 #[debug_handler]
 pub async fn update_influence_level(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<UpdateInfluenceLevelRequest>,
 ) -> AppResult<()> {
     request.validate()?;
-    let user_id = state.auth_user(&cookies).await?;
 
     state
         .postgres()
@@ -139,12 +134,10 @@ pub struct UpdateInfluenceInfoRequest {
 )]
 #[debug_handler]
 pub async fn update_influence_info(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<UpdateInfluenceInfoRequest>,
 ) -> AppResult<()> {
-    let user_id = state.auth_user(&cookies).await?;
-
     state
         .postgres()
         .update_influence_info(request.from_id, user_id, request.info.as_deref())

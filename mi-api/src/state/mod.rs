@@ -12,7 +12,7 @@ use tower_cookies::Cookies;
 pub use self::http::HttpClient;
 pub use self::postgres::PgDb;
 pub use self::redis::RedisDb;
-use crate::api::get_session_cookie;
+use crate::get_session_cookie;
 use crate::result::{AppError, AppResult};
 
 #[derive(Debug, Clone)]
@@ -84,5 +84,18 @@ impl AsRef<PgDb> for SharedState {
 impl AsRef<RedisDb> for SharedState {
     fn as_ref(&self) -> &RedisDb {
         &self.redis
+    }
+}
+
+#[async_trait::async_trait]
+pub trait AuthUser {
+    /// Returns user's Osu! id if user is authenticated
+    async fn auth_user(&self, cookie: Cookies) -> AppResult<i64>;
+}
+
+#[async_trait::async_trait]
+impl AuthUser for SharedState {
+    async fn auth_user(&self, cookies: Cookies) -> AppResult<i64> {
+        self.auth_user(&cookies).await
     }
 }

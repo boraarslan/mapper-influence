@@ -2,11 +2,36 @@ use axum::debug_handler;
 use axum::extract::{Path, State};
 use mi_db::{FullUser, User};
 use serde::Deserialize;
-use tower_cookies::Cookies;
 use utoipa::ToSchema;
 
 use crate::result::{AppResult, Json};
 use crate::state::SharedState;
+use crate::AuthUserId;
+
+#[utoipa::path(
+    get,
+    path = "/user/get",
+    responses((status = 200, description = "User info found", body = User)),
+)]
+#[debug_handler]
+pub async fn get_user(
+    AuthUserId(user_id): AuthUserId,
+    State(state): State<SharedState>,
+) -> AppResult<Json<User>> {
+    let db_user_res = state.postgres().get_user(user_id).await;
+
+    match db_user_res {
+        Ok(db_user) => Ok(Json(db_user)),
+        Err(err) => {
+            if let mi_db::UserError::UserNotFound(_) = err {
+                let db_user = init_missing_user(&state, user_id, user_id).await?;
+                Ok(Json(db_user))
+            } else {
+                Err(err.into())
+            }
+        }
+    }
+}
 
 #[utoipa::path(
     get,
@@ -15,18 +40,11 @@ use crate::state::SharedState;
     params(("user_id", description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
 )]
 #[debug_handler]
-pub async fn get_user(
-    cookies: Cookies,
+pub async fn get_user_by_id(
+    AuthUserId(auth_user_id): AuthUserId,
     State(state): State<SharedState>,
-    Path(user_id): Path<Option<i64>>,
+    Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<User>> {
-    let auth_user_id = state.auth_user(&cookies).await?;
-
-    let query_user_id = match user_id {
-        Some(path_user_id) => path_user_id,
-        None => auth_user_id,
-    };
-
     let db_user_res = state.postgres().get_user(query_user_id).await;
 
     match db_user_res {
@@ -44,40 +62,53 @@ pub async fn get_user(
 
 #[utoipa::path(
     get,
+    path = "/user/get/full",
+    responses((status = 200, description = "User info found", body = FullUser)),
+)]
+#[debug_handler]
+pub async fn get_full_user(
+    AuthUserId(user_id): AuthUserId,
+    State(state): State<SharedState>,
+) -> AppResult<Json<FullUser>> {
+    let db_user_res = state.postgres().get_full_user(user_id).await;
+
+    match db_user_res {
+        Ok(db_user) => {
+            if db_user.is_outdated() {
+                update_user_profile(&state, user_id, user_id).await?;
+            }
+            Ok(Json(db_user))
+        }
+        Err(err) => {
+            if let mi_db::UserError::UserNotFound(_) = err {
+                init_missing_user(&state, user_id, user_id).await?;
+                let full_user = state.postgres().get_full_user(user_id).await?;
+                Ok(Json(full_user))
+            } else {
+                Err(err.into())
+            }
+        }
+    }
+}
+
+#[utoipa::path(
+    get,
     path = "/user/get/{user_id}/full",
     responses((status = 200, description = "User info found", body = FullUser)),
     params(("user_id", description = "Osu! ID of the user. If not specified, defaults to session owner's ID")),
 )]
 #[debug_handler]
-pub async fn get_full_user(
-    cookies: Cookies,
+pub async fn get_full_user_by_id(
+    AuthUserId(auth_user_id): AuthUserId,
     State(state): State<SharedState>,
-    Path(user_id): Path<Option<i64>>,
+    Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<FullUser>> {
-    let auth_user_id = state.auth_user(&cookies).await?;
-
-    let query_user_id = match user_id {
-        Some(path_user_id) => path_user_id,
-        None => auth_user_id,
-    };
-
     let db_user_res = state.postgres().get_full_user(query_user_id).await;
 
     match db_user_res {
         Ok(db_user) => {
-            if db_user.is_outdated() && !state.redis().is_user_locked(query_user_id).await? {
-                state.redis().lock_user(query_user_id).await?;
-
-                let osu_token = state.redis().get_access_token(auth_user_id).await?;
-
-                let osu_user = state
-                    .http()
-                    .request_osu_user(&osu_token, query_user_id)
-                    .await?;
-
-                state.postgres().update_user_osu_data(osu_user).await?;
-
-                state.redis().unlock_user(query_user_id).await?;
+            if db_user.is_outdated() {
+                update_user_profile(&state, auth_user_id, query_user_id).await?;
             }
             Ok(Json(db_user))
         }
@@ -93,6 +124,31 @@ pub async fn get_full_user(
     }
 }
 
+async fn update_user_profile(
+    state: &SharedState,
+    requester_user_id: i64,
+    user_id_to_update: i64,
+) -> AppResult<()> {
+    if state.redis().is_user_locked(user_id_to_update).await? {
+        return Ok(());
+    }
+
+    state.redis().lock_user(user_id_to_update).await?;
+
+    let osu_token = state.redis().get_access_token(requester_user_id).await?;
+
+    let osu_user = state
+        .http()
+        .request_osu_user(&osu_token, user_id_to_update)
+        .await?;
+
+    state.postgres().update_user_osu_data(osu_user).await?;
+
+    state.redis().unlock_user(user_id_to_update).await?;
+
+    Ok(())
+}
+
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct CreateUserRequest {
     user_id: i64,
@@ -106,12 +162,10 @@ pub struct CreateUserRequest {
 )]
 #[debug_handler]
 pub async fn create_user(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<CreateUserRequest>,
 ) -> AppResult<Json<User>> {
-    let user_id = state.auth_user(&cookies).await?;
-
     let user = init_missing_user(&state, user_id, request.user_id).await?;
 
     Ok(Json(user))
@@ -157,12 +211,10 @@ pub struct UpdateUserRequest {
 )]
 #[debug_handler]
 pub async fn update_user(
-    cookies: Cookies,
+    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<UpdateUserRequest>,
 ) -> AppResult<()> {
-    let user_id = state.auth_user(&cookies).await?;
-
     if let Some(user_name) = request.user_name {
         state
             .postgres()
