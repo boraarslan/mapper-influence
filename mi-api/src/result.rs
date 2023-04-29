@@ -45,6 +45,7 @@ pub enum Kind {
     Validation { msg: String },
     Cookie,
     Json { code: StatusCode, msg: String },
+    Database { msg: String },
 }
 
 impl IntoResponse for AppError {
@@ -87,6 +88,7 @@ impl IntoResponse for AppError {
                 (StatusCode::INTERNAL_SERVER_ERROR, influence_err.to_string()).into_response()
             }
             Kind::Validation { msg } => (StatusCode::BAD_REQUEST, msg).into_response(),
+            Kind::Database { msg } => (StatusCode::INTERNAL_SERVER_ERROR, msg).into_response(),
         }
     }
 }
@@ -169,6 +171,14 @@ impl From<ValidationErrors> for AppError {
                 .as_ref()
                 .map(|cow| cow.to_string())
                 .unwrap_or("Unknown validation error.".to_string()),
+        })
+    }
+}
+
+impl From<sqlx::Error> for AppError {
+    fn from(error: sqlx::Error) -> Self {
+        AppError(Kind::Database {
+            msg: error.to_string(),
         })
     }
 }
