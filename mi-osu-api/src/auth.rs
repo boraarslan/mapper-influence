@@ -93,7 +93,7 @@ async fn request_token(
         .form(&body)
         .send()
         .await?;
-    
+
     response_result.try_deserialising().await
 }
 
