@@ -7,6 +7,7 @@ use mi_api::api::influence::{
     create_influence, delete_influence, get_influences, update_influence_info,
     update_influence_level,
 };
+use mi_api::api::leaderboard::get_user_leaderboard;
 use mi_api::api::redoc::redoc;
 use mi_api::api::user::{
     create_user, get_full_user, get_full_user_by_id, get_user, get_user_by_id, update_user,
@@ -46,10 +47,15 @@ fn user_route() -> Router<SharedState> {
         .route("/update", post(update_user))
 }
 
+fn leaderboard_route() -> Router<SharedState> {
+    Router::new().route("/user", get(get_user_leaderboard))
+}
+
 fn api_route() -> Router<SharedState> {
     Router::new()
         .nest("/user", user_route())
         .nest("/influence", influence_route())
+        .nest("/leaderboard", leaderboard_route())
 }
 
 #[tokio::main]
