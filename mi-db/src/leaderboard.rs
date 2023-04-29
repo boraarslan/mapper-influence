@@ -29,7 +29,7 @@ pub async fn get_user_leaderboard(db: &PgPool) -> Result<Vec<LeaderboardUser>, s
             top_influencers.influence_count
         FROM top_influencers
         INNER JOIN users ON id = from_id
-        INNER JOIN users_osu_data ON users.id = users_osu_data.user_id"
+        INNER JOIN users_osu_data ON users_osu_data.user_id = from_id"
     )
     .fetch_all(db)
     .await
