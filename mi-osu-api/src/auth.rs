@@ -93,9 +93,8 @@ async fn request_token(
         .form(&body)
         .send()
         .await?;
-    let response_result: Result<AuthResponseBody, OsuApiError> =
-        response_result.try_deserialising().await;
-    response_result
+    
+    response_result.try_deserialising().await
 }
 
 /// Authorization code refresh method. Returns an [`AuthResponseBody`] with fresh codes to be used.

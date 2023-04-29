@@ -24,7 +24,7 @@ pub type ReqwestError = reqwest::Error;
 pub enum OsuApiError {
     #[error("Request failed with HTTP Status code.")]
     HTTPError { body: String, error: StatusCode },
-    #[error("Request failed because of internal errors before or after the request.")]
+    #[error("An internal error has occurred.")]
     InternalError(#[from] ReqwestError),
     #[error(
         "Invalid BeatmapType argument. Available variants for this method are Graveyard, Loved, \

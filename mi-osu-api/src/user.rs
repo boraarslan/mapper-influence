@@ -163,8 +163,7 @@ pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<Use
         .bearer_auth(auth_token)
         .send()
         .await?;
-    let response_result: Result<User, OsuApiError> = response_result.try_deserialising().await;
-    response_result
+    response_result.try_deserialising().await
 }
 
 /// A request to get [`User`] data with their ID.
@@ -175,8 +174,7 @@ pub async fn request_user(
 ) -> Result<User, OsuApiError> {
     let url = format!("https://osu.ppy.sh/api/v2/users/{}", user_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    let response_result: Result<User, OsuApiError> = response_result.try_deserialising().await;
-    response_result
+    response_result.try_deserialising().await
 }
 
 /// A request to get [`SearchResult`] data.
@@ -195,7 +193,5 @@ pub async fn search_user(
         .query(&[("query", query), ("page", &page.to_string())])
         .send()
         .await?;
-    let response_result: Result<SearchResultWrapper, OsuApiError> =
-        response_result.try_deserialising().await;
-    response_result
+    response_result.try_deserialising().await
 }
