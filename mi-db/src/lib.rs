@@ -8,6 +8,7 @@ use bb8::Pool;
 use bb8_redis::RedisConnectionManager;
 
 pub use crate::influence::*;
+pub use crate::leaderboard::*;
 pub use crate::user::*;
 
 pub type RedisPool = Pool<RedisConnectionManager>;
