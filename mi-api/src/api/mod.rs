@@ -8,6 +8,7 @@ use crate::result::{AppError, AppResult};
 pub mod auth;
 pub mod html;
 pub mod influence;
+pub mod leaderboard;
 pub mod redoc;
 pub mod user;
 
