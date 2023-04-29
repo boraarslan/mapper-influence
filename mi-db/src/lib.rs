@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod influence;
+pub mod leaderboard;
 pub mod user;
 pub mod user_lock;
 
