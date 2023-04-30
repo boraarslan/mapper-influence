@@ -1,29 +1,13 @@
 import Link from "next/link";
-import React, { FC, useEffect } from "react";
+import { FC } from "react";
 import { UserBase } from "@libs/types/user";
 import Badge from "./Badge";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-const textFit = require("textfit");
 
 import styles from "./style.module.scss";
-import { useMediaQuery } from "usehooks-ts";
-import useMatchesWindowSize from "@hooks/useMatchesWindowSize";
 
 type Props = { userData: UserBase };
 
 const BaseProfileCard: FC<Props> = ({ userData }) => {
-  const matches = useMatchesWindowSize();
-  const runFitText = () =>
-    textFit(document.getElementsByClassName(styles.name));
-
-  // Fit text to card on resize and on mount
-  useEffect(() => {
-    document.fonts.ready.then(() => runFitText());
-  }, []);
-  useEffect(() => {
-    runFitText();
-  }, [matches]);
-
   const Badges = userData.groups?.map((group) => (
     <Badge key={group.id} group={group} />
   ));
