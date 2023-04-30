@@ -5,6 +5,7 @@ use axum_macros::FromRequest;
 use mi_db::auth::AuthError;
 use mi_db::user_lock::LockError;
 use mi_db::{InfluenceError, UserError};
+use mi_osu_api::OsuApiError;
 use serde::Serialize;
 use validator::ValidationErrors;
 
@@ -37,23 +38,40 @@ impl AppError {
 
 #[derive(Debug)]
 pub enum Kind {
-    Reqwest { msg: String },
+    OsuApi(OsuApiError),
     Auth { msg: String },
     User(UserError),
     Influence(InfluenceError),
     Validation { msg: String },
     Cookie,
     Json { code: StatusCode, msg: String },
+    Database { msg: String },
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> axum::response::Response {
         match self.0 {
-            Kind::Reqwest { msg } => (
-                StatusCode::SERVICE_UNAVAILABLE,
-                format!("API failed to make the HTTP request: {}", msg),
-            )
-                .into_response(),
+            Kind::OsuApi(osu_api_error) => {
+                let (code, msg) = match osu_api_error {
+                    OsuApiError::HTTPError { body, error } => (
+                        StatusCode::SERVICE_UNAVAILABLE,
+                        format!(
+                            "Response returned with error code {} and body: {}",
+                            error, body
+                        ),
+                    ),
+                    OsuApiError::InternalError(_) | OsuApiError::InvalidBeatmapType => {
+                        (StatusCode::INTERNAL_SERVER_ERROR, osu_api_error.to_string())
+                    }
+                };
+
+                (
+                    code,
+                    format!("osu! API failed to make the HTTP request: {}", msg),
+                )
+                    .into_response()
+            }
+
             Kind::Auth { msg } => {
                 (StatusCode::UNAUTHORIZED, format!("Auth is failed: {}", msg)).into_response()
             }
@@ -70,15 +88,14 @@ impl IntoResponse for AppError {
                 (StatusCode::INTERNAL_SERVER_ERROR, influence_err.to_string()).into_response()
             }
             Kind::Validation { msg } => (StatusCode::BAD_REQUEST, msg).into_response(),
+            Kind::Database { msg } => (StatusCode::INTERNAL_SERVER_ERROR, msg).into_response(),
         }
     }
 }
 
-impl From<reqwest::Error> for AppError {
-    fn from(err: reqwest::Error) -> Self {
-        AppError(Kind::Reqwest {
-            msg: err.to_string(),
-        })
+impl From<OsuApiError> for AppError {
+    fn from(err: OsuApiError) -> Self {
+        AppError(Kind::OsuApi(err))
     }
 }
 
@@ -154,6 +171,14 @@ impl From<ValidationErrors> for AppError {
                 .as_ref()
                 .map(|cow| cow.to_string())
                 .unwrap_or("Unknown validation error.".to_string()),
+        })
+    }
+}
+
+impl From<sqlx::Error> for AppError {
+    fn from(error: sqlx::Error) -> Self {
+        AppError(Kind::Database {
+            msg: error.to_string(),
         })
     }
 }

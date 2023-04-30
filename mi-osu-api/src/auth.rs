@@ -19,7 +19,7 @@ use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
-use crate::ReqwestError;
+use crate::{OsuApiError, ResponseWithBody};
 
 static OSU_CLIENT_ID: Lazy<String> = Lazy::new(|| {
     std::env::var("OSU_CLIENT_ID").expect("Environment variable OSU_CLIENT_ID is not set.")
@@ -87,13 +87,14 @@ pub struct AuthResponseBody {
 async fn request_token(
     client: &Client,
     body: AuthRequest,
-) -> Result<AuthResponseBody, ReqwestError> {
+) -> Result<AuthResponseBody, OsuApiError> {
     let response_result = client
         .post("https://osu.ppy.sh/oauth/token")
         .form(&body)
         .send()
         .await?;
-    response_result.json::<AuthResponseBody>().await
+
+    response_result.try_deserialising().await
 }
 
 /// Authorization code refresh method. Returns an [`AuthResponseBody`] with fresh codes to be used.
@@ -103,7 +104,7 @@ async fn request_token(
 pub async fn refresh_token(
     client: &Client,
     refresh_token: String,
-) -> Result<AuthResponseBody, ReqwestError> {
+) -> Result<AuthResponseBody, OsuApiError> {
     let refresh_request = AuthRequest::refresh(refresh_token);
     request_token(client, refresh_request).await
 }
@@ -114,7 +115,7 @@ pub async fn refresh_token(
 /// For more information, check the [authorization code grant] section on osu! API documentation.
 ///
 /// [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
-pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseBody, ReqwestError> {
+pub async fn access_token(client: &Client, code: String) -> Result<AuthResponseBody, OsuApiError> {
     let access_request = AuthRequest::access(code);
     request_token(client, access_request).await
 }
