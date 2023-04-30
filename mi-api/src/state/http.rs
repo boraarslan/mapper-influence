@@ -1,8 +1,8 @@
 use axum::extract::FromRef;
 use mi_osu_api::auth::{access_token, refresh_token, AuthResponseBody};
 use mi_osu_api::{
-    request_token_user, request_user, request_user_beatmapsets, BeatmapError, BeatmapType,
-    Beatmapset, ReqwestError, User,
+    request_token_user, request_user, request_user_beatmapsets, BeatmapType, Beatmapset,
+    OsuApiError, User,
 };
 use tracing::instrument;
 
@@ -24,7 +24,7 @@ impl HttpClient {
     pub async fn get_osu_refresh_token(
         &self,
         osu_refresh_token: String,
-    ) -> Result<AuthResponseBody, ReqwestError> {
+    ) -> Result<AuthResponseBody, OsuApiError> {
         refresh_token(&self.client, osu_refresh_token)
             .log_elapsed()
             .await
@@ -34,12 +34,12 @@ impl HttpClient {
     pub async fn get_osu_access_token(
         &self,
         code: String,
-    ) -> Result<AuthResponseBody, ReqwestError> {
+    ) -> Result<AuthResponseBody, OsuApiError> {
         access_token(&self.client, code).log_elapsed().await
     }
 
     #[instrument(skip(self, auth_token), fields(elapsed), err)]
-    pub async fn request_osu_token_user(&self, auth_token: &str) -> Result<User, ReqwestError> {
+    pub async fn request_osu_token_user(&self, auth_token: &str) -> Result<User, OsuApiError> {
         request_token_user(&self.client, auth_token)
             .log_elapsed()
             .await
@@ -50,7 +50,7 @@ impl HttpClient {
         &self,
         auth_token: &str,
         user_id: i64,
-    ) -> Result<User, ReqwestError> {
+    ) -> Result<User, OsuApiError> {
         request_user(&self.client, auth_token, user_id)
             .log_elapsed()
             .await
@@ -61,7 +61,7 @@ impl HttpClient {
         &self,
         user_id: i64,
         auth_token: &str,
-    ) -> Result<Vec<Beatmapset>, BeatmapError> {
+    ) -> Result<Vec<Beatmapset>, OsuApiError> {
         let func = async move {
             let results = tokio::try_join!(
                 request_user_beatmapsets(&self.client, auth_token, user_id, BeatmapType::Ranked),

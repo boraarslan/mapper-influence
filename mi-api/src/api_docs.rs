@@ -15,6 +15,7 @@ use crate::api;
         api::influence::delete_influence,
         api::influence::update_influence_level,
         api::influence::update_influence_info,
+        api::leaderboard::get_user_leaderboard,
     ),
     components(schemas(
         mi_db::User,
@@ -22,6 +23,7 @@ use crate::api;
         mi_db::FeaturedMaps,
         mi_db::Maps,
         mi_db::Influence,
+        mi_db::LeaderboardUser,
         mi_osu_api::Beatmapset,
         mi_osu_api::BeatmapsetNames,
         mi_osu_api::Beatmap ,
