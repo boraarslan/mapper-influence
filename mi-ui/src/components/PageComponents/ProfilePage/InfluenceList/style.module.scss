@@ -52,6 +52,13 @@
         background-color: $color-background-card;
       }
 
+      .cardWrapper {
+        height: 100%;
+        .editable {
+          margin-top: $spacing * 4.5;
+        }
+      }
+
       .description {
         min-height: 100%;
         max-width: 70ch;

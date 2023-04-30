@@ -5,16 +5,16 @@ import Badge from "./Badge";
 
 import styles from "./style.module.scss";
 
-type Props = { userData: UserBase };
+type Props = { userData: UserBase; className?: string };
 
-const BaseProfileCard: FC<Props> = ({ userData }) => {
+const BaseProfileCard: FC<Props> = ({ userData, className = "" }) => {
   const Badges = userData.groups?.map((group) => (
     <Badge key={group.id} group={group} />
   ));
 
   return (
     <Link href={`/profile/${userData.id}`} passHref={true}>
-      <a className={styles.cardWrapper}>
+      <a className={`${styles.cardWrapper} ${className}`}>
         <div className={styles.photoCell}>
           <img
             src={userData.avatarUrl}

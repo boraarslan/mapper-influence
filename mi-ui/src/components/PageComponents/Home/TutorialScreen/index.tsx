@@ -8,6 +8,8 @@ import { FC, ReactNode, useState } from "react";
 
 import styles from "./style.module.scss";
 
+// TODO: Add featured map controls
+
 const TutorialStep: FC<{
   number: number;
   title: string;
@@ -57,8 +59,8 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           title={"In your profile, describe how the mapper influenced you"}
         >
           <div className={styles.profileSide}>
-            <BaseProfileCard userData={influenceData.profileData} />
             <InfluenceType editable />
+            <BaseProfileCard userData={influenceData.profileData} />
           </div>
           <div className={styles.descriptionSide}>
             <EditableDescription

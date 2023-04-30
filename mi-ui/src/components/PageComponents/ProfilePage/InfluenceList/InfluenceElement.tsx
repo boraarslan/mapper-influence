@@ -14,9 +14,15 @@ const InfluenceElement: FC<{
   return (
     <>
       <div className={styles.influenceRow}>
-        <div className={styles.cardSide}>
-          <BaseProfileCard userData={influenceData.profileData} />
-          <InfluenceType editable influenceType={influenceData.type} />
+        <div className={styles.cardWrapper}>
+          <InfluenceType
+            editable={editable}
+            influenceType={influenceData.type}
+          />
+          <BaseProfileCard
+            userData={influenceData.profileData}
+            className={`${editable ? styles.editable : ""}`}
+          />
         </div>
         <EditableDescription
           className={styles.description}
