@@ -1,8 +1,9 @@
 import { InfluenceTypeEnum } from "@libs/types/influence";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import Arrow from "@components/SvgComponents/Arrow";
 
 import styles from "./style.module.scss";
+import { useOnClickOutside } from "usehooks-ts";
 
 type Props = {
   editable?: boolean;
@@ -16,6 +17,11 @@ const InfluenceType: FC<Props> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(influenceType);
 
+  const ref = useRef(null);
+  useOnClickOutside(ref, () => {
+    if (isOpen) setIsOpen(false);
+  });
+
   function onRemove() {
     // TODO: Remove influence from list
   }
@@ -24,7 +30,11 @@ const InfluenceType: FC<Props> = ({
   if (editable)
     return (
       <>
-        <button className={dropdownClass} onClick={() => setIsOpen((t) => !t)}>
+        <button
+          className={dropdownClass}
+          onClick={() => setIsOpen((t) => !t)}
+          ref={ref}
+        >
           <span>
             {selectedType}{" "}
             <Arrow className={styles.arrow} color="var(--textColor)" />
