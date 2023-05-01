@@ -40,8 +40,8 @@ h6 {
 }
 
 * {
+  font-family: inherit;
   box-sizing: border-box;
-  font-family: "Comfortaa", cursive;
   font-size: 1rem;
 
   color: $color-text;

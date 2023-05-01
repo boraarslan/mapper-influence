@@ -117,3 +117,18 @@
     color: $color-text;
   }
 }
+
+%resetButtonDefaults {
+  color: inherit;
+  background-color: inherit;
+  outline: none;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    color: inherit;
+    background-color: inherit;
+    outline: none;
+  }
+}

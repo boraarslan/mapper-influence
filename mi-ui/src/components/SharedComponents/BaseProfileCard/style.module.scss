@@ -20,15 +20,15 @@
   .name {
     grid-row: 2;
     grid-column: span 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 100%;
     height: 1.5rem;
     padding-inline: $spacing / 2;
-    text-align: center;
     font-size: 1.5rem;
     font-weight: 800;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .rankedStat,
@@ -55,6 +55,7 @@
   .rankedStat {
     grid-column: 3;
     grid-row: 1;
+    text-align: left;
   }
 
   .flag {

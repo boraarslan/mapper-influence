@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { UserProfile, UserBase } from "@libs/types/user";
 import InfluenceList from "./InfluenceList";
@@ -13,11 +13,27 @@ type Props = { userData: UserProfile; editable?: boolean };
 const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
   const { logout } = useSessionStore();
   const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
+    "influences"
+  );
 
   function onSignOut() {
     logout();
     router.push("/");
   }
+
+  const InfluenceTab = useMemo(() => {
+    switch (selectedTab) {
+      case "influences":
+        return (
+          <InfluenceList influences={userData.influences} editable={editable} />
+        );
+      case "mentions":
+        return <MentionList mentions={userData.mentions} />;
+      default:
+        return <></>;
+    }
+  }, [selectedTab, userData, editable]);
 
   return (
     <div className={styles.profilePage}>
@@ -28,10 +44,23 @@ const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
         profileData={userData as UserBase}
         editable={editable}
       />
-      <div className={styles.doubleCol}>
-        <InfluenceList influences={userData.influences} editable={editable} />
-        <MentionList mentions={userData.mentions} />
+
+      <div className={styles.buttons}>
+        <button
+          className={selectedTab === "influences" ? styles.selected : ""}
+          onClick={() => setSelectedTab("influences")}
+        >
+          Influences
+        </button>
+        <button
+          className={selectedTab === "mentions" ? styles.selected : ""}
+          onClick={() => setSelectedTab("mentions")}
+        >
+          Mentions
+        </button>
       </div>
+      <div className={styles.content}>{InfluenceTab}</div>
+
       <button onClick={onSignOut}>Sign out</button>
     </div>
   );
