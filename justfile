@@ -63,3 +63,6 @@ docker-build: docker-build-grafana-agent
 	--build-arg OSU_CLIENT_SECRET=$OSU_CLIENT_SECRET \
 	--build-arg OSU_REDIRECT_URI=$OSU_REDIRECT_URI \
 	--build-arg RUST_LOG=$RUST_LOG
+
+watch:
+	cargo watch --features="db-tests" -c -x check -x test -x clippy -x run

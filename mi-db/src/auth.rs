@@ -118,6 +118,7 @@ mod test {
     use super::*;
 
     async fn create_db_pool() -> RedisPool {
+        dotenvy::dotenv().ok();
         let local_redis_url = std::env::var("MI_TEST_REDIS_URL").unwrap();
         let manager = bb8_redis::RedisConnectionManager::new(local_redis_url).unwrap();
 
