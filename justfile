@@ -40,10 +40,10 @@ export-ui: install-ui-deps
 	cd mi-ui && npm run export
 
 host: export-ui
-	cd mi-api && cargo run
+	cargo run
 
 host-release: export-ui
-	cd mi-api && cargo run --release
+	&& cargo run --release
 
 docker-build-grafana-agent:
 	docker build -t mi-grafana-agent -f Dockerfile.grafana_agent . \
