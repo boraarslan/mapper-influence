@@ -1,4 +1,5 @@
 use axum::extract::FromRef;
+use mi_core::future_log_ext::FutureLogExt;
 use mi_db::{FeaturedMaps, FullUser, Influence, InfluenceError, LeaderboardUser, User, UserError};
 use mi_osu_api::Beatmapset;
 use sqlx::postgres::PgPoolOptions;
@@ -6,7 +7,6 @@ use sqlx::PgPool;
 use tracing::instrument;
 
 use super::SharedState;
-use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct PgDb {

@@ -1,5 +1,5 @@
 [workspace]
-members = ["mi-api", "mi-db", "mi-osu-api"]
+members = ["mi-api", "mi-db", "mi-osu-api", "mi-core"]
 
 [workspace.package]
 version = "0.0.0"
@@ -46,3 +46,4 @@ validator = { version = "0.16.0", features = ["derive"] }
 
 mi-db = { version = "0.0.0", path = "./mi-db" }
 mi-osu-api = { version = "0.0.0", path = "./mi-osu-api" }
+mi-core = { version = "0.0.0", path = "./mi-core" }

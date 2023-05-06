@@ -1,4 +1,5 @@
 use axum::extract::FromRef;
+use mi_core::future_log_ext::FutureLogExt;
 use mi_osu_api::auth::{access_token, refresh_token, AuthResponseBody};
 use mi_osu_api::{
     request_token_user, request_user, request_user_beatmapsets, BeatmapType, Beatmapset,
@@ -7,7 +8,6 @@ use mi_osu_api::{
 use tracing::instrument;
 
 use super::SharedState;
-use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct HttpClient {

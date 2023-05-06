@@ -11,7 +11,6 @@ use tower_cookies::Cookies;
 
 pub mod api;
 pub mod api_docs;
-pub mod future_log_ext;
 pub mod request_id;
 pub mod result;
 pub mod state;

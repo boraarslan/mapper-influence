@@ -1,11 +1,11 @@
 use axum::extract::FromRef;
+use mi_core::future_log_ext::FutureLogExt;
 use mi_db::auth::AuthResult;
 use mi_db::user_lock::LockError;
 use mi_db::RedisPool;
 use tracing::instrument;
 
 use super::SharedState;
-use crate::future_log_ext::FutureLogExt;
 
 #[derive(Debug, Clone)]
 pub struct RedisDb {

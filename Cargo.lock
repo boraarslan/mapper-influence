@@ -645,7 +645,6 @@ checksum = "23342abe12aba583913b2e62f22225ff9c950774065e4bfb61a19cd9770fec40"
 dependencies = [
  "futures-channel",
  "futures-core",
- "futures-executor",
  "futures-io",
  "futures-sink",
  "futures-task",
@@ -1158,13 +1157,13 @@ dependencies = [
  "chrono",
  "dotenvy",
  "hyper",
+ "mi-core",
  "mi-db",
  "mi-osu-api",
  "once_cell",
  "opentelemetry",
  "opentelemetry-otlp",
  "parking_lot 0.12.1",
- "pin-project-lite",
  "rand_chacha",
  "redis",
  "reqwest",
@@ -1184,6 +1183,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mi-core"
+version = "0.0.0"
+dependencies = [
+ "pin-project-lite",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "mi-db"
 version = "0.0.0"
 dependencies = [
@@ -1191,7 +1199,6 @@ dependencies = [
  "bb8-redis",
  "chrono",
  "dotenvy",
- "futures",
  "mi-osu-api",
  "once_cell",
  "redis",
@@ -1209,7 +1216,6 @@ name = "mi-osu-api"
 version = "0.0.0"
 dependencies = [
  "async-trait",
- "dotenvy",
  "once_cell",
  "reqwest",
  "serde",
