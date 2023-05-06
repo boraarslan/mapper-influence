@@ -3,6 +3,7 @@ pub mod influence;
 pub mod leaderboard;
 pub mod user;
 pub mod user_lock;
+pub mod error;
 
 use bb8::Pool;
 use bb8_redis::RedisConnectionManager;
