@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
-use sqlx::{PgPool};
+
+use sqlx::PgPool;
 
 struct DbErrorObject {
     pub error_type: ErrorType,
@@ -32,7 +32,8 @@ impl DbErrorObject {
 
     pub async fn insert_to_db(&self, db: &PgPool) -> Result<i32, sqlx::Error> {
         let result = sqlx::query!(
-            "INSERT INTO error_table (error_message, error_data, error_code, error_category) VALUES ($1, $2, $3, $4) RETURNING id as \"id: i32\"",
+            "INSERT INTO error_table (error_message, error_data, error_code, error_category) \
+             VALUES ($1, $2, $3, $4) RETURNING id as \"id: i32\"",
             self.message,
             self.data,
             self.error_type as i32,
