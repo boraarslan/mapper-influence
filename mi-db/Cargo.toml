@@ -27,6 +27,7 @@ sqlx = { workspace = true, features = ["offline"] }
 tokio = { workspace = true }
 
 [dev-dependencies]
+dotenvy = { workspace = true }
 futures = { workspace = true }
 once_cell = { workspace = true }
 tokio = { workspace = true }

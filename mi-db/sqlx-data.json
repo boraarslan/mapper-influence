@@ -1,19 +1,5 @@
 {
   "db": "PostgreSQL",
-  "1a2f084f2c424994f43fdd10485169e7cb5635d18b1be1d5b2298f3a525760ba": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int8",
-          "Text",
-          "Text"
-        ]
-      }
-    },
-    "query": "\n        INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3)"
-  },
   "3218b6fc70e46c329ae7ba4a313bcb9a40d5eb7713de7c7ee884dd9db41dda34": {
     "describe": {
       "columns": [],
@@ -147,6 +133,48 @@
       }
     },
     "query": "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id"
+  },
+  "62c983bb3c745b072b15ee523820e5e9403e3819ea61289326b626ef8f5a9c55": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "ranked_map_count",
+          "ordinal": 3,
+          "type_info": "Int4"
+        },
+        {
+          "name": "influence_count",
+          "ordinal": 4,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        null
+      ],
+      "parameters": {
+        "Left": []
+      }
+    },
+    "query": "WITH top_influencers AS (\n            SELECT from_id, COUNT(*) AS influence_count\n            FROM influences\n            GROUP BY from_id\n            ORDER BY influence_count DESC\n            LIMIT 20\n        )\n        SELECT\n            users.id,\n            users.user_name,\n            users.profile_picture,\n            users_osu_data.ranked_count as ranked_map_count,\n            top_influencers.influence_count\n        FROM top_influencers\n        INNER JOIN users ON id = from_id\n        INNER JOIN users_osu_data ON users_osu_data.user_id = from_id"
   },
   "6880dd42e3f4c19b6e694693c4cfebc92066460c49fc11d960d3f7b784e9389f": {
     "describe": {
@@ -320,6 +348,40 @@
       }
     },
     "query": "INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"
+  },
+  "97cb4888ec1fdfd661131764065fc9d022e722e91f672c487e1b097b7df6d9ce": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING *"
   },
   "b20516efd17ee210d247e5b55deafcfaa3b754906bfdce8252ca90dfa015a213": {
     "describe": {

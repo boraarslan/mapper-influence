@@ -55,7 +55,7 @@ RUN addgroup -S myuser && adduser -S myuser -G myuser
 WORKDIR /app
 
 COPY --from=builder /usr/src/mapper-influence/target/x86_64-unknown-linux-musl/release/mi-api /usr/local/bin
-COPY --from=ui-builder /usr/src/mapper-influence/mi-api/pages /app/pages
+COPY --from=ui-builder /usr/src/mapper-influence/pages /app/pages
 
 USER myuser
 
