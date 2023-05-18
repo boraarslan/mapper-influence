@@ -167,8 +167,9 @@ pub async fn request_user_beatmapsets(
         user, beatmap_type
     );
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }
+
 /// A request to get individual [`Beatmap`] data.
 pub async fn request_beatmap(
     client: &Client,
@@ -177,7 +178,7 @@ pub async fn request_beatmap(
 ) -> Result<Beatmap, OsuApiError> {
     let url = format!("https://osu.ppy.sh/api/v2/beatmaps/{}", beatmap_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }
 
 /// A request to get individual [`Beatmapset`] data.
@@ -188,5 +189,5 @@ pub async fn request_beatmapset(
 ) -> Result<Beatmapset, OsuApiError> {
     let url = format!("https://osu.ppy.sh/api/v2/beatmapsets/{}", beatmapset_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }

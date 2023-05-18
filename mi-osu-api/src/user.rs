@@ -163,7 +163,7 @@ pub async fn request_token_user(client: &Client, auth_token: &str) -> Result<Use
         .bearer_auth(auth_token)
         .send()
         .await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }
 
 /// A request to get [`User`] data with their ID.
@@ -174,7 +174,7 @@ pub async fn request_user(
 ) -> Result<User, OsuApiError> {
     let url = format!("https://osu.ppy.sh/api/v2/users/{}", user_id);
     let response_result = client.get(url).bearer_auth(auth_token).send().await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }
 
 /// A request to get [`SearchResult`] data.
@@ -193,5 +193,5 @@ pub async fn search_user(
         .query(&[("query", query), ("page", &page.to_string())])
         .send()
         .await?;
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }

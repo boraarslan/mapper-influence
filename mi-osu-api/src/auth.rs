@@ -94,7 +94,7 @@ async fn request_token(
         .send()
         .await?;
 
-    response_result.try_deserialising().await
+    response_result.try_deser_api_response().await
 }
 
 /// Authorization code refresh method. Returns an [`AuthResponseBody`] with fresh codes to be used.
