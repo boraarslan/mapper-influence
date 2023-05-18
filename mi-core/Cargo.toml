@@ -16,3 +16,8 @@ sqlx = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 validator = { workspace = true }
+
+[build-dependencies]
+dotenvy = { workspace = true }
+sqlx = { workspace = true, features = ["offline"] }
+tokio = { workspace = true }
