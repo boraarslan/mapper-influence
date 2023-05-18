@@ -1,5 +1,4 @@
 pub mod auth;
-pub mod error;
 pub mod influence;
 pub mod leaderboard;
 pub mod user;

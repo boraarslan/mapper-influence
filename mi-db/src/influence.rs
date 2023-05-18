@@ -1,6 +1,9 @@
+use mi_core::error::{AppErrorExt, ErrorType};
+use mi_core::INTERNAL_DB_ERROR_MESSAGE;
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
+use tracing::{error, warn};
 use utoipa::ToSchema;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
@@ -41,9 +44,7 @@ pub async fn get_all_influences_by_from_id(
     .await;
 
     match search_result {
-        Ok(influences) if influences.is_empty() => Err(InfluenceError::InfluenceNotFound(user_id)),
         Ok(influences) => Ok(influences),
-        Err(sqlx::Error::RowNotFound) => Err(InfluenceError::InfluenceNotFound(user_id)),
         Err(db_err) => Err(InfluenceError::from(db_err)),
     }
 }
@@ -61,9 +62,7 @@ pub async fn get_all_influences_by_to_id(
     .await;
 
     match search_result {
-        Ok(influences) if influences.is_empty() => Err(InfluenceError::InfluenceNotFound(user_id)),
         Ok(influences) => Ok(influences),
-        Err(sqlx::Error::RowNotFound) => Err(InfluenceError::InfluenceNotFound(user_id)),
         Err(db_err) => Err(InfluenceError::from(db_err)),
     }
 }
@@ -172,8 +171,6 @@ pub async fn delete_influence(from_id: i64, to_id: i64, db: &PgPool) -> Result<(
 
 #[derive(Debug, Error)]
 pub enum InfluenceError {
-    #[error("No influence with from_id `{0}` exists.")]
-    InfluenceNotFound(i64),
     #[error("No influence with from_id `{0}` and to_id `{1}` exists.")]
     InfluenceNotFoundWithPrimaryKey(i64, i64),
     #[error("User does not exist on `users` table. from_id `{0}`, to_id `{1}`")]
@@ -182,6 +179,41 @@ pub enum InfluenceError {
     InfluenceAlreadyExists(i64, i64),
     #[error("Internal database error: {0}")]
     DatabaseError(#[from] sqlx::Error),
+}
+
+impl AppErrorExt for InfluenceError {
+    fn user_message(&self) -> String {
+        match self {
+            InfluenceError::InfluenceNotFoundWithPrimaryKey(_, _) => self.to_string(),
+            InfluenceError::UserDoesNotExist(_, _) => self.to_string(),
+            InfluenceError::InfluenceAlreadyExists(_, _) => self.to_string(),
+            InfluenceError::DatabaseError(_) => INTERNAL_DB_ERROR_MESSAGE.to_string(),
+        }
+    }
+
+    fn error_type(&self) -> ErrorType {
+        match self {
+            InfluenceError::InfluenceNotFoundWithPrimaryKey(_, _) => ErrorType::DataNotFound,
+            InfluenceError::UserDoesNotExist(_, _) => ErrorType::DataNotFound,
+            InfluenceError::InfluenceAlreadyExists(_, _) => ErrorType::DuplicateEntry,
+            InfluenceError::DatabaseError(_) => ErrorType::DatabaseError,
+        }
+    }
+
+    fn log_error(&self) {
+        match self {
+            InfluenceError::InfluenceNotFoundWithPrimaryKey(from_id, to_id) => {
+                warn!(from_id, to_id, "{}", self.to_string())
+            }
+            InfluenceError::UserDoesNotExist(from_id, to_id) => {
+                warn!(from_id, to_id, "{}", self.to_string())
+            }
+            InfluenceError::InfluenceAlreadyExists(from_id, to_id) => {
+                warn!(from_id, to_id, "{}", self.to_string())
+            }
+            InfluenceError::DatabaseError(db_err) => error!("{}", db_err),
+        }
+    }
 }
 
 #[cfg(all(test, feature = "db-tests"))]
@@ -210,12 +242,9 @@ mod tests {
 
     #[sqlx::test]
     async fn test_influence_db(db: PgPool) {
-        let error = get_all_influences_by_from_id(1, &db).await.unwrap_err();
+        let response = get_all_influences_by_from_id(1, &db).await.unwrap();
 
-        match error {
-            InfluenceError::InfluenceNotFound(1) => {}
-            _ => panic!("Error should be returned on empty response"),
-        }
+        assert!(response.is_empty());
 
         let first_user = user_for_test(1);
         let second_user = user_for_test(2);
@@ -271,14 +300,11 @@ mod tests {
         delete_influence(second_user.id, first_user.id, &db)
             .await
             .unwrap();
-        let error = get_all_influences_by_from_id(second_user.id, &db)
+        let response = get_all_influences_by_from_id(second_user.id, &db)
             .await
-            .unwrap_err();
+            .unwrap();
 
-        match error {
-            InfluenceError::InfluenceNotFound(2) => {}
-            _ => panic!("Error should be returned on empty response"),
-        }
+        assert!(response.is_empty());
 
         update_influence_info(first_user.id, second_user.id, Some("Some info"), &db)
             .await
