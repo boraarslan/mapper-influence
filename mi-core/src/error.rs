@@ -15,7 +15,6 @@ pub const INTERNAL_SERVER_ERROR_MESSAGE: &str = "An internal server error occurr
 /// This trait is used to convert errors into responses and log them.
 /// It also provides a way to customize the error message that is sent to the user.
 pub trait AppErrorExt: Error + Send + Sync + 'static {
-
     /// Message that the user sees on the response. Should be short and non-technical.
     fn user_message(&self) -> String;
 

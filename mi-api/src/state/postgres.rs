@@ -30,7 +30,7 @@ impl PgDb {
         }
     }
 
-    #[instrument(skip(self), fields(elapsed),ret)]
+    #[instrument(skip(self), fields(elapsed), ret)]
     pub async fn get_user(&self, user_id: i64) -> Result<User, UserError> {
         mi_db::get_user(user_id, &self.pool).log_elapsed().await
     }
@@ -160,7 +160,7 @@ impl PgDb {
             .await
     }
 
-    #[instrument(skip(self),  fields(elapsed), ret)]
+    #[instrument(skip(self), fields(elapsed), ret)]
     pub async fn get_user_leaderboard(&self) -> Result<Vec<LeaderboardUser>, LeaderboardError> {
         mi_db::get_user_leaderboard(&self.pool)
             .log_elapsed()
