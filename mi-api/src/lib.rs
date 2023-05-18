@@ -4,10 +4,13 @@ use axum::extract::FromRequestParts;
 use axum::http;
 use axum::http::request::Parts;
 use hyper::StatusCode;
-use result::{AppError, AppResult};
+use mi_core::AppErrorExt;
+use result::AppResult;
 use state::AuthUser;
+use thiserror::Error;
 use tokio::time::Instant;
 use tower_cookies::Cookies;
+use tracing::error;
 
 pub mod api;
 pub mod api_docs;
@@ -18,15 +21,52 @@ pub mod traces;
 
 const COOKIE_NAME: &str = "mi-session-token";
 
+#[derive(Debug, Error)]
+pub enum SessionError {
+    #[error("Unable to get session cookie")]
+    CookieError,
+    #[error("User's session is expired")]
+    SessionExpired,
+    #[error("Osu auth error: {0}")]
+    OsuAuthError(String),
+}
+
+impl AppErrorExt for SessionError {
+    fn user_message(&self) -> String {
+        match self {
+            SessionError::CookieError => self.to_string(),
+            SessionError::SessionExpired => self.to_string(),
+            SessionError::OsuAuthError(_) => "Unable to authorize with osu!".to_string(),
+        }
+    }
+
+    fn error_type(&self) -> mi_core::ErrorType {
+        match self {
+            SessionError::CookieError => mi_core::ErrorType::AuthorizatonError,
+            SessionError::SessionExpired => mi_core::ErrorType::AuthorizatonError,
+            SessionError::OsuAuthError(_) => mi_core::ErrorType::AuthorizatonError,
+        }
+    }
+
+    fn log_error(&self) {
+        match self {
+            SessionError::CookieError => self.log_error(),
+            SessionError::SessionExpired => self.log_error(),
+            SessionError::OsuAuthError(_) => error!("{}", self),
+        }
+    }
+}
+
 pub fn get_session_cookie(cookies: &Cookies) -> AppResult<u128> {
     match cookies.get(COOKIE_NAME) {
         Some(cookie) => Ok(cookie
             .value()
             .parse()
-            .map_err(|_| AppError::cookie_error())?),
-        None => Err(AppError::cookie_error()),
+            .map_err(|_| SessionError::CookieError)?),
+        None => Err(SessionError::CookieError.into()),
     }
 }
+
 pub struct AuthUserId(i64);
 
 #[async_trait::async_trait]
