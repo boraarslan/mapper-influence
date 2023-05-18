@@ -25,35 +25,35 @@ impl RedisDb {
         Self { pool }
     }
 
-    #[instrument(skip(self, session_token), fields(elapsed), err, ret)]
+    #[instrument(skip(self, session_token), fields(elapsed), ret)]
     pub async fn get_user_id(&self, session_token: u128) -> AuthResult<i64> {
         mi_db::get_user_id(session_token, &self.pool)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err)]
+    #[instrument(skip(self), fields(elapsed))]
     pub async fn get_access_token(&self, user_id: i64) -> AuthResult<String> {
         mi_db::get_access_token(user_id, &self.pool)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err)]
+    #[instrument(skip(self), fields(elapsed))]
     pub async fn get_refresh_token(&self, user_id: i64) -> AuthResult<String> {
         mi_db::get_refresh_token(user_id, &self.pool)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self, session_token), fields(elapsed), err, ret)]
+    #[instrument(skip(self, session_token), fields(elapsed), ret)]
     pub async fn set_session_token(&self, user_id: i64, session_token: u128) -> AuthResult<()> {
         mi_db::set_session_token(user_id, session_token, &self.pool)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self, access_token, refresh_token), fields(elapsed), err, ret)]
+    #[instrument(skip(self, access_token, refresh_token), fields(elapsed), ret)]
     pub async fn set_osu_tokens(
         &self,
         user_id: i64,
@@ -65,19 +65,19 @@ impl RedisDb {
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self), fields(elapsed), ret)]
     pub async fn lock_user(&self, user_id: i64) -> Result<(), LockError> {
         mi_db::lock_user(user_id, &self.pool).log_elapsed().await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self), fields(elapsed), ret)]
     pub async fn is_user_locked(&self, user_id: i64) -> Result<bool, LockError> {
         mi_db::is_user_locked(user_id, &self.pool)
             .log_elapsed()
             .await
     }
 
-    #[instrument(skip(self), fields(elapsed), err, ret)]
+    #[instrument(skip(self), fields(elapsed), ret)]
     pub async fn unlock_user(&self, user_id: i64) -> Result<(), LockError> {
         mi_db::unlock_user(user_id, &self.pool).log_elapsed().await
     }
