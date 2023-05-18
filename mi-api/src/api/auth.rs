@@ -9,7 +9,7 @@ use tracing::info;
 
 use crate::result::{AppError, AppResult};
 use crate::state::SharedState;
-use crate::{get_session_cookie, COOKIE_NAME};
+use crate::{get_session_cookie, SessionError, COOKIE_NAME};
 
 static REDIRECT_URI: Lazy<String> = Lazy::new(|| {
     std::env::var("MI_AUTH_REDIRECT_URI")
@@ -34,14 +34,14 @@ pub async fn authorize_from_osu_api(
     Query(params): Query<OsuAuthResponseParams>,
     cookies: Cookies,
     State(state): State<SharedState>,
-) -> AppResult<Redirect> {
+) -> Result<Redirect, AppError> {
     if let Some(err) = params.error {
         // TODO: Better error handling
-        return Err(AppError::osu_auth_error(&err));
+        return Err(SessionError::OsuAuthError(err).into());
     }
 
     let Some(code) = params.code else {
-        return Err(AppError::osu_auth_error("No code provided"));
+        return Err(SessionError::OsuAuthError("No code provided".to_string()).into());
     };
 
     let auth_response = state.http().get_osu_access_token(code).await?;
