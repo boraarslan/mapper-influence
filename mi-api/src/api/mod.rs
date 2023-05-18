@@ -3,7 +3,8 @@ use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
 use axum_auth::{AuthBearerCustom, Rejection};
 
-use crate::result::{AppError, AppResult};
+use crate::result::AppResult;
+use crate::SessionError;
 
 pub mod auth;
 pub mod html;
@@ -14,7 +15,7 @@ pub mod user;
 
 pub fn get_bearer_auth(bearer_auth: BearerAuth) -> AppResult<Option<u128>> {
     match bearer_auth.0 {
-        Some(token) => Ok(Some(token.parse().map_err(|_| AppError::cookie_error())?)),
+        Some(token) => Ok(Some(token.parse().map_err(|_| SessionError::CookieError)?)),
         None => Ok(None),
     }
 }

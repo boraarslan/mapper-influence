@@ -1,6 +1,10 @@
 use bb8::RunError;
+use mi_core::error::{AppErrorExt, ErrorType};
+use mi_core::INTERNAL_DB_ERROR_MESSAGE;
 use redis::RedisError;
+use secrecy::{ExposeSecret, Secret};
 use thiserror::Error;
+use tracing::{error, warn};
 
 use crate::RedisPool;
 
@@ -18,7 +22,10 @@ pub async fn get_user_id(session_token: u128, db: &RedisPool) -> AuthResult<i64>
 
     match token {
         Some(token) => Ok(token),
-        None => Err(AuthError::ValueNotFound),
+        None => Err(AuthError::ValueNotFound {
+            value: Secret::new(session_token.to_string()),
+            expected: "user_id",
+        }),
     }
 }
 
@@ -32,7 +39,10 @@ pub async fn get_access_token(user_id: i64, db: &RedisPool) -> AuthResult<String
 
     match token {
         Some(token) => Ok(token),
-        None => Err(AuthError::ValueNotFound),
+        None => Err(AuthError::ValueNotFound {
+            value: Secret::new(user_id.to_string()),
+            expected: "access_token",
+        }),
     }
 }
 
@@ -46,7 +56,10 @@ pub async fn get_refresh_token(user_id: i64, db: &RedisPool) -> AuthResult<Strin
 
     match token {
         Some(token) => Ok(token),
-        None => Err(AuthError::ValueNotFound),
+        None => Err(AuthError::ValueNotFound {
+            value: Secret::new(user_id.to_string()),
+            expected: "refresh_token",
+        }),
     }
 }
 
@@ -94,14 +107,59 @@ pub async fn set_osu_tokens(
     Ok(())
 }
 
+// TODO: Add record fields to errors.
 #[derive(Debug, Error)]
 pub enum AuthError {
     #[error("Getting a connection from pool took too long.")]
     ConnectionTimedOut,
     #[error("Redis database returned an error {0}")]
     RedisError(#[from] RedisError),
-    #[error("Database returned an empty response")]
-    ValueNotFound,
+    #[error("Database returned an empty response for the given key {value:?}")]
+    ValueNotFound {
+        value: Secret<String>,
+        expected: &'static str,
+    },
+}
+
+impl AppErrorExt for AuthError {
+    fn user_message(&self) -> String {
+        match self {
+            AuthError::ValueNotFound { .. } => "Couldn't authorize the user".to_string(),
+            AuthError::ConnectionTimedOut => INTERNAL_DB_ERROR_MESSAGE.to_string(),
+            AuthError::RedisError(_) => INTERNAL_DB_ERROR_MESSAGE.to_string(),
+        }
+    }
+
+    fn log_error(&self) {
+        match self {
+            AuthError::ValueNotFound { value, expected } => {
+                if *expected == "user_id" {
+                    warn!(
+                        expected,
+                        "Database returned an empty response for the given key: {:?}", value
+                    )
+                } else {
+                    warn!(
+                        expected,
+                        "Database returned an empty response for the given key: {:?}",
+                        value.expose_secret()
+                    )
+                }
+            }
+            AuthError::ConnectionTimedOut => {
+                warn!("Getting a connection from Redis pool took too long.")
+            }
+            AuthError::RedisError(err) => error!("Redis database returned an error: {}", err),
+        }
+    }
+
+    fn error_type(&self) -> ErrorType {
+        match self {
+            AuthError::ValueNotFound { .. } => ErrorType::AuthorizatonError,
+            AuthError::ConnectionTimedOut => ErrorType::DatabaseError,
+            AuthError::RedisError(_) => ErrorType::DatabaseError,
+        }
+    }
 }
 
 impl From<RunError<RedisError>> for AuthError {

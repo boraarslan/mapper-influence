@@ -4,6 +4,7 @@ pub mod redis;
 
 use std::sync::Arc;
 
+use once_cell::sync::OnceCell;
 use parking_lot::{Mutex, MutexGuard};
 use rand_chacha::rand_core::{OsRng, RngCore, SeedableRng};
 use rand_chacha::ChaCha8Rng;
@@ -12,8 +13,10 @@ use tower_cookies::Cookies;
 pub use self::http::HttpClient;
 pub use self::postgres::PgDb;
 pub use self::redis::RedisDb;
-use crate::get_session_cookie;
-use crate::result::{AppError, AppResult};
+use crate::result::AppResult;
+use crate::{get_session_cookie, SessionError};
+
+pub static DB_POOL: OnceCell<sqlx::PgPool> = OnceCell::new();
 
 #[derive(Debug, Clone)]
 pub struct SharedState {
@@ -44,8 +47,8 @@ impl SharedState {
         let token = get_session_cookie(cookies)?;
         let auth_res = self.redis().get_user_id(token).await;
 
-        if let Err(mi_db::auth::AuthError::ValueNotFound) = auth_res {
-            Err(AppError::session_expired())
+        if let Err(mi_db::auth::AuthError::ValueNotFound { .. }) = auth_res {
+            Err(SessionError::SessionExpired.into())
         } else {
             Ok(auth_res?)
         }

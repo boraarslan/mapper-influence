@@ -93,7 +93,10 @@ async fn main() {
                                             .unwrap_or("None"),
                             )
                         })
-                        .on_response(DefaultOnResponse::new().level(Level::INFO)),
+                        .on_response(DefaultOnResponse::new().level(Level::INFO))
+                        .on_body_chunk(())
+                        .on_eos(())
+                        .on_failure(()),
                 )
                 .propagate_x_request_id()
                 .compression()

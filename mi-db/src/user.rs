@@ -1,9 +1,12 @@
 use chrono::Utc;
+use mi_core::error::{AppErrorExt, ErrorType};
+use mi_core::INTERNAL_DB_ERROR_MESSAGE;
 use mi_osu_api::Beatmapset;
 use serde::{Deserialize, Serialize};
 use sqlx::types::Json;
 use sqlx::{FromRow, PgPool};
 use thiserror::Error;
+use tracing::{error, warn, Level};
 use utoipa::ToSchema;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
@@ -358,6 +361,51 @@ pub enum UserError {
     DatabaseError(#[from] sqlx::Error),
     #[error("Failed to serialize Json: {0}")]
     SerdeError(#[from] serde_json::Error),
+}
+
+impl AppErrorExt for UserError {
+    fn user_message(&self) -> String {
+        match self {
+            UserError::UserNotFound(_) => self.to_string(),
+            UserError::UserAlreadyExists(_) => self.to_string(),
+            UserError::DatabaseError(_) => INTERNAL_DB_ERROR_MESSAGE.to_string(),
+            UserError::SerdeError(_) => INTERNAL_DB_ERROR_MESSAGE.to_string(),
+        }
+    }
+
+    fn error_type(&self) -> ErrorType {
+        match self {
+            UserError::UserNotFound(_) => ErrorType::DataNotFound,
+            UserError::UserAlreadyExists(_) => ErrorType::DuplicateEntry,
+            UserError::DatabaseError(_) => ErrorType::DatabaseError,
+            UserError::SerdeError(_) => ErrorType::DeserializeError,
+        }
+    }
+
+    fn log_error(&self) {
+        match self {
+            UserError::UserNotFound(user_id) => warn!(user_id, "{}", self.to_string()),
+            UserError::UserAlreadyExists(user_id) => warn!(user_id, "{}", self.to_string()),
+            UserError::DatabaseError(_) => error!("{}", self.to_string()),
+            UserError::SerdeError(_) => error!("{}", self.to_string()),
+        }
+    }
+}
+
+impl UserError {
+    pub fn log_level(&self) -> Level {
+        match self {
+            UserError::UserNotFound(_) => Level::WARN,
+            UserError::UserAlreadyExists(_) => Level::WARN,
+            UserError::DatabaseError(_) => Level::ERROR,
+            UserError::SerdeError(_) => Level::ERROR,
+        }
+    }
+}
+impl From<UserError> for Level {
+    fn from(value: UserError) -> Self {
+        value.log_level()
+    }
 }
 
 #[cfg(all(test, feature = "db-tests"))]
