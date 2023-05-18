@@ -10,23 +10,37 @@ use validator::ValidationErrors;
 pub const INTERNAL_DB_ERROR_MESSAGE: &str = "An internal database error occurred";
 pub const INTERNAL_SERVER_ERROR_MESSAGE: &str = "An internal server error occurred";
 
+/// Main error trait that needs to be implemented for all AppErrors.
+///
+/// This trait is used to convert errors into responses and log them.
+/// It also provides a way to customize the error message that is sent to the user.
 pub trait AppErrorExt: Error + Send + Sync + 'static {
+
+    /// Message that the user sees on the response. Should be short and non-technical.
     fn user_message(&self) -> String;
+
+    /// Type of the error. Used to categorize errors.
     fn error_type(&self) -> ErrorType;
+
+    /// Log the error to the console.
     fn log_error(&self);
 
+    /// Message that is logged to the database.
     fn error_message(&self) -> String {
         self.to_string()
     }
 
+    /// Whether the error should be saved to the database.
     fn should_save(&self) -> bool {
         false
     }
 
+    /// Error data that is saved to the database.
     fn error_data(&self) -> Option<serde_json::Value> {
         None
     }
 
+    /// Convert the error into a [`DbErrorObject`].
     fn as_db_error_object(&self) -> DbErrorObject {
         DbErrorObject::new(
             self.error_type(),
@@ -35,11 +49,15 @@ pub trait AppErrorExt: Error + Send + Sync + 'static {
         )
     }
 
+    /// Convert the error into a [`axum::response::Response`].
     fn as_response(&self) -> axum::response::Response {
         (self.error_type().http_status(), self.user_message()).into_response()
     }
 }
 
+/// Error to record on the database.
+///
+/// This is generated when an error occurs and needs to be recorded on the database.
 pub struct DbErrorObject {
     pub error_type: ErrorType,
     pub message: String,

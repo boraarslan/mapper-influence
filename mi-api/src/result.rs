@@ -36,6 +36,14 @@ impl<T> From<AppError> for AppResult<T> {
     }
 }
 
+// In my defense:
+//
+// At first, I tried to return every different error by using a trait object
+// (because you can't just return two different types using `impl AppErrorExt`)
+// but that was troublesome and I couldn't get it to work. Might be because I'm
+// trying to work on this project while I'm drunk, but I don't know. I'm awake while writing this.
+// Anyways, its simpler to just add new errors to this enum and implement `AppErrorExt` for them.
+// I'm sorry. (I'm not sorry, I will get drunk again)
 #[derive(Debug, Error)]
 pub enum AppError {
     #[error(transparent)]
@@ -58,6 +66,7 @@ pub enum AppError {
     JsonRejection(#[from] JsonRejection),
 }
 
+// Yeah, check the upper comment
 impl From<AppError> for Box<dyn AppErrorExt> {
     fn from(value: AppError) -> Self {
         match value {
