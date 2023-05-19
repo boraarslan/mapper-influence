@@ -17,7 +17,7 @@ async fn main() {
             .await
             .unwrap();
 
-        sqlx::migrate!("../mi-db/migrations")
+        sqlx::migrate!("../migrations/")
             .run(&db)
             .await
             .unwrap();

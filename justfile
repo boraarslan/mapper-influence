@@ -20,18 +20,18 @@ fix: fmt
 docker-compose-up DOCKER_SERVICES="all": 
 	@echo "Launching {{DOCKER_SERVICES}} Docker service(s)"
 	COMPOSE_PROFILES={{DOCKER_SERVICES}} docker compose -f docker-compose.yml up -d --remove-orphans --wait
-	sqlx migrate run --database-url {{PG_DATABASE_URL}} --source ./mi-db/migrations	
+	sqlx migrate run --database-url {{PG_DATABASE_URL}}	
 
 docker-compose-down:
 	docker compose -f docker-compose.yml down --remove-orphans
 
 test-all: docker-compose-up
-	sqlx migrate run --database-url {{PG_DATABASE_URL}} --source ./mi-db/migrations
+	sqlx migrate run --database-url {{PG_DATABASE_URL}}
 	DATABASE_URL={{PG_DATABASE_URL}} MI_TEST_REDIS_URL={{REDIS_URL}} cargo test --all-features
 
 update-db-schema: docker-compose-up
-	sqlx migrate run --database-url {{PG_DATABASE_URL}} --source ./mi-db/migrations	
-	cd mi-db && cargo sqlx prepare --database-url {{PG_DATABASE_URL}}
+	sqlx migrate run --database-url {{PG_DATABASE_URL}}
+	cargo sqlx prepare --database-url {{PG_DATABASE_URL}} --merged
 
 install-ui-deps:
 	cd mi-ui && npm install
@@ -47,15 +47,19 @@ host-release: export-ui
 
 # Builds the docker image using the .env file
 docker-build: 
-	docker build -t mi-api . \
-	--build-arg DATABASE_URL=$DATABASE_URL \
-	--build-arg MI_REDIS_URL=$MI_REDIS_URL \
-	--build-arg MI_AUTH_REDIRECT_URi=$MI_AUTH_REDIRECT_URI \
-	--build-arg PORT=$PORT \
-	--build-arg OSU_CLIENT_ID=$OSU_CLIENT_ID \
-	--build-arg OSU_CLIENT_SECRET=$OSU_CLIENT_SECRET \
-	--build-arg OSU_REDIRECT_URI=$OSU_REDIRECT_URI \
-	--build-arg RUST_LOG=$RUST_LOG
+	echo $DATABASE_URL
+	docker build -t mi-api \
+	--build-arg DATABASE_URL \
+	--build-arg MI_REDIS_URL \
+	--build-arg MI_AUTH_REDIRECT_URI \
+	--build-arg PORT \
+	--build-arg OSU_CLIENT_ID \
+	--build-arg OSU_CLIENT_SECRET \
+	--build-arg OSU_REDIRECT_URI \
+	--build-arg RUST_LOG \
+	--build-arg HONEYCOMB_KEY \
+	--build-arg OTEL_SERVICE_NAME \
+	.
 
 watch:
 	cargo watch --features="db-tests" -c -x check -x test -x clippy -x run
