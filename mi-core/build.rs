@@ -9,7 +9,7 @@ async fn main() {
     _ = dotenv();
     // Only run migrations in CI
     let ci_env = std::env::var("MAPPER_INFLUENCE_CI_ENV");
-    if ci_env.is_ok() && ci_env.unwrap().starts_with("BUILD") {
+    if ci_env.is_ok() && ci_env.unwrap().starts_with("true") {
         let db_url = std::env::var("DATABASE_URL").unwrap();
         let db = PgPoolOptions::new()
             .max_connections(20)
@@ -17,9 +17,6 @@ async fn main() {
             .await
             .unwrap();
 
-        sqlx::migrate!("../mi-db/migrations")
-            .run(&db)
-            .await
-            .unwrap();
+        sqlx::migrate!("../migrations/").run(&db).await.unwrap();
     }
 }
