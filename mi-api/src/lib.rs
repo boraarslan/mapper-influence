@@ -1,16 +1,14 @@
 use std::future::Future;
 
 use axum::extract::FromRequestParts;
-use axum::http;
 use axum::http::request::Parts;
-use hyper::StatusCode;
 use mi_core::AppErrorExt;
 use result::AppResult;
 use state::AuthUser;
 use thiserror::Error;
 use tokio::time::Instant;
 use tower_cookies::Cookies;
-use tracing::error;
+use tracing::{error, warn};
 
 pub mod api;
 pub mod api_docs;
@@ -50,8 +48,8 @@ impl AppErrorExt for SessionError {
 
     fn log_error(&self) {
         match self {
-            SessionError::CookieError => self.log_error(),
-            SessionError::SessionExpired => self.log_error(),
+            SessionError::CookieError => warn!("{}", self),
+            SessionError::SessionExpired => warn!("{}", self),
             SessionError::OsuAuthError(_) => error!("{}", self),
         }
     }
@@ -71,14 +69,19 @@ pub struct AuthUserId(i64);
 
 #[async_trait::async_trait]
 impl<S: AuthUser + Sync + Send> FromRequestParts<S> for AuthUserId {
-    type Rejection = (http::StatusCode, &'static str);
+    type Rejection = axum::response::Response;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let cookies = Cookies::from_request_parts(parts, state).await?;
+        let cookies = Cookies::from_request_parts(parts, state)
+            .await
+            .map_err(|_| SessionError::CookieError.as_response())?;
+
         if let Ok(user_id) = state.auth_user(cookies).await {
             Ok(AuthUserId(user_id))
         } else {
-            Err((StatusCode::UNAUTHORIZED, "Unauthorized"))
+            let err = SessionError::SessionExpired;
+            err.log_error();
+            Err(err.as_response())
         }
     }
 }
