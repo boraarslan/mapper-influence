@@ -11,7 +11,17 @@ pub fn init_tracer() {
         .add_directive("tower_http=info".parse().unwrap())
         .add_directive("sqlx::query=debug".parse().unwrap());
 
-    let otlp_exporter = opentelemetry_otlp::new_exporter().tonic().with_env();
+    let honeycomb_key = std::env::var("HONEYCOMB_KEY").expect("HONEYCOMB_KEY is not set");
+
+    let otlp_exporter = opentelemetry_otlp::new_exporter()
+        .http()
+        .with_endpoint("https://api.honeycomb.io/v1/traces")
+        .with_headers(
+            [("x-honeycomb-team".to_string(), honeycomb_key)]
+                .into_iter()
+                .collect(),
+        )
+        .with_timeout(std::time::Duration::from_secs(5));
 
     let tracer = opentelemetry_otlp::new_pipeline()
         .tracing()
