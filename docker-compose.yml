@@ -27,16 +27,3 @@ services:
       interval: 1s
       timeout: 3s
       retries: 5
-  agent:
-    image: mi-grafana-agent
-    container_name: agent-mi
-    ports:
-      - "4317:4317"
-    profiles:
-      - all
-      - agent
-    environment:
-      TEMPO_API_KEY: ${TEMPO_API_KEY}
-      TEMPO_ENDPOINT: ${TEMPO_ENDPOINT}
-      TEMPO_USERNAME: ${TEMPO_USERNAME}
-      PORT: ${PORT}
