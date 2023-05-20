@@ -7,7 +7,7 @@ use result::AppResult;
 use state::AuthUser;
 use thiserror::Error;
 use tokio::time::Instant;
-use tower_cookies::Cookies;
+use tower_cookies::{Cookie, Cookies};
 use tracing::{error, warn};
 
 pub mod api;
@@ -76,12 +76,17 @@ impl<S: AuthUser + Sync + Send> FromRequestParts<S> for AuthUserId {
             .await
             .map_err(|_| SessionError::CookieError.as_response())?;
 
-        if let Ok(user_id) = state.auth_user(cookies).await {
-            Ok(AuthUserId(user_id))
-        } else {
-            let err = SessionError::SessionExpired;
-            err.log_error();
-            Err(err.as_response())
+        let auth_res = state.auth_user(&cookies).await;
+        match auth_res {
+            Ok(user_id) => Ok(AuthUserId(user_id)),
+            Err(err) => {
+                // Set cookie empty if session is expired
+                cookies.add(Cookie::build(COOKIE_NAME, "").path("/").finish());
+
+                let box_err: Box<dyn AppErrorExt> = err.into();
+                box_err.log_error();
+                Err(box_err.as_response())
+            }
         }
     }
 }
