@@ -1,10 +1,8 @@
 use std::future::Future;
 
-
 use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
 use mi_core::AppErrorExt;
-
 use result::AppResult;
 use state::AuthUser;
 use thiserror::Error;
