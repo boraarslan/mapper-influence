@@ -93,12 +93,12 @@ impl AsRef<RedisDb> for SharedState {
 #[async_trait::async_trait]
 pub trait AuthUser {
     /// Returns user's Osu! id if user is authenticated
-    async fn auth_user(&self, cookie: Cookies) -> AppResult<i64>;
+    async fn auth_user(&self, cookie: &Cookies) -> AppResult<i64>;
 }
 
 #[async_trait::async_trait]
 impl AuthUser for SharedState {
-    async fn auth_user(&self, cookies: Cookies) -> AppResult<i64> {
-        self.auth_user(&cookies).await
+    async fn auth_user(&self, cookies: &Cookies) -> AppResult<i64> {
+        self.auth_user(cookies).await
     }
 }
