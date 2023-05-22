@@ -1,6 +1,9 @@
 use axum::extract::FromRef;
 use mi_core::future_log_ext::FutureLogExt;
-use mi_db::{FeaturedMaps, FullUser, Influence, InfluenceError, LeaderboardUser, User, UserError, InfluenceResponse};
+use mi_db::{
+    FeaturedMaps, FullUser, Influence, InfluenceError, InfluenceResponse, LeaderboardUser, User,
+    UserError,
+};
 use mi_osu_api::Beatmapset;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
