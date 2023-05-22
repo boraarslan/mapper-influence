@@ -108,9 +108,13 @@ impl From<mi_osu_api::User> for User {
 }
 
 pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
-    let search_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
-        .fetch_one(db)
-        .await;
+    let search_result = sqlx::query_as!(
+        User,
+        "SELECT id, user_name, profile_picture FROM users WHERE id = $1",
+        user_id
+    )
+    .fetch_one(db)
+    .await;
 
     match search_result {
         Ok(user) => Ok(user),
@@ -177,7 +181,7 @@ pub async fn update_user_featured_maps(
 ) -> Result<(), UserError> {
     let query_result = sqlx::query!(
         r#"
-            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2
+            UPDATE user_profiles SET (featured_maps, modified_at) = ($1, DEFAULT) WHERE user_id = $2
         "#,
         serde_json::to_value(&maps)?,
         user_id
@@ -217,7 +221,7 @@ pub async fn upsert_user_mapsets(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let result = sqlx::query!(
-        r#"INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"#,
+        r#"INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET (mapsets, modified_at) = ($2, DEFAULT)"#,
         user_id,
         serde_json::to_value(&mapsets)?,
     ).execute(db).await;
@@ -238,7 +242,8 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
 
     let insert_user_result = sqlx::query_as!(
         User,
-        "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING *",
+        "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING id, \
+         user_name, profile_picture",
         user.id,
         user.user_name,
         user.profile_picture,
@@ -283,7 +288,7 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
 
 pub async fn update_user_name(user_name: &str, user_id: i64, db: &PgPool) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE users SET user_name = $1 WHERE id = $2 RETURNING id",
+        "UPDATE users SET (user_name, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING id",
         user_name,
         user_id,
     )
@@ -303,7 +308,8 @@ pub async fn update_user_picture(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id",
+        "UPDATE users SET (profile_picture, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING \
+         id",
         user_picture,
         user_id,
     )
@@ -323,7 +329,8 @@ pub async fn update_user_bio(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE user_profiles SET bio = $1 WHERE user_id = $2 RETURNING user_id",
+        "UPDATE user_profiles SET (bio, modified_at) = ($1, DEFAULT) WHERE user_id = $2 RETURNING \
+         user_id",
         user_bio,
         user_id,
     )

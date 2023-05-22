@@ -1,3 +1,4 @@
+use chrono::Utc;
 use mi_core::error::{AppErrorExt, ErrorType};
 use mi_core::INTERNAL_DB_ERROR_MESSAGE;
 use serde::{Deserialize, Serialize};
@@ -7,6 +8,15 @@ use tracing::{error, warn};
 use utoipa::ToSchema;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
+
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
+pub struct InfluenceResponse {
+    #[sqlx(flatten)]
+    #[serde(flatten)]
+    influence: Influence,
+    created_at: chrono::DateTime<Utc>,
+    modified_at: chrono::DateTime<Utc>,
+}
 
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
 pub struct Influence {
@@ -34,14 +44,12 @@ impl Influence {
 pub async fn get_all_influences_by_from_id(
     user_id: i64,
     db: &PgPool,
-) -> Result<Vec<Influence>, InfluenceError> {
-    let search_result = sqlx::query_as!(
-        Influence,
-        "SELECT * FROM influences WHERE from_id = $1",
-        user_id
-    )
-    .fetch_all(db)
-    .await;
+) -> Result<Vec<InfluenceResponse>, InfluenceError> {
+    // Using query_as function instead of macro to bypass FromRow limitation
+    let search_result = sqlx::query_as("SELECT * FROM influences WHERE from_id = $1")
+        .bind(user_id)
+        .fetch_all(db)
+        .await;
 
     match search_result {
         Ok(influences) => Ok(influences),
@@ -52,14 +60,12 @@ pub async fn get_all_influences_by_from_id(
 pub async fn get_all_influences_by_to_id(
     user_id: i64,
     db: &PgPool,
-) -> Result<Vec<Influence>, InfluenceError> {
-    let search_result = sqlx::query_as!(
-        Influence,
-        "SELECT * FROM influences WHERE to_id = $1",
-        user_id
-    )
-    .fetch_all(db)
-    .await;
+) -> Result<Vec<InfluenceResponse>, InfluenceError> {
+    // Using query_as function instead of macro to bypass FromRow limitation
+    let search_result = sqlx::query_as("SELECT * FROM influences WHERE to_id = $1")
+        .bind(user_id)
+        .fetch_all(db)
+        .await;
 
     match search_result {
         Ok(influences) => Ok(influences),
@@ -109,8 +115,8 @@ pub async fn update_influence_level(
     db: &PgPool,
 ) -> Result<(), InfluenceError> {
     let update_result = sqlx::query!(
-        "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING \
-         from_id",
+        "UPDATE influences SET (influence_level, modified_at) = ($1, DEFAULT) WHERE from_id = $2 \
+         AND to_id = $3 RETURNING from_id",
         influence_level,
         from_id,
         to_id
@@ -134,7 +140,8 @@ pub async fn update_influence_info(
     db: &PgPool,
 ) -> Result<(), InfluenceError> {
     let update_result = sqlx::query!(
-        "UPDATE influences SET info = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id",
+        "UPDATE influences SET (info, modified_at) = ($1, DEFAULT) WHERE from_id = $2 AND to_id = \
+         $3 RETURNING from_id",
         info,
         from_id,
         to_id
@@ -260,8 +267,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].to_id, second_user.id);
-        assert_eq!(influence[0].info, None);
+        assert_eq!(influence[0].influence.to_id, second_user.id);
+        assert_eq!(influence[0].influence.info, None);
 
         let influence = influence_for_test(second_user.id, first_user.id);
 
@@ -272,8 +279,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].to_id, first_user.id);
-        assert_eq!(influence[0].info, None);
+        assert_eq!(influence[0].influence.to_id, first_user.id);
+        assert_eq!(influence[0].influence.info, None);
 
         let mut duplicate_influence = influence_for_test(first_user.id, second_user.id);
         // Only keep the primary key the same
@@ -318,8 +325,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].to_id, second_user.id);
-        assert_eq!(influence[0].influence_level, 1);
-        assert_eq!(influence[0].info, Some("Some info".to_string()));
+        assert_eq!(influence[0].influence.to_id, second_user.id);
+        assert_eq!(influence[0].influence.influence_level, 1);
+        assert_eq!(influence[0].influence.info, Some("Some info".to_string()));
     }
 }

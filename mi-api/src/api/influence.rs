@@ -1,5 +1,6 @@
 use axum::debug_handler;
 use axum::extract::State;
+use mi_db::InfluenceResponse;
 use mi_db::influence::Influence;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -25,7 +26,7 @@ pub async fn get_influences(
     AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Json(request): Json<Option<GetInfluenceRequest>>,
-) -> AppResult<Json<Vec<Influence>>> {
+) -> AppResult<Json<Vec<InfluenceResponse>>> {
     let user_id = match request {
         Some(req) => req.user_id,
         None => user_id,
