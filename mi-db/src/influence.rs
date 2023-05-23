@@ -233,11 +233,11 @@ mod tests {
     use crate::user::{init_user, User};
 
     fn user_for_test(user_id: i64) -> User {
-        User {
-            id: user_id,
-            user_name: "boraarslan".to_string(),
-            profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
-        }
+        User::new(
+            user_id,
+            "boraarslan".to_string(),
+            "random.imageservice.com/boraarslan.jpg".to_string(),
+        )
     }
 
     fn influence_for_test(first_id: i64, second_id: i64) -> Influence {

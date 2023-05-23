@@ -11,7 +11,7 @@ use utoipa::ToSchema;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
 
-#[derive(Debug, FromRow, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, FromRow, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema, Default)]
 pub struct User {
     /// Osu user ID of a user
     pub id: i64,
@@ -19,9 +19,11 @@ pub struct User {
     pub user_name: String,
     /// Url to user profile picture
     pub profile_picture: String,
+    /// Last modification date
+    pub modified_at: chrono::DateTime<Utc>,
 }
 
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, Default)]
 pub struct UserProfile {
     /// Osu user ID of a user (references user id from `users` table)
     pub user_id: i64,
@@ -29,6 +31,8 @@ pub struct UserProfile {
     pub bio: Option<String>,
     // Featured maps of the user
     pub featured_maps: Option<Json<FeaturedMaps>>,
+    /// Last modification date
+    pub modified_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -85,8 +89,10 @@ pub struct FullUser {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
-    /// Last Osu! data modified timestamp
+    /// Last osu! data modified timestamp
     pub osu_data_modified_at: chrono::DateTime<Utc>,
+    /// last profile data modified timestamp
+    pub profile_data_modified_at: chrono::DateTime<Utc>,
 }
 
 impl FullUser {
@@ -97,12 +103,24 @@ impl FullUser {
     }
 }
 
+impl User {
+    pub fn new(id: i64, user_name: String, profile_picture: String) -> Self {
+        Self {
+            id,
+            user_name,
+            profile_picture,
+            ..Default::default()
+        }
+    }
+}
+
 impl From<mi_osu_api::User> for User {
     fn from(osu_user: mi_osu_api::User) -> Self {
         Self {
             id: osu_user.id,
             user_name: osu_user.username,
             profile_picture: osu_user.avatar_url,
+            ..Default::default()
         }
     }
 }
@@ -110,7 +128,7 @@ impl From<mi_osu_api::User> for User {
 pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
     let search_result = sqlx::query_as!(
         User,
-        "SELECT id, user_name, profile_picture FROM users WHERE id = $1",
+        "SELECT id, user_name, profile_picture, modified_at FROM users WHERE id = $1",
         user_id
     )
     .fetch_one(db)
@@ -131,6 +149,7 @@ pub async fn get_full_user(user_id: i64, db: &PgPool) -> Result<FullUser, UserEr
             id, user_name, profile_picture, 
             profile.bio, 
             profile.featured_maps as "featured_maps: Json<FeaturedMaps>", 
+            profile.modified_at as profile_data_modified_at,
             osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,
             osu.modified_at as osu_data_modified_at
         FROM users 
@@ -243,7 +262,7 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_user_result = sqlx::query_as!(
         User,
         "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING id, \
-         user_name, profile_picture",
+         user_name, profile_picture, modified_at",
         user.id,
         user.user_name,
         user.profile_picture,
@@ -423,12 +442,12 @@ mod tests {
 
     const NOT_FOUND_ERROR_TEXT: &str = "Query against absent users should return NotFound error.";
 
-    fn user_for_test(id: i64) -> User {
-        User {
-            id,
-            user_name: "boraarslan".to_string(),
-            profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
-        }
+    fn user_for_test(user_id: i64) -> User {
+        User::new(
+            user_id,
+            "boraarslan".to_string(),
+            "random.imageservice.com/boraarslan.jpg".to_string(),
+        )
     }
 
     #[sqlx::test]
@@ -444,6 +463,7 @@ mod tests {
             id: 1i64,
             user_name: "fursum".to_string(),
             profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
+            ..Default::default()
         };
         let error = init_user(user_second, &db).await.unwrap_err();
         match error {
