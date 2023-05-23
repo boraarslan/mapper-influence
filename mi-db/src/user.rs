@@ -463,7 +463,7 @@ mod tests {
         assert_eq!(user.profile_picture, db_user.profile_picture);
         assert_ne!(user.modified_at, db_user.modified_at);
         // Test user insert with duplicate keys
-        let user_second = User::New(
+        let user_second = User::new(
             // Using the key of the previously inserted user for key violation test
             1i64,
             "fursum".to_string(),
