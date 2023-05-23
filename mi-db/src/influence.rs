@@ -9,16 +9,7 @@ use utoipa::ToSchema;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
 
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
-pub struct InfluenceResponse {
-    #[sqlx(flatten)]
-    #[serde(flatten)]
-    influence: Influence,
-    created_at: chrono::DateTime<Utc>,
-    modified_at: chrono::DateTime<Utc>,
-}
-
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema, Default)]
 pub struct Influence {
     /// Id of the influencer user
     from_id: i64,
@@ -28,6 +19,10 @@ pub struct Influence {
     influence_level: i32,
     /// Extra info/notes about influence
     info: Option<String>,
+    /// Creation date, only used in search queries
+    created_at: chrono::DateTime<Utc>,
+    /// Last modification date, only used in search queries
+    modified_at: chrono::DateTime<Utc>,
 }
 
 impl Influence {
@@ -37,6 +32,7 @@ impl Influence {
             to_id,
             influence_level,
             info,
+            ..Default::default()
         }
     }
 }
@@ -44,12 +40,15 @@ impl Influence {
 pub async fn get_all_influences_by_from_id(
     user_id: i64,
     db: &PgPool,
-) -> Result<Vec<InfluenceResponse>, InfluenceError> {
+) -> Result<Vec<Influence>, InfluenceError> {
     // Using query_as function instead of macro to bypass FromRow limitation
-    let search_result = sqlx::query_as("SELECT * FROM influences WHERE from_id = $1")
-        .bind(user_id)
-        .fetch_all(db)
-        .await;
+    let search_result = sqlx::query_as!(
+        Influence,
+        "SELECT * FROM influences WHERE from_id = $1",
+        user_id
+    )
+    .fetch_all(db)
+    .await;
 
     match search_result {
         Ok(influences) => Ok(influences),
@@ -60,12 +59,15 @@ pub async fn get_all_influences_by_from_id(
 pub async fn get_all_influences_by_to_id(
     user_id: i64,
     db: &PgPool,
-) -> Result<Vec<InfluenceResponse>, InfluenceError> {
+) -> Result<Vec<Influence>, InfluenceError> {
     // Using query_as function instead of macro to bypass FromRow limitation
-    let search_result = sqlx::query_as("SELECT * FROM influences WHERE to_id = $1")
-        .bind(user_id)
-        .fetch_all(db)
-        .await;
+    let search_result = sqlx::query_as!(
+        Influence,
+        "SELECT * FROM influences WHERE to_id = $1",
+        user_id
+    )
+    .fetch_all(db)
+    .await;
 
     match search_result {
         Ok(influences) => Ok(influences),
@@ -239,12 +241,7 @@ mod tests {
     }
 
     fn influence_for_test(first_id: i64, second_id: i64) -> Influence {
-        Influence {
-            from_id: first_id,
-            to_id: second_id,
-            influence_level: 9,
-            info: None,
-        }
+        Influence::new(first_id, second_id, 3, None)
     }
 
     #[sqlx::test]
@@ -267,8 +264,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].influence.to_id, second_user.id);
-        assert_eq!(influence[0].influence.info, None);
+        assert_eq!(influence[0].to_id, second_user.id);
+        assert_eq!(influence[0].info, None);
 
         let influence = influence_for_test(second_user.id, first_user.id);
 
@@ -279,8 +276,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].influence.to_id, first_user.id);
-        assert_eq!(influence[0].influence.info, None);
+        assert_eq!(influence[0].to_id, first_user.id);
+        assert_eq!(influence[0].info, None);
 
         let mut duplicate_influence = influence_for_test(first_user.id, second_user.id);
         // Only keep the primary key the same
@@ -325,8 +322,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(influence.len(), 1);
-        assert_eq!(influence[0].influence.to_id, second_user.id);
-        assert_eq!(influence[0].influence.influence_level, 1);
-        assert_eq!(influence[0].influence.info, Some("Some info".to_string()));
+        assert_eq!(influence[0].to_id, second_user.id);
+        assert_eq!(influence[0].influence_level, 1);
+        assert_eq!(influence[0].info, Some("Some info".to_string()));
     }
 }

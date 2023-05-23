@@ -1,9 +1,6 @@
 use axum::extract::FromRef;
 use mi_core::future_log_ext::FutureLogExt;
-use mi_db::{
-    FeaturedMaps, FullUser, Influence, InfluenceError, InfluenceResponse, LeaderboardUser, User,
-    UserError,
-};
+use mi_db::{FeaturedMaps, FullUser, Influence, InfluenceError, LeaderboardUser, User, UserError};
 use mi_osu_api::Beatmapset;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
@@ -83,7 +80,7 @@ impl PgDb {
     pub async fn get_user_influencers(
         &self,
         user_id: i64,
-    ) -> Result<Vec<InfluenceResponse>, InfluenceError> {
+    ) -> Result<Vec<Influence>, InfluenceError> {
         mi_db::get_all_influences_by_to_id(user_id, &self.pool)
             .log_elapsed()
             .await
