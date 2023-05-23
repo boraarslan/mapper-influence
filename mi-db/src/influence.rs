@@ -41,7 +41,6 @@ pub async fn get_all_influences_by_from_id(
     user_id: i64,
     db: &PgPool,
 ) -> Result<Vec<Influence>, InfluenceError> {
-    // Using query_as function instead of macro to bypass FromRow limitation
     let search_result = sqlx::query_as!(
         Influence,
         "SELECT * FROM influences WHERE from_id = $1",
@@ -60,7 +59,6 @@ pub async fn get_all_influences_by_to_id(
     user_id: i64,
     db: &PgPool,
 ) -> Result<Vec<Influence>, InfluenceError> {
-    // Using query_as function instead of macro to bypass FromRow limitation
     let search_result = sqlx::query_as!(
         Influence,
         "SELECT * FROM influences WHERE to_id = $1",
