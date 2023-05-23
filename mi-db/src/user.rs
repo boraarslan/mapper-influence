@@ -19,7 +19,7 @@ pub struct User {
     pub user_name: String,
     /// Url to user profile picture
     pub profile_picture: String,
-    /// Last modification date
+    /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
 }
 
@@ -31,7 +31,7 @@ pub struct UserProfile {
     pub bio: Option<String>,
     // Featured maps of the user
     pub featured_maps: Option<Json<FeaturedMaps>>,
-    /// Last modification date
+    /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
 }
 
@@ -62,7 +62,7 @@ pub struct UserOsuData {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
-    // Last modified timestamp
+    // Last modified timestamp. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
 }
 
@@ -89,7 +89,7 @@ pub struct FullUser {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
-    /// Last osu! data modified timestamp
+    /// Last osu! data modified timestamp.
     pub osu_data_modified_at: chrono::DateTime<Utc>,
     /// last profile data modified timestamp
     pub profile_data_modified_at: chrono::DateTime<Utc>,

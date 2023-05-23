@@ -19,9 +19,9 @@ pub struct Influence {
     influence_level: i32,
     /// Extra info/notes about influence
     info: Option<String>,
-    /// Creation date, only used in search queries
+    /// Creation date. Not used during inserts and defaulted
     created_at: chrono::DateTime<Utc>,
-    /// Last modification date, only used in search queries
+    /// Last modification date. Not used during inserts and defaulted
     modified_at: chrono::DateTime<Utc>,
 }
 
