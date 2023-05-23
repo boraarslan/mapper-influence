@@ -463,13 +463,12 @@ mod tests {
         assert_eq!(user.profile_picture, db_user.profile_picture);
         assert_ne!(user.modified_at, db_user.modified_at);
         // Test user insert with duplicate keys
-        let user_second = User {
+        let user_second = User::New(
             // Using the key of the previously inserted user for key violation test
-            id: 1i64,
-            user_name: "fursum".to_string(),
-            profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
-            ..Default::default()
-        };
+            1i64,
+            "fursum".to_string(),
+            "random.imageservice.com/fursum.jpg".to_string(),
+        );
         let error = init_user(user_second, &db).await.unwrap_err();
         match error {
             UserError::UserAlreadyExists(1) => {}
