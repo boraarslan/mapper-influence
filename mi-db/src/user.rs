@@ -456,7 +456,12 @@ mod tests {
         let user = user_for_test(1i64);
         init_user(user.clone(), &db).await.unwrap();
         let db_user = get_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user);
+        // Initiated user has default timestamp that is not used during database initiation.
+        // Therefore asserting them at struct level will never be successful.
+        assert_eq!(user.id, db_user.id);
+        assert_eq!(user.user_name, db_user.user_name);
+        assert_eq!(user.profile_picture, db_user.profile_picture);
+        assert_ne!(user.modified_at, db_user.modified_at);
         // Test user insert with duplicate keys
         let user_second = User {
             // Using the key of the previously inserted user for key violation test
