@@ -13,7 +13,7 @@ env:
   RUST_BACKTRACE: 1
   RUSTFLAGS: -Dwarnings
   MAPPER_INFLUENCE_CI_ENV: "true"
-  SQLX_OFFLINE: false
+  SQLX_OFFLINE: true
   DATABASE_URL: postgres://mapper-influence:mi-dev@localhost:5432/mapper-influence-dev
   MI_TEST_REDIS_URL: redis://localhost:6379
 
