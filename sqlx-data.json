@@ -1,18 +1,6 @@
 {
   "db": "PostgreSQL",
-  "3218b6fc70e46c329ae7ba4a313bcb9a40d5eb7713de7c7ee884dd9db41dda34": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "INSERT INTO users_osu_data (user_id) VALUES ($1)"
-  },
-  "3efdd109d852b73587114756e2bb4e7b43c2fcd7acd0dca0fd69d31b74e86d0b": {
+  "255f092eb3bc1adfaff54ee0f5fd63c81b3ffffcbd758904b2ba65c865dca153": {
     "describe": {
       "columns": [
         {
@@ -41,33 +29,38 @@
           "type_info": "Json"
         },
         {
-          "name": "ranked_count",
+          "name": "profile_data_modified_at",
           "ordinal": 5,
-          "type_info": "Int4"
+          "type_info": "Timestamptz"
         },
         {
-          "name": "loved_count",
+          "name": "ranked_count",
           "ordinal": 6,
           "type_info": "Int4"
         },
         {
-          "name": "nominated_count",
+          "name": "loved_count",
           "ordinal": 7,
           "type_info": "Int4"
         },
         {
-          "name": "graveyard_count",
+          "name": "nominated_count",
           "ordinal": 8,
           "type_info": "Int4"
         },
         {
-          "name": "guest_count",
+          "name": "graveyard_count",
           "ordinal": 9,
           "type_info": "Int4"
         },
         {
-          "name": "osu_data_modified_at",
+          "name": "guest_count",
           "ordinal": 10,
+          "type_info": "Int4"
+        },
+        {
+          "name": "osu_data_modified_at",
+          "ordinal": 11,
           "type_info": "Timestamptz"
         }
       ],
@@ -82,6 +75,7 @@
         false,
         false,
         false,
+        false,
         false
       ],
       "parameters": {
@@ -90,13 +84,13 @@
         ]
       }
     },
-    "query": "\n        SELECT \n            id, user_name, profile_picture, \n            profile.bio, \n            profile.featured_maps as \"featured_maps: Json<FeaturedMaps>\", \n            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,\n            osu.modified_at as osu_data_modified_at\n        FROM users \n        INNER JOIN user_profiles profile ON profile.user_id = $1 \n        INNER JOIN users_osu_data osu ON osu.user_id = $1\n        WHERE id = $1"
+    "query": "\n        SELECT \n            id, user_name, profile_picture, \n            profile.bio, \n            profile.featured_maps as \"featured_maps: Json<FeaturedMaps>\", \n            profile.modified_at as profile_data_modified_at,\n            osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,\n            osu.modified_at as osu_data_modified_at\n        FROM users \n        INNER JOIN user_profiles profile ON profile.user_id = $1 \n        INNER JOIN users_osu_data osu ON osu.user_id = $1\n        WHERE id = $1"
   },
-  "51530a1a06b0ae31e99258c59fd819580d9993fd23ee08f9df65ef7924a21275": {
+  "2574ee2238d9532bf14080af1c132d34fde438153d87867eae738b8d112f7784": {
     "describe": {
       "columns": [
         {
-          "name": "id",
+          "name": "from_id",
           "ordinal": 0,
           "type_info": "Int8"
         }
@@ -107,17 +101,30 @@
       "parameters": {
         "Left": [
           "Text",
+          "Int8",
           "Int8"
         ]
       }
     },
-    "query": "UPDATE users SET user_name = $1 WHERE id = $2 RETURNING id"
+    "query": "UPDATE influences SET (info, modified_at) = ($1, DEFAULT) WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
   },
-  "60fd0e0da707e92b214adef7489778fe11cf20e0090c17a1492a7b341e9304e5": {
+  "3218b6fc70e46c329ae7ba4a313bcb9a40d5eb7713de7c7ee884dd9db41dda34": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "INSERT INTO users_osu_data (user_id) VALUES ($1)"
+  },
+  "3bced19a68c140c3735d6d96043dbfbf51b28beea3be90780e6cca563e0b5ea2": {
     "describe": {
       "columns": [
         {
-          "name": "id",
+          "name": "from_id",
           "ordinal": 0,
           "type_info": "Int8"
         }
@@ -127,12 +134,13 @@
       ],
       "parameters": {
         "Left": [
-          "Text",
+          "Int4",
+          "Int8",
           "Int8"
         ]
       }
     },
-    "query": "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id"
+    "query": "UPDATE influences SET (influence_level, modified_at) = ($1, DEFAULT) WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
   },
   "62c983bb3c745b072b15ee523820e5e9403e3819ea61289326b626ef8f5a9c55": {
     "describe": {
@@ -176,27 +184,6 @@
     },
     "query": "WITH top_influencers AS (\n            SELECT from_id, COUNT(*) AS influence_count\n            FROM influences\n            GROUP BY from_id\n            ORDER BY influence_count DESC\n            LIMIT 20\n        )\n        SELECT\n            users.id,\n            users.user_name,\n            users.profile_picture,\n            users_osu_data.ranked_count as ranked_map_count,\n            top_influencers.influence_count\n        FROM top_influencers\n        INNER JOIN users ON id = from_id\n        INNER JOIN users_osu_data ON users_osu_data.user_id = from_id"
   },
-  "6880dd42e3f4c19b6e694693c4cfebc92066460c49fc11d960d3f7b784e9389f": {
-    "describe": {
-      "columns": [
-        {
-          "name": "user_id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Text",
-          "Int8"
-        ]
-      }
-    },
-    "query": "UPDATE user_profiles SET bio = $1 WHERE user_id = $2 RETURNING user_id"
-  },
   "689ccc8a2c47be7848241b7a600220ae40f9b5e42e6db5c65303b2d227412dab": {
     "describe": {
       "columns": [
@@ -220,19 +207,7 @@
     },
     "query": "INSERT INTO influences (from_id, to_id, influence_level, info) VALUES ($1, $2, $3, $4) RETURNING from_id"
   },
-  "82936ca170aef076e016acefd68b8b007064eb599ef9821ce2024534baace85f": {
-    "describe": {
-      "columns": [],
-      "nullable": [],
-      "parameters": {
-        "Left": [
-          "Int8"
-        ]
-      }
-    },
-    "query": "\n        INSERT INTO user_profiles (user_id) VALUES ($1)"
-  },
-  "843923b9a0257cf80f1dff554e7dc8fdfc05f489328e8376513124dfb42996e3": {
+  "80883d8db95f9c062a5cdd72f0841b497925c13975d07cf2726684d28b92005b": {
     "describe": {
       "columns": [
         {
@@ -249,9 +224,79 @@
           "name": "profile_picture",
           "ordinal": 2,
           "type_info": "Text"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
         }
       ],
       "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Int8",
+          "Text",
+          "Text"
+        ]
+      }
+    },
+    "query": "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING id, user_name, profile_picture, modified_at, created_at"
+  },
+  "82936ca170aef076e016acefd68b8b007064eb599ef9821ce2024534baace85f": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      }
+    },
+    "query": "\n        INSERT INTO user_profiles (user_id) VALUES ($1)"
+  },
+  "82e2aef8c9129c9981a728b4ad079c6e8bce004e05ef108d95bf35ddd41a877b": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        },
+        {
+          "name": "user_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "profile_picture",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 3,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        }
+      ],
+      "nullable": [
+        false,
+        false,
         false,
         false,
         false
@@ -262,20 +307,49 @@
         ]
       }
     },
-    "query": "SELECT * FROM users WHERE id = $1"
+    "query": "SELECT id, user_name, profile_picture, modified_at, created_at FROM users WHERE id = $1"
   },
-  "8558e50e3ec076a0724e43cdd00c1e2b4ffdb56861ad5e76e05f59edc4f4d465": {
+  "845a089f111b4261058f18e3b054bfbb47dd38020c5ea1ed3cb3c92021b96934": {
     "describe": {
-      "columns": [],
-      "nullable": [],
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
       "parameters": {
         "Left": [
-          "Json",
+          "Text",
           "Int8"
         ]
       }
     },
-    "query": "\n            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2\n        "
+    "query": "UPDATE users SET (user_name, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING id"
+  },
+  "8661c9c25327628ec63cf7b71f639aafcd0933e5faffedb2d4c51c40b82febe4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "user_id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE user_profiles SET (bio, modified_at) = ($1, DEFAULT) WHERE user_id = $2 RETURNING user_id"
   },
   "8cdda88cc181541f72fc905f0444da40e8165750a8c27db6da174f0cc2bcac22": {
     "describe": {
@@ -343,13 +417,25 @@
           "name": "info",
           "ordinal": 3,
           "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
         }
       ],
       "nullable": [
         false,
         false,
         false,
-        true
+        true,
+        false,
+        false
       ],
       "parameters": {
         "Left": [
@@ -359,7 +445,7 @@
     },
     "query": "SELECT * FROM influences WHERE to_id = $1"
   },
-  "91243710a9aeaf94e627d2d904f7d61c6c4063631fd5aac87b518a69d434a21e": {
+  "b080103b2f20f90a70e50b98bb5d5bb2e83cd275780934da7e74827acb7dfa19": {
     "describe": {
       "columns": [],
       "nullable": [],
@@ -370,85 +456,20 @@
         ]
       }
     },
-    "query": "INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"
+    "query": "INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET (mapsets, modified_at) = ($2, DEFAULT)"
   },
-  "97cb4888ec1fdfd661131764065fc9d022e722e91f672c487e1b097b7df6d9ce": {
+  "b5c262e88aeab5651d2156d6f27fedd2e3c79f80b5acd0b5ba4087837c7196c3": {
     "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        },
-        {
-          "name": "user_name",
-          "ordinal": 1,
-          "type_info": "Text"
-        },
-        {
-          "name": "profile_picture",
-          "ordinal": 2,
-          "type_info": "Text"
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false
-      ],
+      "columns": [],
+      "nullable": [],
       "parameters": {
         "Left": [
-          "Int8",
-          "Text",
-          "Text"
-        ]
-      }
-    },
-    "query": "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING *"
-  },
-  "b20516efd17ee210d247e5b55deafcfaa3b754906bfdce8252ca90dfa015a213": {
-    "describe": {
-      "columns": [
-        {
-          "name": "from_id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Text",
-          "Int8",
+          "Json",
           "Int8"
         ]
       }
     },
-    "query": "UPDATE influences SET info = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
-  },
-  "c48c463c5b2ea7bbb97258775db9151d86eee3570906b6968ba0e52dbb67368a": {
-    "describe": {
-      "columns": [
-        {
-          "name": "from_id",
-          "ordinal": 0,
-          "type_info": "Int8"
-        }
-      ],
-      "nullable": [
-        false
-      ],
-      "parameters": {
-        "Left": [
-          "Int4",
-          "Int8",
-          "Int8"
-        ]
-      }
-    },
-    "query": "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id"
+    "query": "\n            UPDATE user_profiles SET (featured_maps, modified_at) = ($1, DEFAULT) WHERE user_id = $2\n        "
   },
   "c84c66286a50e498d37559f48cc79cdc4e9855a19ca317b4deac1a7b4a4dc3cc": {
     "describe": {
@@ -487,6 +508,27 @@
     },
     "query": "SELECT mapsets as \"mapsets: Json<Vec<Beatmapset>>\" FROM user_osu_maps WHERE user_id = $1"
   },
+  "f46345492e9269caa13c17baff41da3c1d4dc96de1af67dc3d61579c0153cd6a": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int8"
+        }
+      ],
+      "nullable": [
+        false
+      ],
+      "parameters": {
+        "Left": [
+          "Text",
+          "Int8"
+        ]
+      }
+    },
+    "query": "UPDATE users SET (profile_picture, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING id"
+  },
   "f749cbfc1f240abd5f0b804c7a567e84730e6dbc4f444da645450f275c1d8c15": {
     "describe": {
       "columns": [
@@ -509,13 +551,25 @@
           "name": "info",
           "ordinal": 3,
           "type_info": "Text"
+        },
+        {
+          "name": "created_at",
+          "ordinal": 4,
+          "type_info": "Timestamptz"
+        },
+        {
+          "name": "modified_at",
+          "ordinal": 5,
+          "type_info": "Timestamptz"
         }
       ],
       "nullable": [
         false,
         false,
         false,
-        true
+        true,
+        false,
+        false
       ],
       "parameters": {
         "Left": [
