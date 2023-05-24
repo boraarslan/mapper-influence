@@ -21,6 +21,9 @@ pub struct User {
     pub profile_picture: String,
     /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize, Default)]
@@ -33,6 +36,9 @@ pub struct UserProfile {
     pub featured_maps: Option<Json<FeaturedMaps>>,
     /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -64,6 +70,9 @@ pub struct UserOsuData {
     pub guest_count: i32,
     // Last modified timestamp. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -128,7 +137,7 @@ impl From<mi_osu_api::User> for User {
 pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
     let search_result = sqlx::query_as!(
         User,
-        "SELECT id, user_name, profile_picture, modified_at FROM users WHERE id = $1",
+        "SELECT id, user_name, profile_picture, modified_at, created_at FROM users WHERE id = $1",
         user_id
     )
     .fetch_one(db)
@@ -262,7 +271,7 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
     let insert_user_result = sqlx::query_as!(
         User,
         "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING id, \
-         user_name, profile_picture, modified_at",
+         user_name, profile_picture, modified_at, created_at",
         user.id,
         user.user_name,
         user.profile_picture,
