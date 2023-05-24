@@ -11,7 +11,7 @@ use utoipa::ToSchema;
 
 use crate::PG_UNIQUE_KEY_VIOLATION;
 
-#[derive(Debug, FromRow, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, FromRow, Clone, PartialEq, Eq, Serialize, Deserialize, ToSchema, Default)]
 pub struct User {
     /// Osu user ID of a user
     pub id: i64,
@@ -19,9 +19,15 @@ pub struct User {
     pub user_name: String,
     /// Url to user profile picture
     pub profile_picture: String,
+    /// Last modification date. Not used during inserts and defaulted
+    pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, Default)]
 pub struct UserProfile {
     /// Osu user ID of a user (references user id from `users` table)
     pub user_id: i64,
@@ -29,6 +35,12 @@ pub struct UserProfile {
     pub bio: Option<String>,
     // Featured maps of the user
     pub featured_maps: Option<Json<FeaturedMaps>>,
+    /// Last modification date. Not used during inserts and defaulted
+    pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -58,8 +70,12 @@ pub struct UserOsuData {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
-    // Last modified timestamp
+    // Last modified timestamp. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
+    #[serde(skip)]
+    pub created_at: chrono::DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -85,8 +101,10 @@ pub struct FullUser {
     pub graveyard_count: i32,
     /// Guest map count
     pub guest_count: i32,
-    /// Last Osu! data modified timestamp
+    /// Last osu! data modified timestamp.
     pub osu_data_modified_at: chrono::DateTime<Utc>,
+    /// last profile data modified timestamp
+    pub profile_data_modified_at: chrono::DateTime<Utc>,
 }
 
 impl FullUser {
@@ -97,20 +115,36 @@ impl FullUser {
     }
 }
 
+impl User {
+    pub fn new(id: i64, user_name: String, profile_picture: String) -> Self {
+        Self {
+            id,
+            user_name,
+            profile_picture,
+            ..Default::default()
+        }
+    }
+}
+
 impl From<mi_osu_api::User> for User {
     fn from(osu_user: mi_osu_api::User) -> Self {
         Self {
             id: osu_user.id,
             user_name: osu_user.username,
             profile_picture: osu_user.avatar_url,
+            ..Default::default()
         }
     }
 }
 
 pub async fn get_user(user_id: i64, db: &PgPool) -> Result<User, UserError> {
-    let search_result = sqlx::query_as!(User, "SELECT * FROM users WHERE id = $1", user_id)
-        .fetch_one(db)
-        .await;
+    let search_result = sqlx::query_as!(
+        User,
+        "SELECT id, user_name, profile_picture, modified_at, created_at FROM users WHERE id = $1",
+        user_id
+    )
+    .fetch_one(db)
+    .await;
 
     match search_result {
         Ok(user) => Ok(user),
@@ -127,6 +161,7 @@ pub async fn get_full_user(user_id: i64, db: &PgPool) -> Result<FullUser, UserEr
             id, user_name, profile_picture, 
             profile.bio, 
             profile.featured_maps as "featured_maps: Json<FeaturedMaps>", 
+            profile.modified_at as profile_data_modified_at,
             osu.ranked_count, osu.loved_count, osu.nominated_count, osu.graveyard_count, osu.guest_count,
             osu.modified_at as osu_data_modified_at
         FROM users 
@@ -177,7 +212,7 @@ pub async fn update_user_featured_maps(
 ) -> Result<(), UserError> {
     let query_result = sqlx::query!(
         r#"
-            UPDATE user_profiles SET featured_maps = $1 WHERE user_id = $2
+            UPDATE user_profiles SET (featured_maps, modified_at) = ($1, DEFAULT) WHERE user_id = $2
         "#,
         serde_json::to_value(&maps)?,
         user_id
@@ -217,7 +252,7 @@ pub async fn upsert_user_mapsets(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let result = sqlx::query!(
-        r#"INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET mapsets = $2"#,
+        r#"INSERT INTO user_osu_maps (user_id, mapsets) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET (mapsets, modified_at) = ($2, DEFAULT)"#,
         user_id,
         serde_json::to_value(&mapsets)?,
     ).execute(db).await;
@@ -238,7 +273,8 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
 
     let insert_user_result = sqlx::query_as!(
         User,
-        "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING *",
+        "INSERT INTO users (id, user_name, profile_picture) VALUES ($1, $2, $3) RETURNING id, \
+         user_name, profile_picture, modified_at, created_at",
         user.id,
         user.user_name,
         user.profile_picture,
@@ -283,7 +319,7 @@ pub async fn init_user(user: User, db: &PgPool) -> Result<User, UserError> {
 
 pub async fn update_user_name(user_name: &str, user_id: i64, db: &PgPool) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE users SET user_name = $1 WHERE id = $2 RETURNING id",
+        "UPDATE users SET (user_name, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING id",
         user_name,
         user_id,
     )
@@ -303,7 +339,8 @@ pub async fn update_user_picture(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE users SET profile_picture = $1 WHERE id = $2 RETURNING id",
+        "UPDATE users SET (profile_picture, modified_at) = ($1, DEFAULT) WHERE id = $2 RETURNING \
+         id",
         user_picture,
         user_id,
     )
@@ -323,7 +360,8 @@ pub async fn update_user_bio(
     db: &PgPool,
 ) -> Result<(), UserError> {
     let update_result = sqlx::query!(
-        "UPDATE user_profiles SET bio = $1 WHERE user_id = $2 RETURNING user_id",
+        "UPDATE user_profiles SET (bio, modified_at) = ($1, DEFAULT) WHERE user_id = $2 RETURNING \
+         user_id",
         user_bio,
         user_id,
     )
@@ -416,12 +454,12 @@ mod tests {
 
     const NOT_FOUND_ERROR_TEXT: &str = "Query against absent users should return NotFound error.";
 
-    fn user_for_test(id: i64) -> User {
-        User {
-            id,
-            user_name: "boraarslan".to_string(),
-            profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
-        }
+    fn user_for_test(user_id: i64) -> User {
+        User::new(
+            user_id,
+            "boraarslan".to_string(),
+            "random.imageservice.com/boraarslan.jpg".to_string(),
+        )
     }
 
     #[sqlx::test]
@@ -430,14 +468,19 @@ mod tests {
         let user = user_for_test(1i64);
         init_user(user.clone(), &db).await.unwrap();
         let db_user = get_user(user.id, &db).await.unwrap();
-        assert_eq!(user, db_user);
+        // Initiated user has default timestamp that is not used during database initiation.
+        // Therefore asserting them at struct level will never be successful.
+        assert_eq!(user.id, db_user.id);
+        assert_eq!(user.user_name, db_user.user_name);
+        assert_eq!(user.profile_picture, db_user.profile_picture);
+        assert_ne!(user.modified_at, db_user.modified_at);
         // Test user insert with duplicate keys
-        let user_second = User {
+        let user_second = User::new(
             // Using the key of the previously inserted user for key violation test
-            id: 1i64,
-            user_name: "fursum".to_string(),
-            profile_picture: "random.imageservice.com/fursum.jpg".to_string(),
-        };
+            1i64,
+            "fursum".to_string(),
+            "random.imageservice.com/fursum.jpg".to_string(),
+        );
         let error = init_user(user_second, &db).await.unwrap_err();
         match error {
             UserError::UserAlreadyExists(1) => {}

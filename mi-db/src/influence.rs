@@ -1,3 +1,4 @@
+use chrono::Utc;
 use mi_core::error::{AppErrorExt, ErrorType};
 use mi_core::INTERNAL_DB_ERROR_MESSAGE;
 use serde::{Deserialize, Serialize};
@@ -8,7 +9,7 @@ use utoipa::ToSchema;
 
 use crate::{PG_FOREIGN_KEY_VIOLATION, PG_UNIQUE_KEY_VIOLATION};
 
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema)]
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize, ToSchema, Default)]
 pub struct Influence {
     /// Id of the influencer user
     from_id: i64,
@@ -18,6 +19,10 @@ pub struct Influence {
     influence_level: i32,
     /// Extra info/notes about influence
     info: Option<String>,
+    /// Creation date. Not used during inserts and defaulted
+    created_at: chrono::DateTime<Utc>,
+    /// Last modification date. Not used during inserts and defaulted
+    modified_at: chrono::DateTime<Utc>,
 }
 
 impl Influence {
@@ -27,6 +32,7 @@ impl Influence {
             to_id,
             influence_level,
             info,
+            ..Default::default()
         }
     }
 }
@@ -109,8 +115,8 @@ pub async fn update_influence_level(
     db: &PgPool,
 ) -> Result<(), InfluenceError> {
     let update_result = sqlx::query!(
-        "UPDATE influences SET influence_level = $1 WHERE from_id = $2 AND to_id = $3 RETURNING \
-         from_id",
+        "UPDATE influences SET (influence_level, modified_at) = ($1, DEFAULT) WHERE from_id = $2 \
+         AND to_id = $3 RETURNING from_id",
         influence_level,
         from_id,
         to_id
@@ -134,7 +140,8 @@ pub async fn update_influence_info(
     db: &PgPool,
 ) -> Result<(), InfluenceError> {
     let update_result = sqlx::query!(
-        "UPDATE influences SET info = $1 WHERE from_id = $2 AND to_id = $3 RETURNING from_id",
+        "UPDATE influences SET (info, modified_at) = ($1, DEFAULT) WHERE from_id = $2 AND to_id = \
+         $3 RETURNING from_id",
         info,
         from_id,
         to_id
@@ -224,20 +231,15 @@ mod tests {
     use crate::user::{init_user, User};
 
     fn user_for_test(user_id: i64) -> User {
-        User {
-            id: user_id,
-            user_name: "boraarslan".to_string(),
-            profile_picture: "random.imageservice.com/boraarslan.jpg".to_string(),
-        }
+        User::new(
+            user_id,
+            "boraarslan".to_string(),
+            "random.imageservice.com/boraarslan.jpg".to_string(),
+        )
     }
 
     fn influence_for_test(first_id: i64, second_id: i64) -> Influence {
-        Influence {
-            from_id: first_id,
-            to_id: second_id,
-            influence_level: 9,
-            info: None,
-        }
+        Influence::new(first_id, second_id, 3, None)
     }
 
     #[sqlx::test]
