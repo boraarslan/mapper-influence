@@ -21,7 +21,8 @@ pub struct User {
     pub profile_picture: String,
     /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
-    /// Creation date. Not used during inserts and defaulted
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
     #[serde(skip)]
     pub created_at: chrono::DateTime<Utc>,
 }
@@ -36,7 +37,8 @@ pub struct UserProfile {
     pub featured_maps: Option<Json<FeaturedMaps>>,
     /// Last modification date. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
-    /// Creation date. Not used during inserts and defaulted
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
     #[serde(skip)]
     pub created_at: chrono::DateTime<Utc>,
 }
@@ -70,7 +72,8 @@ pub struct UserOsuData {
     pub guest_count: i32,
     // Last modified timestamp. Not used during inserts and defaulted
     pub modified_at: chrono::DateTime<Utc>,
-    /// Creation date. Not used during inserts and defaulted
+    /// Creation date. Not used during inserts and defaulted. Skipped serialization to not include
+    /// it in API response
     #[serde(skip)]
     pub created_at: chrono::DateTime<Utc>,
 }
