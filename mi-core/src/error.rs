@@ -70,6 +70,7 @@ pub enum ErrorType {
     DatabaseError = 200,
     HttpClientError = 300,
     OsuApiError = 400,
+    OsuApiScopeError = 401, 
     AuthorizatonError = 500,
     BadRequestData = 600,
     BadRequestSyntax = 601,
@@ -93,6 +94,7 @@ impl ErrorType {
             ErrorType::UnableToProcess => "InternalProcessing",
             ErrorType::OsuApiError => "OsuApi",
             ErrorType::HttpClientError => "HttpClient",
+            ErrorType::OsuApiScopeError => "OsuApi",
         }
     }
 
@@ -109,6 +111,7 @@ impl ErrorType {
             ErrorType::UnableToProcess => StatusCode::INTERNAL_SERVER_ERROR,
             ErrorType::OsuApiError => StatusCode::INTERNAL_SERVER_ERROR,
             ErrorType::HttpClientError => StatusCode::INTERNAL_SERVER_ERROR,
+            ErrorType::OsuApiScopeError => StatusCode::UNAUTHORIZED,
         }
     }
 }
