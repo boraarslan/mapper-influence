@@ -11,8 +11,7 @@ use mi_core::{AppErrorExt, ErrorType, TryDeserialize, INTERNAL_SERVER_ERROR_MESS
 use reqwest::{Response, StatusCode};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
-use tracing::info;
-use tracing::{error, warn};
+use tracing::{error, info, warn};
 
 pub mod auth;
 pub mod beatmap;
