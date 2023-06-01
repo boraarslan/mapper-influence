@@ -11,6 +11,7 @@ use mi_core::{AppErrorExt, ErrorType, TryDeserialize, INTERNAL_SERVER_ERROR_MESS
 use reqwest::{Response, StatusCode};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
+use tracing::info;
 use tracing::{error, warn};
 
 pub mod auth;
@@ -99,7 +100,7 @@ impl AppErrorExt for OsuApiError {
             OsuApiError::DeserializeError(err) => err.log_error(),
             OsuApiError::InvalidBeatmapType => warn!("{}", self),
             OsuApiError::JwtParseError(err) => error!("JWT parsing failed: {}", err),
-            OsuApiError::PublicScopeError => warn!("{}", self),
+            OsuApiError::PublicScopeError => info!("{}", self),
         }
     }
 }
