@@ -70,7 +70,7 @@ pub enum ErrorType {
     DatabaseError = 200,
     HttpClientError = 300,
     OsuApiError = 400,
-    OsuApiScopeError = 401, 
+    OsuApiScopeError = 401,
     AuthorizatonError = 500,
     BadRequestData = 600,
     BadRequestSyntax = 601,

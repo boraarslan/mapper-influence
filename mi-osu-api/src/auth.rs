@@ -15,7 +15,7 @@
 //! [authorization code grant]: <https://osu.ppy.sh/docs/index.html#authorization-code-grant>
 
 #![allow(dead_code)]
-use jwt::{Token, Header};
+use jwt::{Header, Token};
 use once_cell::sync::Lazy;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -32,11 +32,10 @@ static OSU_REDIRECT_URI: Lazy<String> = Lazy::new(|| {
     std::env::var("OSU_REDIRECT_URI").expect("Environment variable OSU_REDIRECT_URI is not set.")
 });
 
-#[derive(Deserialize,Serialize,Debug)]
-struct Scopes{
-    scopes: Vec<String>
+#[derive(Deserialize, Serialize, Debug)]
+struct Scopes {
+    scopes: Vec<String>,
 }
-
 
 #[derive(Serialize, Debug)]
 struct AuthRequest {
@@ -91,15 +90,13 @@ pub struct AuthResponseBody {
     pub refresh_token: String,
 }
 
-
-fn check_scope(access_token:&str) -> Result<(), OsuApiError>{
-    let parsed_token:Token<Header, Scopes, _> = Token::parse_unverified(access_token)?;
-    if !parsed_token.claims().scopes.contains(&"public".to_string()){
+fn check_scope(access_token: &str) -> Result<(), OsuApiError> {
+    let parsed_token: Token<Header, Scopes, _> = Token::parse_unverified(access_token)?;
+    if !parsed_token.claims().scopes.contains(&"public".to_string()) {
         return Err(OsuApiError::PublicScopeError);
     }
     Ok(())
 }
-
 
 async fn request_token(
     client: &Client,
