@@ -99,7 +99,7 @@ impl AppErrorExt for OsuApiError {
             OsuApiError::DeserializeError(err) => err.log_error(),
             OsuApiError::InvalidBeatmapType => warn!("{}", self),
             OsuApiError::JwtParseError(err) => error!("JWT parsing failed: {}", err),
-            OsuApiError::PublicScopeError => error!("Missing "),
+            OsuApiError::PublicScopeError => warn!("{}", self),
         }
     }
 }
