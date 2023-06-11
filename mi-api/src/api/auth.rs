@@ -2,6 +2,7 @@ use axum::debug_handler;
 use axum::extract::{Query, State};
 use axum::response::Redirect;
 use mi_db::user::UserError;
+use mi_osu_api::OsuApiError;
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use tower_cookies::{Cookie, Cookies};
@@ -44,7 +45,18 @@ pub async fn authorize_from_osu_api(
         return Err(SessionError::OsuAuthError("No code provided".to_string()).into());
     };
 
-    let auth_response = state.http().get_osu_access_token(code).await?;
+    let auth_response = state.http().get_osu_access_token(code).await;
+    let auth_response = match auth_response {
+        Ok(response) => response,
+        Err(err) => match err {
+            OsuApiError::PublicScopeError => {
+                let bad_scope_redirect_uri = format!("{}/login/failed", *REDIRECT_URI);
+                return Ok(Redirect::to(&bad_scope_redirect_uri));
+            }
+            err => return Err(err.into()),
+        },
+    };
+
     let user = state
         .http()
         .request_osu_token_user(&auth_response.access_token)

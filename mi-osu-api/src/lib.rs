@@ -11,7 +11,7 @@ use mi_core::{AppErrorExt, ErrorType, TryDeserialize, INTERNAL_SERVER_ERROR_MESS
 use reqwest::{Response, StatusCode};
 use serde::de::DeserializeOwned;
 use thiserror::Error;
-use tracing::{error, warn};
+use tracing::{error, info, warn};
 
 pub mod auth;
 pub mod beatmap;
@@ -36,6 +36,10 @@ pub enum OsuApiError {
          Pending and Ranked."
     )]
     InvalidBeatmapType,
+    #[error("An internal error has occurred.")]
+    JwtParseError(#[from] jwt::error::Error),
+    #[error("Missing public scope in access token.")]
+    PublicScopeError,
 }
 
 #[async_trait]
@@ -70,6 +74,8 @@ impl AppErrorExt for OsuApiError {
             OsuApiError::InternalError(_) => INTERNAL_SERVER_ERROR_MESSAGE.to_string(),
             OsuApiError::DeserializeError(err) => err.user_message(),
             OsuApiError::InvalidBeatmapType => INTERNAL_SERVER_ERROR_MESSAGE.to_string(),
+            OsuApiError::JwtParseError(_) => INTERNAL_SERVER_ERROR_MESSAGE.to_string(),
+            OsuApiError::PublicScopeError => self.to_string(),
         }
     }
 
@@ -79,6 +85,8 @@ impl AppErrorExt for OsuApiError {
             OsuApiError::InternalError(_) => ErrorType::HttpClientError,
             OsuApiError::DeserializeError(err) => err.error_type(),
             OsuApiError::InvalidBeatmapType => ErrorType::BadRequestData,
+            OsuApiError::JwtParseError(_) => ErrorType::OsuApiError,
+            OsuApiError::PublicScopeError => ErrorType::OsuApiScopeError,
         }
     }
 
@@ -90,6 +98,8 @@ impl AppErrorExt for OsuApiError {
             OsuApiError::InternalError(err) => error!("Reqwest client failed: {}", err),
             OsuApiError::DeserializeError(err) => err.log_error(),
             OsuApiError::InvalidBeatmapType => warn!("{}", self),
+            OsuApiError::JwtParseError(err) => error!("JWT parsing failed: {}", err),
+            OsuApiError::PublicScopeError => info!("{}", self),
         }
     }
 }
