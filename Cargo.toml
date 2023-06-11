@@ -13,7 +13,7 @@ axum-auth = "0.4.0"
 axum-macros = "0.3.7"
 bb8 = "0.8.0"
 bb8-redis = "0.13.0"
-chrono = { version = "0.4.24", default-features = false, features = ["serde"] }
+chrono = { version = "0.4.26", default-features = false, features = ["serde"] }
 dotenvy = "0.15.7"
 futures = "0.3.28"
 hyper = { version = "0.14.26", features = ["full"] }
