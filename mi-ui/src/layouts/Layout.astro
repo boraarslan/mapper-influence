@@ -1,0 +1,53 @@
+---
+import "/src/styles/variables.scss";
+import "/src/styles/globals.scss";
+import "@fontsource-variable/comfortaa";
+import "@fontsource-variable/inter";
+export interface Props {
+  title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="description"
+      content="Track and share your osu! mapping influences."
+    />
+    <meta
+      name="keywords"
+      content="osu, mapping, map, beatmap, beatmaps, community, influence, style"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="author"
+      content="Fursum"
+    />
+    <link
+      rel="icon"
+      href="/svg/Influences.svg"
+    />
+    <link
+      rel="shortcut icon"
+      href="/svg/Influences.svg"
+    />
+    <link
+      rel="mask-icon"
+      href="/svg/Influences.svg"
+      color="#000000"
+    />
+    <title>
+      {title ? `${title} | ` : ""}Mapper Influences
+    </title>
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,148 @@
+.positioner {
+  position: absolute;
+  top: -8rem;
+  pointer-events: none; // Enable it on children
+
+  .cardWrapper {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--spacing) * 2);
+
+    transform: perspective(30rem) rotateX(30deg) rotateY(-25deg) rotateZ(15deg)
+      scale(0.65);
+
+    *,
+    *::before,
+    *::after {
+      transition: opacity 0.5s ease-out, background-color 0.5s ease-out,
+        transform 0.5s ease-out;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 46rem;
+      aspect-ratio: 16 / 9;
+
+      border-radius: calc(var(--borderRadius) * 4);
+
+      pointer-events: all;
+      user-select: none;
+
+      animation-name: slideIn;
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-duration: 1s;
+
+      // Staggered animation
+      @for $i from 1 through 3 {
+        &:nth-child(#{$i}n) {
+          animation-delay: #{$i * 0.1}s;
+        }
+      }
+
+      // Center one div on left side
+      &:nth-child(1) {
+        grid-row-start: 1;
+        grid-row-end: 3;
+        margin-block: auto;
+      }
+
+      // Fit video to card
+      > video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        border-radius: inherit;
+      }
+
+      &:hover {
+        > video,
+        .overlay {
+          transform: translateX(-1rem) translateY(-1rem);
+        }
+      }
+
+      //Blur overlay
+      .overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+
+        &::after,
+        &::before {
+          position: absolute;
+          opacity: 0;
+          border-radius: inherit;
+        }
+        &::after {
+          content: "";
+          inset: 0;
+          opacity: 0.5;
+          background-color: transparent;
+          backdrop-filter: blur(5px);
+        }
+        &::before {
+          content: "Go to map";
+          z-index: 1;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+
+          padding: var(--spacing);
+          border-radius: calc(var(--borderRadius) * 2);
+
+          background-color: var(--buttonBg);
+          color: var(--buttonText);
+          font-size: 1.5rem;
+          font-weight: 700;
+        }
+      }
+      &:hover {
+        .overlay {
+          &::after,
+          &::before {
+            opacity: 1;
+          }
+          &::after {
+            background-color: hsla(0, 0%, 100%, 0.2);
+          }
+        }
+      }
+
+      // Animated hover shadow
+      .shadow {
+        z-index: -1;
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-color: hsla(0, 0%, 0%, 1);
+        filter: blur(0.5rem);
+        scale: 1;
+        transition: filter 0.5s ease-out, scale 0.5s ease-out;
+      }
+      &:hover {
+        .shadow {
+          filter: blur(2rem);
+          scale: 0.95;
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(5%) translateY(2%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0%) translateY(0%);
+  }
+}

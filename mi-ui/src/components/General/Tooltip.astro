@@ -1,0 +1,59 @@
+---
+export interface Props {
+  className?: string;
+}
+
+const { className = "" } = Astro.props;
+---
+
+<span
+  class=`tooltip ${className}`
+  id="tooltip"
+>
+  <slot />
+</span>
+
+<script>
+  var element = document.getElementById("tooltip");
+  document.addEventListener("mousemove", fn);
+
+  // Follow mouse
+  function fn(e: MouseEvent) {
+    if (!element) return;
+    const padding = 16;
+    const deadzone = 16;
+
+    // X axis
+    if (element.clientWidth / 2 + e.pageX + deadzone > window.innerWidth)
+      element.style.left = e.pageX - element.clientWidth - padding + "px";
+    else element.style.left = e.pageX - element.clientWidth / 2 + "px";
+
+    // Y axis
+    if (e.clientY - element.clientHeight - deadzone <= 0)
+      element.style.top = e.pageY + padding + "px";
+    else element.style.top = e.pageY - element.clientHeight - padding + "px";
+  }
+</script>
+
+<style lang="scss">
+  @import "/src/styles/extendables.scss";
+
+  .tooltip {
+    position: absolute;
+    padding: 0.25em 0.5em;
+    border-radius: var(--borderRadius);
+    max-width: 10rem;
+    width: max-content;
+
+    background-color: var(--bgColor-1);
+    @extend %cardShadow;
+
+    text-align: center;
+    pointer-events: none;
+
+    opacity: 0;
+    transition: opacity ease-out 0.15s;
+
+    z-index: 2;
+  }
+</style>

@@ -1,0 +1,111 @@
+%cardShadow {
+  box-shadow: var(--cardShadow);
+
+  &:hover {
+    box-shadow: var(--cardShadowHover);
+  }
+}
+
+%contentBox {
+  background-color: var(--bgColor-2);
+  box-shadow: var(--contentShadow);
+  border-radius: var(--borderRadius);
+}
+
+%button {
+  cursor: pointer;
+  background-color: var(--buttonBg-alt);
+  outline: 2px solid var(--buttonOutline);
+  border-radius: var(--borderRadius);
+  color: var(--buttonText-alt);
+  &:hover,
+  &:focus-visible {
+    background-color: var(--buttonOutline);
+    color: var(--bgColor-1);
+  }
+}
+
+%buttonHover {
+  isolation: isolate;
+  position: relative;
+  &::before,
+  &::after {
+    border-radius: inherit;
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transition: opacity 0.1s ease-out;
+  }
+
+  // Used for gradient transitions
+  &::after {
+    background: linear-gradient(
+      to right,
+      var(--secondaryColor) 0%,
+      var(--primaryColor) 4% 96%,
+      var(--secondaryColor) 100%
+    );
+    box-shadow: 0.1rem 0 1rem -0.25rem var(--secondaryColor);
+    opacity: 0;
+  }
+  // Only used for background color
+  &::before {
+    content: "";
+    background-color: var(--primaryColorBg);
+    z-index: -2;
+  }
+
+  &:hover {
+    --primaryTextColor: var(--textColor);
+    outline-color: var(--secondaryColor);
+    .icon {
+      --primaryTextColor: var(--textColor);
+    }
+    &::after {
+      opacity: 0.4;
+    }
+  }
+}
+
+// Just swapping colors
+%buttonHoverSecondary {
+  @extend %buttonHover;
+  outline-color: var(--secondaryColor);
+  color: var(--secondaryTextColor);
+
+  // Used for gradient transitions
+  &::after {
+    background: linear-gradient(
+      to right,
+      var(--primaryColor) 0%,
+      var(--secondaryColor) 4% 96%,
+      var(--primaryColor) 100%
+    );
+    box-shadow: 0.1rem 0 1rem -0.25rem var(--primaryColor);
+  }
+  // Only used for background color
+  &::before {
+    background-color: var(--primaryColorBg);
+  }
+
+  &:hover {
+    outline-color: var(--primaryColor);
+    color: var(--textColor);
+  }
+}
+
+%resetButtonDefaults {
+  color: inherit;
+  background-color: inherit;
+  outline: none;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    color: inherit;
+    background-color: inherit;
+    outline: none;
+  }
+}

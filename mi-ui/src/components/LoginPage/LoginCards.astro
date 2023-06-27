@@ -1,0 +1,50 @@
+---
+import "./LoginCards.scss";
+
+const CARD_DATA = [
+  {
+    url: "https://osu.ppy.sh/beatmapsets/1536948",
+    filePath:
+      "https://cdn.discordapp.com/attachments/645591556585291776/1038477819912650792/example1.webm",
+  },
+  {
+    url: "https://osu.ppy.sh/beatmapsets/1846040",
+    filePath:
+      "https://cdn.discordapp.com/attachments/645591556585291776/1038477820751515789/example2.webm",
+  },
+  {
+    url: "https://osu.ppy.sh/beatmapsets/855677",
+    filePath:
+      "https://cdn.discordapp.com/attachments/645591556585291776/1038477820399210526/example3.webm",
+  },
+];
+---
+
+<div class="positioner">
+  <div class="cardWrapper">
+    {
+      CARD_DATA.map((item) => (
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noreferrer"
+          class="card"
+        >
+          <video
+            autoplay
+            muted
+            loop
+            playsinline
+          >
+            <source
+              src={item.filePath}
+              type="video/webm"
+            />
+          </video>
+          <div class="overlay" />
+          <div class="shadow" />
+        </a>
+      ))
+    }
+  </div>
+</div>
