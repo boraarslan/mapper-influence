@@ -9,12 +9,14 @@
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Justfile](https://github.com/casey/just) `cargo install just` 
+- [Justfile](https://github.com/casey/just) `cargo install just`
+- Sqlx `cargo install sqlx-cli`
 
  1. Install the dependencies above
  2. Clone the repo
  3. Start Docker then run `just docker-compose-up`
- 4. Start the server with `just host`
+ 4. Run the migrations with `just update-db-schema`
+ 5. Start the server with `just host`
 
 ### How to run tests
 

@@ -1,26 +1,23 @@
-@import "./mixins/index";
-@import "./variables/sizes";
-@import "./variables/toggledVariables";
-@import "./variables/fonts";
+@import "./extendables";
 
 html,
 body {
   padding: 0;
   margin: 0;
 
-  background-color: $color-background;
+  background-color: var(--bgColor-1);
   overflow-x: hidden;
 
-  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: var(--inter);
 
   font-size: 1rem;
-  @media screen and (max-width: $responsive-breakpoint) {
+  // var(--responsiveWidth) does not work
+  @media screen and (max-width: 60rem) {
     font-size: 0.75rem;
   }
 
   &::-webkit-scrollbar-track {
-    margin: $spacing;
+    margin: 1rem;
   }
 }
 
@@ -44,13 +41,13 @@ h6 {
   box-sizing: border-box;
   font-size: 1rem;
 
-  color: $color-text;
-  // All of the color transitions
+  color: var(--textColor);
+  /* All of the color transitions */
   $transitionConfig: 0.1s ease-in;
   $allTransitions: background-color $transitionConfig, color $transitionConfig,
     outline-color $transitionConfig, text-shadow $transitionConfig,
     box-shadow $transitionConfig, font-weight $transitionConfig,
-    fill $transitionConfig;
+    fill $transitionConfig, border-color $transitionConfig;
   transition: $allTransitions;
   &::after,
   &::before {
@@ -60,13 +57,11 @@ h6 {
 
 a {
   text-decoration: none;
-  color: $color-button-outline;
+  color: var(--buttonOutline);
   cursor: pointer;
 }
 
 button {
-  @extend %button;
-
   > span {
     line-height: 1;
     color: inherit;
@@ -78,11 +73,19 @@ button {
   width: 0.6rem;
 }
 *::-webkit-scrollbar-thumb {
-  background: linear-gradient(to top, $color-primary, $color-secondary);
+  background: linear-gradient(
+    to top,
+    var(--primaryColor),
+    var(--secondaryColor)
+  );
   border-radius: 999rem;
 }
 *::-webkit-scrollbar-track {
-  background: linear-gradient(to top, $color-primary-bg, $color-secondary-bg);
+  background: linear-gradient(
+    to top,
+    var(--primaryColorBg),
+    var(--secondaryColorBg)
+  );
   border-radius: 999rem;
 }
 
@@ -90,6 +93,10 @@ input,
 textarea,
 button {
   border: none;
-  padding: $spacing / 2;
-  border-radius: $border-radius;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.globals-hoverableButton {
+  @extend %button;
 }

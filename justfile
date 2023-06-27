@@ -37,7 +37,7 @@ install-ui-deps:
 	cd mi-ui && npm install
 
 export-ui: install-ui-deps
-	cd mi-ui && npm run export
+	cd mi-ui && npm run build
 
 host: export-ui
 	cargo run

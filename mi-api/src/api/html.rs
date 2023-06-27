@@ -15,10 +15,11 @@ pub fn html_router() -> Router<SharedState> {
     Router::new()
         // Pages
         .route_service("/", serve_file("index.html"))
-        .route_service("/profile", serve_file("profile.html"))
-        .route_service("/profile/:user_id", serve_file("/profile/[mapperId].html"))
-        .route_service("/oauth", serve_file("oauth.html"))
+        //.route_service("/profile", serve_file("profile.html"))
+        //.route_service("/profile/:user_id", serve_file("/profile/[mapperId].html"))
+        //.route_service("/oauth", serve_file("oauth.html"))
         // Assets
-        .nest_service("/assets/_next", serve_dir("_next"))
+        .nest_service("/_astro", serve_dir("_astro"))
         .nest_service("/svg", serve_dir("svg"))
+        .nest_service("/fonts", serve_dir("fonts"))
 }
