@@ -14,8 +14,6 @@ type Props = {
 const Layout: FC<Props> = ({ children }) => {
   const user = useUser();
 
-  console.log(user);
-
   return (
     <>
       {<Header />}
