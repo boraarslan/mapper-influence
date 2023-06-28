@@ -1,10 +1,10 @@
 import type { NextPage, InferGetStaticPropsType } from "next";
 import { readFileSync } from "fs";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { userData } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
-import { useSessionStore } from "src/states/user";
+import { useUser } from "@hooks/useUser";
 
 const DynamicNewsScreen = dynamic(() =>
   import("@components/PageComponents/Home").then((r) => r.NewsScreen)
@@ -23,26 +23,21 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
-  const { user } = useSessionStore();
-  const [isHydrated, setIsHydrated] = useState(false);
+  const { user } = useUser();
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  if (user)
+    switch (screen) {
+      case "News":
+        return <DynamicNewsScreen newsList={news} topList={leaderboard} />;
+      case "Tutorial":
+        return (
+          <DynamicTutorialScreen>
+            <button onClick={() => setScreen("News")}>Close tutorial</button>
+          </DynamicTutorialScreen>
+        );
+    }
 
-  if (!isHydrated || !user)
-    return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
-
-  switch (screen) {
-    case "News":
-      return <DynamicNewsScreen newsList={news} topList={leaderboard} />;
-    case "Tutorial":
-      return (
-        <DynamicTutorialScreen>
-          <button onClick={() => setScreen("News")}>Close tutorial</button>
-        </DynamicTutorialScreen>
-      );
-  }
+  return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
 };
 
 export const getStaticProps = async () => {

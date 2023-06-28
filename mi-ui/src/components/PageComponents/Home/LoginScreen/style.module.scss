@@ -14,9 +14,10 @@
   }
 
   .loginText {
+    font-family: "Inter Variable";
     margin-top: $spacing;
-    margin-bottom: 7rem;
     > h4 {
+      font-family: inherit;
       margin: 0;
       margin-bottom: $spacing / 2;
       font-weight: inherit;
@@ -25,15 +26,15 @@
       .login {
         @extend %button;
         font-size: inherit;
-        padding-inline: $spacing * 2;
+        padding-inline: $spacing;
         padding-block: $spacing / 4;
-        margin-left: $spacing;
+        margin-left: $spacing / 2;
       }
     }
   }
 
   section {
-    margin-bottom: 7rem;
+    margin-bottom: 8rem;
     max-width: 40rem;
 
     > h2 {
@@ -43,21 +44,11 @@
 
     > p,
     .a {
-      position: relative;
       font-size: 1.5rem;
-      line-height: 140%;
+      line-height: 130%;
     }
 
     .a {
-      .tooltip {
-        @extend %tooltip;
-        left: 0;
-        right: 0;
-        width: max-content;
-        padding-inline: $spacing;
-        margin-inline: auto;
-      }
-
       &:hover {
         .tooltip {
           opacity: 1;

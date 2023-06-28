@@ -1,27 +1,22 @@
 import { NextPage } from "next";
 import ProfilePage from "@components/PageComponents/ProfilePage";
 import { UserProfile } from "@libs/types/user";
-import { useFetchService } from "@hooks/useFetchService";
-import { getUserBase } from "src/services/userBase";
-
-const fetchUser = () => getUserBase();
+import { useUser } from "@hooks/useUser";
 
 const MapperPage: NextPage = () => {
-  const [user, error, loading] = useFetchService(fetchUser);
+  const { user } = useUser();
 
   let mergedData = dummyData;
   if (user)
     mergedData = {
       ...dummyData,
-      avatarUrl: user.profile_picture,
-      username: user.user_name,
-      id: user.id,
+      ...user,
     };
 
-  if (error) return <h1>Error while fetching user: {error}</h1>;
-  if (loading) return <span>Loading...</span>;
+  //if (error) return <h1>Error while fetching user: {error}</h1>;
+  //if (loading) return <span>Loading...</span>;
   if (user) return <ProfilePage userData={mergedData} editable />;
-  return <h1>User not found! {error}</h1>;
+  //return <h1>User not found! {error}</h1>;
 };
 
 export default MapperPage;

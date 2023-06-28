@@ -31,9 +31,7 @@
     width: 90%;
 
     .tutorialStep {
-      position: relative;
       display: flex;
-
       flex-direction: column;
       text-align: center;
       width: 20rem;
@@ -44,7 +42,6 @@
       @extend %contentBox;
 
       .centerer {
-        position: relative;
         display: flex;
         flex-grow: 1;
         align-items: center;
@@ -52,9 +49,12 @@
       }
 
       .addButtonTooltip {
-        @extend %tooltip;
-        opacity: 1;
-        margin-top: 4rem;
+        position: absolute;
+        z-index: 1;
+
+        font-family: "Inter Variable";
+        padding-block: $spacing;
+        background-color: $color-background-content;
         animation: fadeIn 0.1s ease-out;
       }
 
@@ -73,10 +73,11 @@
         padding-bottom: $spacing;
 
         .profileSide {
+          position: relative;
           display: flex;
           flex-direction: column;
 
-          .card{
+          .card {
             margin-top: $spacing * 5;
           }
         }

@@ -26,11 +26,9 @@ export default function Header() {
 
   return (
     <div className={styles.header}>
-      <Link href="/" passHref>
-        <a className={styles.home}>
-          <Influences />
-          <span>Mapper Influences</span>
-        </a>
+      <Link href="/" className={styles.home}>
+        <Influences />
+        <span>Mapper Influences</span>
       </Link>
       <SearchBar className={styles.searchBar} />
       <DarkModeToggle className={styles.darkMode} />
@@ -40,14 +38,12 @@ export default function Header() {
 }
 
 export const ProfileLinkAvatar: FC<{ user?: UserBase }> = ({ user }) => (
-  <Link href={"/profile"} passHref>
-    <a>
-      <ProfilePhoto
-        className={styles.avatar}
-        photoUrl={user?.avatarUrl}
-        size="md"
-        circle
-      />
-    </a>
+  <Link href={"/profile"}>
+    <ProfilePhoto
+      className={styles.avatar}
+      photoUrl={user?.avatarUrl}
+      size="md"
+      circle
+    />
   </Link>
 );
