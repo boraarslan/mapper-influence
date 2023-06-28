@@ -1,9 +1,10 @@
 ---
 export interface Props {
   className?: string;
+  children?: any;
 }
 
-const { className = "" } = Astro.props;
+const { className = "", children } = Astro.props;
 ---
 
 <span
@@ -11,6 +12,7 @@ const { className = "" } = Astro.props;
   id="tooltip"
 >
   <slot />
+  {children}
 </span>
 
 <script>

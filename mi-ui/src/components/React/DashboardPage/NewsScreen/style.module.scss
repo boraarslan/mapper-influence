@@ -1,0 +1,35 @@
+.newsScreen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing);
+
+  .double {
+    position: relative;
+    display: flex;
+    gap: inherit;
+    height: 100%;
+  }
+
+  .newsContainer {
+    width: 30rem;
+  }
+
+  .contribute {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: var(--responsiveWidth)) {
+  .newsScreen {
+    flex-direction: column;
+    .newsContainer,
+    .contribute {
+      width: 20rem;
+      max-width: 20rem;
+      flex-basis: 100%;
+    }
+  }
+}

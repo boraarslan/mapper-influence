@@ -1,0 +1,29 @@
+.allResults {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing);
+  
+  // Match the card width
+  top: calc(100% + var(--spacing));
+  padding: var(--spacing);
+  right: 0;
+  
+  background-color: var(--bgColor-2);
+  
+  outline: 0.1rem solid var(--primaryColor);
+  border-radius: var(--borderRadius);
+
+  // "Matching users:"
+  > h4 {
+    margin: 0;
+  }
+}
+
+@media screen and (max-width: (var(--responsiveWidth) / 2)) {
+  .allResults {
+    left: 0;
+    right: 0;
+  }
+}

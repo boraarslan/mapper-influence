@@ -1,0 +1,54 @@
+.createPost {
+  padding: calc(var(--spacing) / 2);
+  border-radius: var(--borderRadius);
+  margin-bottom: calc(var(--spacing) / 2);
+}
+
+.title {
+  margin-top: 0;
+}
+
+.closePost {
+  position: absolute;
+  top: calc(var(--spacing) / 2);
+  right: calc(var(--spacing) / 2);
+  font-weight: 700;
+  color: red;
+  outline: 2px solid red;
+  background-color: transparent;
+}
+
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 15rem;
+  max-width: 30rem;
+  gap: var(--spacing);
+  > label {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    > textarea {
+      max-width: 25rem;
+      width: 20rem; //This property decides initial modal width
+      height: 12rem;
+    }
+
+    > input,
+    > textarea {
+      margin-top: var(--spacing)/2;
+      background-color: transparent;
+      outline: 2px solid var(--secondaryColor);
+
+      &:focus-within {
+        outline-color: var(--primaryColor);
+      }
+    }
+  }
+
+  > button {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+}

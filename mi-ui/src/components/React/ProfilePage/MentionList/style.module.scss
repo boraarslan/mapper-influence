@@ -1,0 +1,31 @@
+.mentionList {
+  height: var(--height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing);
+  padding-top: 0;
+
+  background-color: var(--bgColor-1)-content;
+
+  > h2 {
+    text-align: center;
+    margin-bottom: var(--spacing);
+  }
+
+  .mentionGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing);
+    width: var(--cardWidth) * 2 + var(--spacing);
+  }
+
+  @media screen and (max-width: var(--responsiveWidth)) {
+    max-width: none;
+
+    .mentionGrid {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

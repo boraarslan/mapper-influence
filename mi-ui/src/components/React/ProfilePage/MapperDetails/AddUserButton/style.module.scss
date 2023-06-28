@@ -1,0 +1,37 @@
+.addUser {
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  isolation: isolate;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing);
+
+  background: linear-gradient(to right, var(--secondaryColor), var(--primaryColor));
+
+  outline: none;
+
+  border-radius: var(--borderRadius);
+  padding-inline: calc(var(--spacing) * 2);
+  padding-block: var(--spacing);
+
+  > span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    z-index: 1;
+    color: var(--white);
+  }
+
+  &::after {
+    position: absolute;
+    content: "";
+    inset: var(--spacing) / 8;
+    border-radius: var(--borderRadius) / 2;
+    background-color: var(--bgColor-1);
+    opacity: 0.05;
+  }
+}

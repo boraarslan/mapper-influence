@@ -1,0 +1,99 @@
+.mapperInfluences {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  height: var(--height);
+  max-width: var(--max-width);
+  margin-inline: auto;
+
+  padding: calc(var(--spacing) / 2);
+  padding-top: 0;
+
+  background-color: var(--bgColor-1)-content;
+
+  > h2 {
+    text-align: center;
+    margin-bottom: var(--spacing)/2;
+  }
+
+  .scrollWrapper {
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--spacing) * 2);
+
+    > span {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .influenceRow {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing);
+      width: 100%;
+
+      padding: calc(var(--spacing) / 2);
+      padding-bottom: 0;
+
+      // Line separator
+      &:not(:first-of-type)::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: calc(var(--spacing) / 2);
+        top: -var(--spacing) + 0.1rem;
+        height: 0.2rem;
+        background-color: var(--bgColor-1)-card;
+      }
+
+      .cardWrapper {
+        height: 100%;
+        .editable {
+          margin-top: calc(var(--spacing) * 4).5;
+        }
+      }
+
+      .description {
+        min-height: 100%;
+        max-width: 70ch;
+      }
+
+      .maps {
+        > h4 {
+          width: 100%;
+          text-align: center;
+          margin-block: var(--spacing)/2;
+        }
+      }
+    }
+
+    @media screen and (max-width: var(--responsiveWidth)) {
+      .influenceRow {
+        height: auto;
+        flex-wrap: wrap;
+
+        &:not(:last-child) {
+          margin-bottom: var(--spacing);
+        }
+
+        .description {
+          order: 3;
+          min-height: 10rem;
+          height: 10rem;
+          flex-basis: 100%;
+          margin-right: var(--spacing)/2;
+        }
+
+        .maps {
+          order: 2;
+        }
+      }
+    }
+  }
+}

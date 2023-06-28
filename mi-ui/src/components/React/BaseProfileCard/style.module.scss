@@ -1,0 +1,136 @@
+@import "/src/styles/extendables";
+
+.cardWrapper {
+  $photoSize: 5rem;
+
+  position: relative;
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr $photoSize 1fr;
+  grid-template-rows: 3.5rem auto;
+  gap: calc(var(--spacing) / 2);
+
+  border-radius: var(--borderRadius);
+  width: var(--cardWidth);
+  height: var(--cardHeight);
+  min-width: var(--cardWidth);
+  margin-top: calc($photoSize / 4);
+  padding-bottom: calc(var(--spacing) / 2);
+
+  @extend %cardShadow;
+
+  .name {
+    grid-row: 2;
+    grid-column: span 3;
+    width: 100%;
+    height: 1.5rem;
+    padding-inline: calc(var(--spacing) / 2);
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .rankedStat,
+  .influencedStat {
+    width: 100%;
+    margin-top: 0.75rem;
+    font-size: 0.75rem;
+    opacity: 0.8;
+
+    > span {
+      margin-top: 0.1rem;
+      font-size: 1rem;
+      display: block;
+    }
+  }
+
+  .influencedStat {
+    text-align: right;
+
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .rankedStat {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .flag {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    grid-row: 3;
+    grid-column: 2;
+    width: 100%;
+
+    padding: calc(var(--spacing) / 8);
+    margin-top: -0.55rem;
+    border-radius: 0.25rem;
+
+    > img {
+      height: 1rem;
+      border-radius: inherit;
+    }
+  }
+
+  .photoCell {
+    position: relative;
+
+    > img {
+      grid-column: 2;
+
+      border-radius: 999rem;
+      height: $photoSize;
+      width: $photoSize;
+      margin-top: calc($photoSize / 4 * -1);
+
+      // Transparent mask gradient for badges
+      mask-image: linear-gradient(
+        to top,
+        transparent 5%,
+        white 30%,
+        white 100%
+      );
+    }
+
+    .badges {
+      position: absolute;
+      width: 100%;
+      bottom: -0.25rem;
+      display: flex;
+      justify-content: center;
+
+      grid-row: 1;
+      grid-column: 2;
+
+      .badge {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: var(--bgColor-1)-card;
+        border: 1px solid;
+
+        padding: 0.1rem 0.3rem;
+        padding-top: 0.25rem;
+
+        border-radius: 50rem;
+        font-size: 0.75rem;
+
+        &:hover {
+          .tooltip {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}

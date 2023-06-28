@@ -1,0 +1,113 @@
+@import "/src/styles/extendables";
+
+.tutorialWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  > h1 {
+    position: relative;
+    padding-inline: calc(var(--spacing) / 2);
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -0.25rem;
+      left: 0;
+      width: 100%;
+      height: 0.1rem;
+
+      background-color: var(--textColor);
+    }
+  }
+
+  .stepsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+    width: 90%;
+
+    .tutorialStep {
+      position: relative;
+      display: flex;
+
+      flex-direction: column;
+      text-align: center;
+      width: 20rem;
+      min-height: 10rem;
+      padding-block: calc(var(--spacing) / 2);
+      padding-inline: var(--spacing);
+
+      @extend %contentBox;
+
+      .centerer {
+        position: relative;
+        display: flex;
+        flex-grow: 1;
+        align-items: center;
+        justify-content: center;
+      }
+
+      // Mobile search bar expanding alignment fix
+      &:nth-child(1) {
+        @media screen and (max-width: var(--responsiveWidth)) {
+          > div:focus-within {
+            bottom: 15%;
+          }
+        }
+      }
+
+      // Editing step
+      &:nth-child(3) {
+        width: calc(40rem + var(--spacing));
+        padding-bottom: var(--spacing);
+
+        .profileSide {
+          display: flex;
+          flex-direction: column;
+
+          .card {
+            margin-top: calc(var(--spacing) * 5);
+          }
+        }
+
+        .descriptionSide {
+          height: 100%;
+          flex-grow: 1;
+          margin-left: calc(var(--spacing) / 2);
+          margin-top: calc(var(--spacing) / 2);
+        }
+
+        @media screen and (max-width: var(--responsiveWidth)) {
+          position: relative;
+          width: 20rem;
+          .centerer {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--spacing) / 2);
+            width: calc(20rem - var(--spacing) * 2);
+
+            .descriptionSide {
+              margin-left: 0;
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,106 @@
+---
+import Layout from "@layouts/Layout.astro";
+import LoginCards from "@components/LoginPage/LoginCards.astro";
+import ThemeToggle from "@components/React/DarkMode/ThemeToggle";
+import Tooltip from "@components/General/Tooltip.astro";
+---
+<Layout>
+  <div class="w-full font-light max-w-7xl mx-auto mt-4 px-4">
+    <div
+      class="ml-2"
+      style="min-height: 2.5rem"
+    >
+      <ThemeToggle client:load />
+    </div>
+    <div class="p-2 pt-0 text-2xl">
+      <span
+        class="m-2"
+        style="margin-left: 0.1rem"
+        >Welcome to</span
+      >
+      <h1 class="-ml-1 text-7xl">Mapper Influences</h1>
+    </div>
+    <section class="mt-6 mb-32">
+      <h4 class="m-0 mb-2 text-2xl">Most features are locked to guests.</h4>
+      <h4 class="m-0 mb-2 mt-4 text-2xl">
+        To continue, <a
+          href="/login"
+          class="globals-hoverableButton loginButton px-4 py-2 ml-2"
+          >Login</a
+        >
+      </h4>
+    </section>
+    <section class="leftAccent">
+      <h2>What is this site?</h2>
+      <p>
+        This site is meant to be a more interactive version of{" "}
+        <a
+          href="https://pishifat.github.io/"
+          target={"_blank"}
+          rel={"noreferrer"}
+          class="a group"
+        >
+          pishifat's Mapper Influences
+          <Tooltip className="group-hover:opacity-100">
+            Opens in new tab
+          </Tooltip>
+        </a>{" "}
+        project.
+        <br />
+        Naming is a coincidence though.
+      </p>
+    </section>
+    <section class="max-w-2xl leftAccent">
+      <h2>Cool, what are the features?</h2>
+      <p>
+        The main function of this site is to add other mappers to your profile.
+        You can then give additional details on how they affected you.
+        <br />
+        There is also a leaderboard of top influencers down below.
+      </p>
+    </section>
+    {/*<ContributeButtons />*/}
+    <LoginCards />
+  </div>
+</Layout>
+
+<script>
+  if (document.cookie.includes("mi-session-token"))
+    window.location.replace("/dashboard");
+</script>
+
+<style>
+  h1 {
+    font-weight: 700 !important;
+    font-family: var(--comfortaa) !important;
+    letter-spacing: -0.15rem;
+  }
+
+  section {
+    margin-bottom: 7rem;
+    max-width: 40rem;
+    padding-inline: 0.5rem;
+  }
+
+  section > h2 {
+    font-family: var(--comfortaa) !important;
+    font-size: 3rem;
+    letter-spacing: -0.1rem;
+  }
+
+  section > p,
+  section > h4,
+  section > p > a {
+    font-weight: 300;
+    font-size: 1.5rem;
+  }
+
+  .leftAccent {
+    border-left: 0.25rem solid var(--bgColor-3);
+  }
+
+  .loginButton {
+    font-size: inherit;
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,16 @@
+---
+import Layout from "@layouts/Layout.astro";
+import TutorialScreen from "@components/React/DashboardPage/TutorialScreen";
+import Header from "@components/React/Header";
+---
+
+<Layout title="Dashboard">
+  <Header
+    client:load
+    client:only
+  />
+  <TutorialScreen
+    client:load
+    client:only
+  />
+</Layout>
