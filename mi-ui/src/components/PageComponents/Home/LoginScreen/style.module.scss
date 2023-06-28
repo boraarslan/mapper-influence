@@ -16,6 +16,9 @@
   .loginText {
     font-family: "Inter Variable";
     margin-top: $spacing;
+    padding-left: 0;
+    border: none;
+
     > h4 {
       font-family: inherit;
       margin: 0;
@@ -36,6 +39,8 @@
   section {
     margin-bottom: 8rem;
     max-width: 40rem;
+    border-left: 0.25rem solid $color-background-card;
+    padding-left: $spacing;
 
     > h2 {
       font-size: 3rem;
@@ -68,6 +73,9 @@
     gap: $spacing * 2;
     max-width: 100%;
     margin-bottom: $spacing;
+    padding-left: 0;
+    border: none;
+
     h2 {
       font-size: 2rem;
     }
