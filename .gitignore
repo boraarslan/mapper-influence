@@ -9,5 +9,5 @@
 mi-ui/out
 mi-ui/build
 
-**/pages
+/pages
 signoz

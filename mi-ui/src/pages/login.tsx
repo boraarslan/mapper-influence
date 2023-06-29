@@ -22,8 +22,7 @@ const DevLoginPage = () => {
           id: data.id,
           username: data.user_name,
           flag: { code: "TR", name: "Türkiye" },
-        },
-        session.toString()
+        }
       )
     );
     //router.replace("/");

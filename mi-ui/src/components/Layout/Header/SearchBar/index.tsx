@@ -1,8 +1,6 @@
-import { FC, useRef, useState } from "react";
-import { useRouter } from "next/router";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { FC, useCallback, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
-
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts";
 import { UserBase } from "@libs/types/user";
@@ -15,14 +13,13 @@ type Props = {
 };
 
 const SearchBar: FC<Props> = ({ className }) => {
-  const router = useRouter();
   const containerRef = useRef(null);
   const [results, setResults] = useState<UserBase[]>([]);
   const [showResults, setShowResults] = useState(false);
 
   useOnClickOutside(containerRef, () => setShowResults(false));
 
-  const searchUser = (query: string) => {
+  const searchUser = useCallback((query: string) => {
     setResults(
       Array.from(Array(10).keys()).map((_, index) => ({
         username: query,
@@ -32,7 +29,7 @@ const SearchBar: FC<Props> = ({ className }) => {
       }))
     );
     // TODO: Search user service
-  };
+  }, []);
 
   const debouncedSearch = AwesomeDebouncePromise(searchUser, 500);
 

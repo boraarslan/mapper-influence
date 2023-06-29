@@ -18,6 +18,7 @@ const SingleItemCarousel: FC<{
       showStatus={false}
       showArrows={false}
       transitionTime={0}
+      showThumbs={false}
     >
       {mapList.map((item) => (
         <div key={item.mapUrl} className={styles.slide}>
