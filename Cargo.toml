@@ -11,16 +11,20 @@ async-trait = "0.1.68"
 axum = { version = "0.6.18", features = ["macros", "http2"] }
 axum-auth = "0.4.0"
 axum-macros = "0.3.7"
-bb8 = "0.8.0"
-bb8-redis = "0.13.0"
+bb8 = "0.8.1"
+bb8-redis = "0.13.1"
 chrono = { version = "0.4.24", default-features = false, features = ["serde"] }
 dotenvy = "0.15.7"
 futures = "0.3.28"
 hyper = { version = "0.14.26", features = ["full"] }
 jwt = "0.16.0"
-once_cell = "1.17.1"
+once_cell = "1.18.0"
 opentelemetry = { version = "0.18.0", features = ["rt-tokio"] }
-opentelemetry-otlp = {version = "0.11.0", features = ["reqwest-rustls", "http-proto", "reqwest-client"] }
+opentelemetry-otlp = { version = "0.11.0", features = [
+    "reqwest-rustls",
+    "http-proto",
+    "reqwest-client",
+] }
 parking_lot = "0.12.1"
 pin-project-lite = "0.2"
 rand_chacha = "0.3.1"
@@ -35,7 +39,7 @@ sqlx = { version = "0.6.3", features = [
     "postgres",
 ] }
 thiserror = "1.0.40"
-tokio = { version = "1.28.1", features = ["macros"] }
+tokio = { version = "1.29.0", features = ["macros"] }
 tower = "0.4.13"
 tower-cookies = "0.9.0"
 tower-http = { version = "0.4.0", features = ["full"] }
