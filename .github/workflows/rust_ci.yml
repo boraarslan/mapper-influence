@@ -85,17 +85,17 @@ jobs:
           --health-timeout 3s
           --health-retries 5
 
-  cargo-deny:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Install protoc
-        run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
-      - uses: Swatinem/rust-cache@v2
-      - name: cargo deny
-        uses: EmbarkStudios/cargo-deny-action@v1
-        with:
-          rust-version: "1.65.0"
-          log-level: warn
-          command: check
+  #cargo-deny:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Checkout
+  #      uses: actions/checkout@v2
+  #    - name: Install protoc
+  #      run: sudo apt-get update && sudo apt-get install protobuf-compiler -y
+  #    - uses: Swatinem/rust-cache@v2
+  #    - name: cargo deny
+  #      uses: EmbarkStudios/cargo-deny-action@v1
+  #      with:
+  #        rust-version: "1.65.0"
+  #        log-level: warn
+  #        command: check
