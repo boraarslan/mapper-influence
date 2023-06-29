@@ -1,15 +1,18 @@
+import { FC, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
-import SearchBar from "./SearchBar";
 import { Influences } from "@components/SvgComponents";
-import { useSessionStore } from "src/states/user";
-import styles from "../style.module.scss";
-import { FC, useEffect, useState } from "react";
 import { UserBase } from "@libs/types/user";
-import dynamic from "next/dynamic";
+import { useSessionStore } from "src/states/user";
+import SearchBar from "./SearchBar";
+
+import styles from "../style.module.scss";
 
 export default function Header() {
+  const router = useRouter();
   const { user } = useSessionStore();
   const NoSSRProfile = dynamic(
     () => import(".").then((modules) => modules.ProfileLinkAvatar),
@@ -22,11 +25,12 @@ export default function Header() {
     setHasHydrated(true);
   }, []);
 
+  if (router.pathname === "/") return <></>;
   if (hasHydrated && !user) return <></>;
 
   return (
     <div className={styles.header}>
-      <Link href="/" className={styles.home}>
+      <Link href="/dashboard" className={styles.home}>
         <Influences />
         <span>Mapper Influences</span>
       </Link>

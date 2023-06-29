@@ -20,7 +20,7 @@
     "react": "^18.2.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
-    "react-hook-form": "^7.45.0",
+    "react-hook-form": "^7.45.1",
     "react-markdown": "^8.0.7",
     "react-responsive-carousel": "^3.2.23",
     "remark-gfm": "^3.0.1",
@@ -35,6 +35,6 @@
     "@types/react-dom": "18.2.6",
     "eslint": "8.43.0",
     "eslint-config-next": "^13.4.7",
-    "typescript": "5.1.5"
+    "typescript": "5.1.6"
   }
 }

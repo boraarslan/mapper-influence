@@ -1,43 +1,25 @@
-import type { NextPage, InferGetStaticPropsType } from "next";
-import { readFileSync } from "fs";
-import dynamic from "next/dynamic";
-import { useState } from "react";
+import { LoginScreen } from "@components/PageComponents/Home";
+import { useUser } from "@hooks/useUser";
 import { userData } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
-import { useUser } from "@hooks/useUser";
-
-const DynamicNewsScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.NewsScreen)
-);
-
-const DynamicTutorialScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.TutorialScreen)
-);
-
-const DynamicLoginScreen = dynamic(() =>
-  import("@components/PageComponents/Home").then((r) => r.LoginScreen)
-);
+import { readFileSync } from "fs";
+import type { InferGetStaticPropsType, NextPage } from "next";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,
   news,
 }) => {
-  const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
+  const router = useRouter();
   const { user } = useUser();
 
-  if (user)
-    switch (screen) {
-      case "News":
-        return <DynamicNewsScreen newsList={news} topList={leaderboard} />;
-      case "Tutorial":
-        return (
-          <DynamicTutorialScreen>
-            <button onClick={() => setScreen("News")}>Close tutorial</button>
-          </DynamicTutorialScreen>
-        );
-    }
+  useEffect(() => {
+    if (user) router.push("/dashboard");
+  }, [user, router]);
 
-  return <DynamicLoginScreen topList={leaderboard} newsList={news} />;
+  return <LoginScreen topList={leaderboard} newsList={news} />;
 };
 
 export const getStaticProps = async () => {
