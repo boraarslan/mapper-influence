@@ -6,11 +6,13 @@ import styles from "./style.module.scss";
 import { useOnClickOutside } from "usehooks-ts";
 
 type Props = {
+  className?: string;
   editable?: boolean;
   influenceType?: InfluenceTypeEnum;
 };
 
 const InfluenceType: FC<Props> = ({
+  className,
   editable,
   influenceType = InfluenceTypeEnum.Fascination,
 }) => {
@@ -31,7 +33,7 @@ const InfluenceType: FC<Props> = ({
     return (
       <>
         <button
-          className={dropdownClass}
+          className={`${dropdownClass} ${className}`}
           onClick={() => setIsOpen((t) => !t)}
           ref={ref}
         >

@@ -7,7 +7,7 @@ export interface UserBase {
   avatarUrl: string;
   groups?: Group[];
   title?: string;
-  flag: { code: string; name: string };
+  flag?: { code: string; name: string };
 }
 
 export interface UserProfile extends UserBase {

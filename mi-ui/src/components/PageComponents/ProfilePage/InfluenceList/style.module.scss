@@ -31,7 +31,6 @@
     }
 
     .influenceRow {
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -53,9 +52,9 @@
       }
 
       .cardWrapper {
-        height: 100%;
+        position: relative;
         .editable {
-          margin-top: $spacing * 4.5;
+          margin-top: $spacing * 5;
         }
       }
 

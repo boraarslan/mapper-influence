@@ -1,10 +1,10 @@
+import { FC, ReactNode, useState } from "react";
 import SearchBar from "@components/Layout/Header/SearchBar";
 import EditableDescription from "@components/PageComponents/ProfilePage/EditableDescription";
 import InfluenceType from "@components/PageComponents/ProfilePage/InfluenceList/InfluenceType";
 import AddUserButton from "@components/PageComponents/ProfilePage/MapperDetails/AddUserButton";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { Influence, InfluenceTypeEnum } from "@libs/types/influence";
-import { FC, ReactNode, useState } from "react";
 
 import styles from "./style.module.scss";
 
@@ -34,7 +34,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
 
   return (
     <div className={styles.tutorialWrapper}>
-      <h1>Getting Started:</h1>
+      <h1>Getting Started</h1>
       <div className={styles.stepsWrapper}>
         <TutorialStep
           number={1}
@@ -44,13 +44,16 @@ const TutorialScreen: FC<Props> = ({ children }) => {
             <SearchBar />
           </div>
         </TutorialStep>
-        <TutorialStep number={2} title={"Add the user to your influences list"}>
+        <TutorialStep
+          number={2}
+          title={"Add the user to  your influences list"}
+        >
           <AddUserButton onClick={toggleTooltip} />
           {showTooltip && (
-            <span className={styles.addButtonTooltip}>
+            <div className={styles.addButtonTooltip}>
               You need to click this inside a profile. <br />
               Search someone first!
-            </span>
+            </div>
           )}
         </TutorialStep>
 

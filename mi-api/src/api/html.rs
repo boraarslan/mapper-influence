@@ -15,6 +15,7 @@ pub fn html_router() -> Router<SharedState> {
     Router::new()
         // Pages
         .route_service("/", serve_file("index.html"))
+        .route_service("/dashboard", serve_file("dashboard.html"))
         .route_service("/profile", serve_file("profile.html"))
         .route_service("/profile/:user_id", serve_file("/profile/[mapperId].html"))
         .route_service("/oauth", serve_file("oauth.html"))

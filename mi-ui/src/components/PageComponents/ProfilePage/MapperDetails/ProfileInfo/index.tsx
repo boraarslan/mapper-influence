@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/router";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
@@ -19,23 +19,20 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
     return router.asPath === "/profile";
   }, [router]);
 
-  const runFitText = () =>
-    textFit(document.getElementsByClassName(styles.mapperName));
+  const nameRef = useRef(null);
 
   // Fit text to card on resize and on mount
   useEffect(() => {
-    document.fonts.ready.then(() => runFitText());
+    if (!nameRef.current) return;
+    const runFitText = () => textFit(nameRef.current);
+    const debounceFitText = AwesomeDebouncePromise(runFitText, 50);
 
-    const debounceFitText = AwesomeDebouncePromise(
-      runFitText,
-      //Add random delay to updates
-      50 + Math.random() * 15
-    );
+    document.fonts.ready.then(() => runFitText());
     window.addEventListener("resize", debounceFitText);
     return () => {
       window.removeEventListener("resize", debounceFitText);
     };
-  }, []);
+  }, [nameRef]);
 
   const renderGroup = () => {
     if (!profileData.groups?.length) return <></>;
@@ -68,7 +65,9 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
           target="_blank"
           rel="noreferrer"
         >
-          <div className={styles.mapperName}>{profileData.username}</div>
+          <div className={styles.mapperName} ref={nameRef}>
+            {profileData.username}
+          </div>
         </a>
         {renderGroup()}
         {!ownProfile && (
