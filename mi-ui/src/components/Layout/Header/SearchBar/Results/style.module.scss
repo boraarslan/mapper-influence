@@ -5,9 +5,7 @@
   align-items: center;
   gap: $spacing;
   
-  // Match the card width
-  left: -3rem;
-  right: -3rem;
+  right: 0;
   top: calc(100% + $spacing);
   padding: $spacing;
   

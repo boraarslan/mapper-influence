@@ -99,5 +99,12 @@
         }
       }
     }
+
+    // Hacky fix to prevent search results from shrinking
+    &:not(:focus-within) {
+      > div:nth-child(2) {
+        display: none;
+      }
+    }
   }
 }

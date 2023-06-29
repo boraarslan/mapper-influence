@@ -21,4 +21,9 @@
   &.editable:hover {
     background-color: $color-background-card-hover;
   }
+
+  &::placeholder{
+    font-family: "Inter Variable";
+    color: $color-text-faded;
+  }
 }

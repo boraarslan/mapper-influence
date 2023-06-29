@@ -8,6 +8,7 @@ const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
   influences,
   editable,
 }) => {
+
   const InfluenceCards = influences.map((influence) => (
     <InfluenceElement
       key={influence.profileData.id}

@@ -27,24 +27,33 @@
       gap: $spacing;
       margin-bottom: $spacing;
 
+      &:first-of-type .number > span:first-of-type {
+        background: -webkit-linear-gradient(
+          left,
+          $color-text-secondary,
+          $color-text-primary
+        );
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
       .number {
-        margin-top: 1.25rem;
-        position: relative;
+        margin-top: 1rem;
+        padding-right: $spacing / 2;
+
         > span {
+          display: block;
+          font-size: 0.75rem;
+          width: 100%;
+          margin-left: 0.1rem;
+
+          // Big number text
           &:first-of-type {
+            margin-left: 0;
             font-weight: 700;
             font-size: 3rem;
-            background: -webkit-linear-gradient(
-              left,
-              $color-text-secondary,
-              $color-text-primary
-            );
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.1rem;
           }
-          display: block;
-          font-size: 0.9rem;
-          width: 100%;
         }
       }
     }

@@ -1,26 +1,23 @@
-import React, { FC, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { UserProfile, UserBase } from "@libs/types/user";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 import MentionList from "./MentionList";
-import { useSessionStore } from "src/states/user";
+import { useUser } from "@hooks/useUser";
 
 import styles from "./style.module.scss";
 
 type Props = { userData: UserProfile; editable?: boolean };
 
 const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
-  const { logout } = useSessionStore();
+  const { logout } = useUser();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
     "influences"
   );
 
-  function onSignOut() {
-    logout();
-    router.push("/");
-  }
+  const isUser = router.asPath === "/profile";
 
   const InfluenceTab = useMemo(() => {
     switch (selectedTab) {
@@ -61,7 +58,7 @@ const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
       </div>
       <div className={styles.content}>{InfluenceTab}</div>
 
-      <button onClick={onSignOut}>Sign out</button>
+      {isUser && <button onClick={logout}>Sign out</button>}
     </div>
   );
 };

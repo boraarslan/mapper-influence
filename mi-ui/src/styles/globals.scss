@@ -1,7 +1,10 @@
 @import "./mixins/index";
 @import "./variables/sizes";
 @import "./variables/toggledVariables";
-@import "./variables/fonts";
+
+$fallback-font: "Comfortaa Variable", -apple-system, BlinkMacSystemFont,
+  Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+  Helvetica Neue, sans-serif;
 
 html,
 body {
@@ -11,8 +14,7 @@ body {
   background-color: $color-background;
   overflow-x: hidden;
 
-  font-family: "Comfortaa", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Inter Variable", $fallback-font;
 
   font-size: 1rem;
   @media screen and (max-width: $responsive-breakpoint) {
@@ -24,14 +26,24 @@ body {
   }
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Comfortaa Variable", $fallback-font;
+}
+
 h1 {
   font-size: 2rem;
+  letter-spacing: -0.15rem;
 }
 h2 {
   font-size: 1.75rem;
+  letter-spacing: -0.1rem;
 }
 h3 {
   font-size: 1.25rem;
+  letter-spacing: -0.05rem;
 }
 h4,
 h5,

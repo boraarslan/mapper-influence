@@ -5,11 +5,14 @@ import ContributeButtons from "../Shared/ContributeButtons";
 import Leaderboard from "../Shared/Leaderboard";
 import News from "../Shared/News";
 import CoolCards from "./CoolCards";
+import { useGlobalTooltip } from "src/states/globalTooltip";
 
 import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
 const LoginScreen: FC<Props> = ({ topList, newsList }) => {
+  const { activateTooltip } = useGlobalTooltip();
+
   const LoginButton = (
     <a className={`${styles.login} ${styles.a}`} href={"/login"}>
       Log In
@@ -37,9 +40,11 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
             target={"_blank"}
             rel={"noreferrer"}
             className={styles.a}
+            onMouseEnter={(e) =>
+              activateTooltip("Opens in new tab", e.currentTarget)
+            }
           >
             pishifat’s Mapper Influences
-            <span className={styles.tooltip}>Opens in new tab</span>
           </a>{" "}
           project.
           <br />

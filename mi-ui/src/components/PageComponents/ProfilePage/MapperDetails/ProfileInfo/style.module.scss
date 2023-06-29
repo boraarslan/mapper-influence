@@ -16,12 +16,15 @@
     .mapperName {
       position: relative;
       display: flex;
-      font-weight: 700;
+      width: 21rem;
+
+      font-family: "Comfortaa Variable";
+      font-weight: 800;
       font-size: 4rem;
+      line-height: 75%;
+
       margin-left: -0.25rem;
       margin-top: 0.5rem;
-      line-height: 75%;
-      width: 21rem;
     }
 
     .mapperName:hover {
