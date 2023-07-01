@@ -26,7 +26,7 @@ use utoipa_swagger_ui::SwaggerUi;
 
 fn influence_route() -> Router<SharedState> {
     Router::new()
-        .route("/get", post(get_influences))
+        .route("/get/:query_user_id", get(get_influences))
         .route("/create", post(create_influence))
         .route("/delete", delete(delete_influence))
         .nest(

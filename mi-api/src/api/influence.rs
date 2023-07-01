@@ -1,5 +1,5 @@
 use axum::debug_handler;
-use axum::extract::State;
+use axum::extract::{Path, State};
 use mi_db::influence::Influence;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -9,28 +9,17 @@ use crate::result::{AppResult, Json};
 use crate::state::SharedState;
 use crate::AuthUserId;
 
-#[derive(Debug, Serialize, Deserialize, ToSchema)]
-pub struct GetInfluenceRequest {
-    user_id: i64,
-}
-
 #[utoipa::path(
-    post,
-    path = "/influence/get/",
-    request_body = Option<GetInfluenceRequest>,
+    get,
+    path = "/influence/get/{user_id}/",
     responses((status = 200, description = "List of influences", body = [Influence])),
 )]
 #[debug_handler]
 pub async fn get_influences(
-    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
-    Json(request): Json<Option<GetInfluenceRequest>>,
+    Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<Vec<Influence>>> {
-    let user_id = match request {
-        Some(req) => req.user_id,
-        None => user_id,
-    };
-    let influences = state.postgres().get_user_influencers(user_id).await?;
+    let influences = state.postgres().get_user_influencers(query_user_id).await?;
 
     Ok(Json(influences))
 }

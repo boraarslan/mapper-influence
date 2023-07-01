@@ -31,7 +31,6 @@ use crate::api;
         mi_osu_api::BeatmapType,
         api::user::CreateUserRequest,
         api::user::UpdateUserRequest,
-        api::influence::GetInfluenceRequest,
         api::influence::InsertInfluenceRequest,
         api::influence::DeleteInfluenceRequest,
         api::influence::UpdateInfluenceLevelRequest,
