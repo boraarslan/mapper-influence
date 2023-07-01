@@ -31,7 +31,7 @@ export async function getUserBase(userId?: number | string) {
 
   let searchUrl = "/api/v1/user/get";
   // Add query when using with an id
-  if (userId) searchUrl += userId;
+  if (userId) searchUrl += `/${userId}`;
 
   return await axios.get<UserBaseResponse>(searchUrl).then((res) => res.data);
 }

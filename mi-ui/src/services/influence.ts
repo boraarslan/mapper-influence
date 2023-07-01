@@ -17,7 +17,7 @@ export async function getInfluences(userId: string | number) {
   if (process.env.NODE_ENV !== "production")
     return mockRequest(DUMMY_INFLUENCES, 1000);
 
-  let searchUrl = "/api/v1/influence/get/" + userId;
+  let searchUrl = "/api/v1/influence/get" + `/${userId}`;
   return axios.get<InfluenceResponse[]>(searchUrl).then((res) => res.data);
 }
 
@@ -41,7 +41,7 @@ export async function addInfluence(body: AddInfluenceRequest) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  let searchUrl = "/api/v1/influence/create/";
+  let searchUrl = "/api/v1/influence/create";
   return await axios.post(searchUrl, body);
 }
 
@@ -49,7 +49,7 @@ export async function deleteInfluence(from_id: string | number) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  let searchUrl = "/api/v1/influence/delete/";
+  let searchUrl = "/api/v1/influence/delete";
   return await axios.post(searchUrl, { from_id });
 }
 

@@ -7,6 +7,7 @@ import InfluenceType from "../../InfluenceList/InfluenceType";
 
 import styles from "./style.module.scss";
 import EditableDescription from "../../EditableDescription";
+import { toast } from "react-toastify";
 
 type Props = {
   userId: string | number;
@@ -45,9 +46,12 @@ const AddUserButton: FC<Props> = ({
         info: description,
       };
 
-      addInfluence(body).then(() => {
-        setShowForm(false);
-      });
+      addInfluence(body)
+        .then(() => {
+          setShowForm(false);
+          toast.success("Influence added successfully.");
+        })
+        .catch(() => toast.error("Failed to add influence."));
     },
     [userId, type, description]
   );
