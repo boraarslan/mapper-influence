@@ -6,7 +6,7 @@ import type {
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
-import { mockRequest } from "@libs/functions";
+import { mockAxiosReject, mockRequest } from "@libs/functions";
 
 export type UserBaseResponse = {
   id: number;
@@ -107,7 +107,7 @@ export type UserEditRequest = {
 
 export function editUser(body: UserEditRequest) {
   // Mock data for dev
-  if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
+  if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
 
   let searchUrl = "/api/v1/user/update";
   return axios.post(searchUrl, body);

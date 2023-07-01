@@ -23,7 +23,7 @@ const EditableDescription: FC<Props> = ({
     (e: ChangeEvent<HTMLTextAreaElement>) => {
       onChange && onChange(e);
     },
-    250
+    500
   );
 
   return (
