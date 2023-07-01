@@ -1,20 +1,26 @@
 import { FC, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { toast } from "react-toastify";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Arrow from "@components/SvgComponents/Arrow";
 import { InfluenceTypeEnum, convertToInfluence } from "@libs/enums";
 import Modal from "@components/SharedComponents/Modal";
-import { InfluenceResponse, deleteInfluence } from "@services/influence";
+import {
+  InfluenceResponse,
+  deleteInfluence,
+  getInfluences,
+} from "@services/influence";
 
 import styles from "./style.module.scss";
+import { useCurrentUser } from "@hooks/useUser";
 
 type Props = {
   className?: string;
   editable?: boolean;
-  influenceData: InfluenceResponse;
+  influenceData?: InfluenceResponse;
   hideRemove?: boolean;
   onChange?: (type: InfluenceTypeEnum) => Promise<any>;
+  noSubmitOnChange?: (type: InfluenceTypeEnum) => void;
 };
 
 const InfluenceType: FC<Props> = ({
@@ -23,14 +29,16 @@ const InfluenceType: FC<Props> = ({
   influenceData,
   hideRemove,
   onChange,
+  noSubmitOnChange,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<InfluenceTypeEnum>(
-    convertToInfluence(influenceData.influence_level || 1)
+    convertToInfluence(influenceData?.influence_level || 1)
   );
 
+  const { user } = useCurrentUser();
   const queryClient = useQueryClient();
 
   const ref = useRef(null);
@@ -38,19 +46,49 @@ const InfluenceType: FC<Props> = ({
     if (isOpen) setIsOpen(false);
   });
 
-  const onRemove = () =>
-    deleteInfluence(influenceData.from_id)
-      .then(() => {
-        queryClient.invalidateQueries(["influences", influenceData.to_id], {
-          exact: true,
-        });
-      })
-      .finally(() => setIsModalOpen(false));
+  const onRemove = () => {
+    setIsLoading(true);
+    return deleteInfluence(influenceData?.from_id || 0).finally(() => {
+      setIsLoading(false);
+      setIsModalOpen(false);
+    });
+  };
+
+  const updateInfluences = useMutation(onRemove, {
+    onMutate: async () => {
+      await queryClient.cancelQueries(["influences", user?.id]);
+      const previousInfluences = queryClient.getQueryData<InfluenceResponse[]>([
+        "influences",
+        user?.id,
+      ]);
+      if (previousInfluences) {
+        queryClient.setQueryData<InfluenceResponse[]>(
+          ["influences", user?.id],
+          previousInfluences.filter(
+            (influence) => influence.from_id !== influenceData?.from_id
+          )
+        );
+      }
+      return { previousInfluences };
+    },
+    onError: (err, _, context: any) => {
+      if (context?.previousInfluences) {
+        queryClient.setQueryData<InfluenceResponse[]>(
+          ["influences", user?.id],
+          context.previousInfluences
+        );
+      }
+      toast.error("Failed to delete influence.");
+    },
+    onSuccess: () => toast.success("Influence deleted."),
+    onSettled: () => queryClient.invalidateQueries(["influences", user?.id]),
+  });
 
   const handleChange = (newType: InfluenceTypeEnum) => {
+    setSelectedType(newType);
+    noSubmitOnChange && noSubmitOnChange(newType);
     if (onChange) {
       setIsLoading(true);
-      setSelectedType(newType);
       onChange(newType)
         .catch(() => {
           setSelectedType(selectedType);
@@ -60,29 +98,36 @@ const InfluenceType: FC<Props> = ({
     }
   };
 
-  const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ""}`;
+  const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ""} ${
+    isLoading ? styles.disabled : ""
+  }`;
   if (editable)
     return (
       <>
         <Modal
           setShowModal={setIsModalOpen}
           showModal={isModalOpen}
-          className={styles.modal}>
+          className={`${styles.modal}`}>
           <h4>Are you sure you want to delete this influence?</h4>
           <div>
-            <button className="cancel" onClick={() => setIsModalOpen(false)}>
+            <button
+              className="cancel"
+              disabled={isLoading}
+              onClick={() => setIsModalOpen(false)}>
               Cancel
             </button>
-            <button className="danger" onClick={onRemove}>
+            <button
+              className="danger"
+              disabled={isLoading}
+              onClick={() => updateInfluences.mutate()}>
               Delete
             </button>
           </div>
         </Modal>
-        <button
+        <div
           className={`${dropdownClass} ${className}`}
           ref={ref}
-          disabled={isLoading}
-          onClick={() => setIsOpen(true)}>
+          onClick={() => !isLoading && setIsOpen((t) => !t)}>
           <span>
             {selectedType}{" "}
             <Arrow className={styles.arrow} color="var(--textColor)" />
@@ -110,7 +155,7 @@ const InfluenceType: FC<Props> = ({
               )}
             </div>
           )}
-        </button>
+        </div>
       </>
     );
 

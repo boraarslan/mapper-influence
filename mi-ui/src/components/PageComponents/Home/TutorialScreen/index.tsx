@@ -7,6 +7,7 @@ import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { InfluenceResponse } from "@services/influence";
 
 import styles from "./style.module.scss";
+import { useCurrentUser } from "@hooks/useUser";
 
 // TODO: Add featured map controls
 
@@ -27,9 +28,20 @@ type Props = { children?: ReactNode };
 const TutorialScreen: FC<Props> = ({ children }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
+  const { user } = useCurrentUser();
+
   const toggleTooltip = () => {
     setShowTooltip(true);
     setTimeout(() => setShowTooltip(false), 3000);
+  };
+
+  const influenceData: InfluenceResponse = {
+    info: "Edit here to give details.",
+    modified_at: new Date().getDate(),
+    created_at: new Date().getDate(),
+    from_id: user?.id || 0,
+    to_id: user?.id || 0,
+    influence_level: 1,
   };
 
   return (
@@ -38,16 +50,14 @@ const TutorialScreen: FC<Props> = ({ children }) => {
       <div className={styles.stepsWrapper}>
         <TutorialStep
           number={1}
-          title={"Look up someone who inspired your mapping"}
-        >
+          title={"Look up someone who inspired your mapping"}>
           <div className={styles.searchWrapper}>
             <SearchBar />
           </div>
         </TutorialStep>
         <TutorialStep
           number={2}
-          title={"Add the user to  your influences list"}
-        >
+          title={"Add the user to  your influences list"}>
           <AddUserButton
             userId={0}
             action="add"
@@ -64,10 +74,9 @@ const TutorialScreen: FC<Props> = ({ children }) => {
 
         <TutorialStep
           number={3}
-          title={"In your profile, describe how the mapper influenced you"}
-        >
+          title={"In your profile, describe how the mapper influenced you"}>
           <div className={styles.profileSide}>
-            <InfluenceType editable />
+            <InfluenceType editable influenceData={influenceData} />
             <BaseProfileCard
               userId={influenceData.from_id}
               className={styles.card}
@@ -86,15 +95,6 @@ const TutorialScreen: FC<Props> = ({ children }) => {
       {children}
     </div>
   );
-};
-
-const influenceData: InfluenceResponse = {
-  info: "Edit here to give details.",
-  modified_at: new Date().getDate(),
-  created_at: new Date().getDate(),
-  from_id: 123,
-  to_id: 1234,
-  influence_level: 1,
 };
 
 export default TutorialScreen;

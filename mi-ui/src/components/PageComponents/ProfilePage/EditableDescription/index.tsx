@@ -1,14 +1,14 @@
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
+import { toast } from "react-toastify";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 import styles from "./style.module.scss";
-import { toast } from "react-toastify";
 
 type Props = {
   className?: string;
   description: string;
   placeholder: string;
-  label: string;
+  label?: string;
   editable?: boolean;
   statusText?: {
     loading?: string;
@@ -16,6 +16,7 @@ type Props = {
     error?: string;
   };
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => Promise<any>;
+  noSubmitOnChange?: ChangeEventHandler<HTMLTextAreaElement>;
 };
 const EditableDescription: FC<Props> = ({
   className,
@@ -29,6 +30,7 @@ const EditableDescription: FC<Props> = ({
     loading: "Submitting.",
   },
   onChange,
+  noSubmitOnChange,
 }) => {
   const debouncedSubmit = AwesomeDebouncePromise(
     (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -63,7 +65,10 @@ const EditableDescription: FC<Props> = ({
         className={`${className} ${styles.description} ${
           editable ? styles.editable : ""
         }`}
-        onChange={(e) => debouncedSubmit(e)}
+        onChange={(e) => {
+          noSubmitOnChange && noSubmitOnChange(e);
+          debouncedSubmit(e);
+        }}
         defaultValue={description}
         placeholder={editable ? placeholder : ""}
         readOnly={!editable}

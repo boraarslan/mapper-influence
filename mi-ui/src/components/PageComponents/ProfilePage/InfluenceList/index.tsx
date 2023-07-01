@@ -1,13 +1,9 @@
 import { FC } from "react";
-import {
-  editInfluenceInfo,
-  editInfluenceLevel,
-  useGetInfluences,
-} from "@services/influence";
+import { useGetInfluences } from "@services/influence";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import InfluenceElement from "./InfluenceElement";
 
 import styles from "./style.module.scss";
-import { convertFromInfluence } from "@libs/enums";
 
 const InfluenceList: FC<{
   userId?: string | number;
@@ -15,7 +11,7 @@ const InfluenceList: FC<{
 }> = ({ userId, open }) => {
   const editable = !userId;
 
-  const { data: influences, ...all } = useGetInfluences(userId);
+  const { data: influences } = useGetInfluences(userId);
 
   const InfluenceCards = influences?.map((influence) => (
     <InfluenceElement
@@ -25,13 +21,13 @@ const InfluenceList: FC<{
     />
   ));
 
-  console.log(all);
+  const [ref] = useAutoAnimate({ easing: "ease-out", duration: 200 });
 
   return (
     <div
       className={styles.mapperInfluences}
       style={!open ? { display: "none" } : {}}>
-      <div className={styles.scrollWrapper}>
+      <div className={styles.scrollWrapper} ref={ref}>
         {InfluenceCards}
         {!influences?.length && (
           <span>

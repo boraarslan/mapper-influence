@@ -1,5 +1,5 @@
 .dropdown {
-  @extend %resetButtonDefaults;
+  cursor: pointer;
 
   position: absolute;
   overflow: hidden;
@@ -10,11 +10,13 @@
   margin-bottom: $spacing / 2;
   padding: 0;
 
+  font-weight: 500;
   color: $color-text;
   background-color: $color-background-card;
   box-shadow: var(--cardShadow);
+  border-radius: $border-radius;
 
-  &:disabled {
+  &.disabled {
     cursor: default;
     opacity: 0.25;
   }
@@ -23,7 +25,7 @@
   &:focus,
   &:focus-visible,
   &:focus-within {
-    &:not(:disabled) {
+    &:not(.disabled) {
       background-color: $color-background-card-hover;
     }
   }
@@ -115,7 +117,7 @@
 }
 
 .modal {
-  > div{
+  > div {
     display: flex;
     justify-content: space-between;
     width: 100%;

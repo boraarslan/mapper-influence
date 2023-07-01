@@ -115,8 +115,10 @@ button {
   &:focus,
   &:focus-within,
   &:focus-visible {
-    background-color: $color-danger;
-    color: $color-background;
+    &:not(:disabled) {
+      background-color: $color-danger;
+      color: $color-background;
+    }
   }
 }
 
@@ -129,7 +131,10 @@ button {
   &:focus,
   &:focus-within,
   &:focus-visible {
-    background-color: $color-reset;
-    color: $color-background;
+    &:not(:disabled) {
+      background-color: $color-reset;
+      color: $color-background;
+    }
   }
 }
+

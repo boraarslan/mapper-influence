@@ -23,9 +23,10 @@ export async function getInfluences(userId: string | number) {
 
 export const useGetInfluences = (userId?: string | number) => {
   const { user } = useCurrentUser();
+  const id = userId || user?.id || 0;
   return useQuery({
-    queryKey: ["influences", userId],
-    queryFn: () => getInfluences(userId || user?.id || 0),
+    queryKey: ["influences", id],
+    queryFn: () => getInfluences(id),
     staleTime: 60 * 1000,
   });
 };

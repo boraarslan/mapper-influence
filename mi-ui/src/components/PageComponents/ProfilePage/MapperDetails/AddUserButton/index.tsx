@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useState } from "react";
 import { AddInfluenceRequest, addInfluence } from "@services/influence";
 import Modal from "@components/SharedComponents/Modal";
 import { useGlobalTheme } from "@states/theme";
@@ -6,6 +6,7 @@ import { InfluenceTypeEnum, convertFromInfluence } from "@libs/enums";
 import InfluenceType from "../../InfluenceList/InfluenceType";
 
 import styles from "./style.module.scss";
+import EditableDescription from "../../EditableDescription";
 
 type Props = {
   userId: string | number;
@@ -26,7 +27,6 @@ const AddUserButton: FC<Props> = ({
   const [type, setType] = useState<InfluenceTypeEnum>(
     InfluenceTypeEnum.Fascination
   );
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const handleClick = useCallback(() => {
     onClick && onClick();
@@ -35,32 +35,62 @@ const AddUserButton: FC<Props> = ({
     }
   }, [userId, action]);
 
-  const handleSubmit = useCallback(() => {
-    const body: AddInfluenceRequest = {
-      from_id: Number(userId),
-      level: convertFromInfluence(type),
-      info: descriptionRef.current?.value || "",
-    };
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    addInfluence(body).then(() => {
-      setShowForm(false);
-    });
-  }, [userId, type]);
+      const body: AddInfluenceRequest = {
+        from_id: Number(userId),
+        level: convertFromInfluence(type),
+        info: description,
+      };
+
+      addInfluence(body).then(() => {
+        setShowForm(false);
+      });
+    },
+    [userId, type]
+  );
+
+  const resetForm = () => {
+    setDescription("");
+    setType(InfluenceTypeEnum.Fascination);
+    setShowForm(false);
+  };
 
   return (
     <>
-      <Modal keepOpen showModal={showForm} setShowModal={setShowForm}>
+      <Modal
+        className={styles.modal}
+        keepOpen
+        showModal={showForm}
+        setShowModal={setShowForm}>
         <form onSubmit={handleSubmit}>
-          <InfluenceType hideRemove editable onChange={setType} />
-          <textarea ref={descriptionRef} />
+          <InfluenceType
+            hideRemove
+            editable
+            onChange={async (type) => setType(type)}
+            className={styles.influenceType}
+          />
+          <EditableDescription
+            description=""
+            placeholder="Add a description for your influence."
+            editable
+            noSubmitOnChange={(e) => setDescription(e.target.value)}
+          />
+          <div className={styles.buttons}>
+            <button type="button" className="cancel" onClick={resetForm}>
+              Cancel
+            </button>
+            <button className="submit">Add</button>
+          </div>
         </form>
       </Modal>
       <button
         className={`${action === "add" ? styles.addUser : styles.removeUser} ${
           theme === "dark" ? styles.dark : styles.light
         }`}
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <span>{action === "add" ? "Add" : "Remove"} Influence</span>
       </button>
     </>
