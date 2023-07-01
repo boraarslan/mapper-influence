@@ -32,10 +32,12 @@ const InfluenceElement: FC<{
           editable={editable}
           placeholder={"Describe your influence here."}
         />
-        <div className={styles.maps}>
-          <h4>Featured Maps</h4>
-          <MapCarousel mapList={[]} />
-        </div>
+        {false && (
+          <div className={styles.maps}>
+            <h4>Featured Maps</h4>
+            <MapCarousel mapList={[]} />
+          </div>
+        )}
       </div>
     </>
   );

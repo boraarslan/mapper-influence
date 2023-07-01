@@ -8,9 +8,9 @@ import { useFullUser } from "@services/user";
 
 import styles from "./style.module.scss";
 
-type Props = { userId?: number | string; editable?: boolean };
+type Props = { userId?: number | string };
 
-const ProfilePage: FC<Props> = ({ userId, editable = false }) => {
+const ProfilePage: FC<Props> = ({ userId }) => {
   const { logout } = useCurrentUser();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
@@ -23,7 +23,7 @@ const ProfilePage: FC<Props> = ({ userId, editable = false }) => {
 
   return (
     <div className={styles.profilePage}>
-      <MapperDetails userId={userId} editable={editable} />
+      <MapperDetails userId={userId} />
 
       <div className={styles.buttons}>
         <button
@@ -41,11 +41,7 @@ const ProfilePage: FC<Props> = ({ userId, editable = false }) => {
       </div>
       <div className={styles.content}>
         <MentionList mentions={[]} open={selectedTab === "mentions"} />
-        <InfluenceList
-          influences={[]}
-          editable={editable}
-          open={selectedTab === "influences"}
-        />
+        <InfluenceList userId={userId} open={selectedTab === "influences"} />
       </div>
       {isUser && <button onClick={logout}>Sign out</button>}
     </div>

@@ -98,3 +98,17 @@ export const useFullUser = (userId?: number | string) => {
     staleTime: 60 * 1000,
   });
 };
+
+export type UserEditRequest = {
+  user_name?: string;
+  profile_picture?: string;
+  bio?: string;
+};
+
+export function editUser(body: UserEditRequest) {
+  // Mock data for dev
+  if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
+
+  let searchUrl = "/api/v1/user/update";
+  return axios.post(searchUrl, body);
+}

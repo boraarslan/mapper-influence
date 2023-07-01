@@ -1,15 +1,18 @@
 import { FC } from "react";
-import { InfluenceResponse } from "@services/influence";
+import { useGetInfluences } from "@services/influence";
 import InfluenceElement from "./InfluenceElement";
 
 import styles from "./style.module.scss";
 
 const InfluenceList: FC<{
-  influences: InfluenceResponse[];
-  editable?: boolean;
+  userId?: string | number;
   open?: boolean;
-}> = ({ influences, editable, open }) => {
-  const InfluenceCards = influences.map((influence) => (
+}> = ({ userId, open }) => {
+  const editable = !userId;
+
+  const { data: influences } = useGetInfluences(userId);
+
+  const InfluenceCards = influences?.map((influence) => (
     <InfluenceElement
       key={influence.from_id}
       influenceData={influence}
@@ -20,11 +23,11 @@ const InfluenceList: FC<{
   return (
     <div
       className={styles.mapperInfluences}
-      style={open ? { display: "none" } : {}}
+      style={!open ? { display: "none" } : {}}
     >
       <div className={styles.scrollWrapper}>
         {InfluenceCards}
-        {influences.length === 0 && (
+        {!!influences?.length && (
           <span>
             {`This person is unique!`}
             <br />

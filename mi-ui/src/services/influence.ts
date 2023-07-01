@@ -3,6 +3,7 @@ import axios from "axios";
 import { mockRequest } from "@libs/functions";
 import { useCurrentUser } from "@hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
+import { DUMMY_INFLUENCES } from "@libs/consts/dummyUserData";
 
 export type InfluenceResponse = {
   from_id: number;
@@ -14,8 +15,11 @@ export type InfluenceResponse = {
 };
 
 export async function getInfluences(userId: string | number) {
+  if (process.env.NODE_ENV !== "production")
+    return mockRequest(DUMMY_INFLUENCES, 1000);
+
   let searchUrl = "/api/v1/influence/get/" + userId;
-  return axios.get<InfluenceResponse[]>(searchUrl);
+  return axios.get<InfluenceResponse[]>(searchUrl).then((res) => res.data);
 }
 
 export const useGetInfluences = (userId?: string | number) => {
@@ -38,7 +42,6 @@ export async function addInfluence(body: AddInfluenceRequest) {
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
   let searchUrl = "/api/v1/influence/create/";
-
   return await axios.post(searchUrl, body);
 }
 
@@ -47,7 +50,6 @@ export async function deleteInfluence(from_id: string | number) {
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
   let searchUrl = "/api/v1/influence/delete/";
-
   return await axios.post(searchUrl, { from_id });
 }
 
@@ -61,7 +63,6 @@ export async function editInfluenceInfo(body: EditInfluenceInfoRequest) {
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
   let searchUrl = "/api/v1/influence/update/info";
-
   return await axios.post(searchUrl, body);
 }
 
@@ -75,6 +76,5 @@ export async function editInfluenceLevel(body: EditInfluenceLevelRequest) {
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
   let searchUrl = "/api/v1/influence/update/level";
-
   return await axios.post(searchUrl, body);
 }

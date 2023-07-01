@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 import styles from "./style.module.scss";
@@ -9,7 +9,7 @@ type Props = {
   placeholder: string;
   label: string;
   editable?: boolean;
-  onChange?: () => void;
+  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
 };
 const EditableDescription: FC<Props> = ({
   className,
@@ -19,13 +19,12 @@ const EditableDescription: FC<Props> = ({
   placeholder,
   onChange,
 }) => {
-  const submitChanges = (e: string) => {
-    console.log(e);
-
-    if (onChange) onChange();
-  };
-
-  const debouncedSubmit = AwesomeDebouncePromise(submitChanges, 250);
+  const debouncedSubmit = AwesomeDebouncePromise(
+    (e: ChangeEvent<HTMLTextAreaElement>) => {
+      onChange && onChange(e);
+    },
+    250
+  );
 
   return (
     <>
@@ -34,7 +33,7 @@ const EditableDescription: FC<Props> = ({
         className={`${className} ${styles.description} ${
           editable ? styles.editable : ""
         }`}
-        onChange={(e) => debouncedSubmit(e.target.value)}
+        onChange={(e) => debouncedSubmit(e)}
         defaultValue={description}
         placeholder={editable ? placeholder : ""}
         readOnly={!editable}

@@ -1,4 +1,5 @@
 import { BeatmapType } from "@libs/types/user";
+import { InfluenceResponse } from "@services/influence";
 import { FeaturedMapsResponse, UserFullResponse } from "@services/user";
 
 const exampleMapList: FeaturedMapsResponse[] = [
@@ -265,3 +266,38 @@ export const DUMMY_USER: UserFullResponse = {
   ],
   */
 };
+
+export const DUMMY_INFLUENCES: InfluenceResponse[] = [
+  {
+    created_at: Date.now(),
+    modified_at: Date.now(),
+    from_id: 12345,
+    to_id: 123456,
+    influence_level: 1,
+    info: "",
+  },
+  {
+    created_at: Date.now(),
+    modified_at: Date.now(),
+    from_id: 1234,
+    to_id: 123456,
+    influence_level: 1,
+    info: "",
+  },
+  {
+    created_at: Date.now(),
+    modified_at: Date.now(),
+    from_id: 123,
+    to_id: 123456,
+    influence_level: 1,
+    info: "",
+  },
+  {
+    created_at: Date.now(),
+    modified_at: Date.now(),
+    from_id: 12,
+    to_id: 123456,
+    influence_level: 1,
+    info: "test info",
+  },
+];
