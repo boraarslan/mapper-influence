@@ -33,7 +33,7 @@ const AddUserButton: FC<Props> = ({
     if (action === "add" && !dontShowForm) {
       setShowForm(true);
     }
-  }, [userId, action]);
+  }, [action, setShowForm, onClick, dontShowForm]);
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
@@ -49,7 +49,7 @@ const AddUserButton: FC<Props> = ({
         setShowForm(false);
       });
     },
-    [userId, type]
+    [userId, type, description]
   );
 
   const resetForm = () => {
