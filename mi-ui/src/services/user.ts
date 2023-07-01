@@ -6,7 +6,7 @@ import type {
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
-import { mockRequest } from "@libs/functions";
+import { mockAxiosReject, mockRequest } from "@libs/functions";
 
 export type UserBaseResponse = {
   id: number;
@@ -31,7 +31,7 @@ export async function getUserBase(userId?: number | string) {
 
   let searchUrl = "/api/v1/user/get";
   // Add query when using with an id
-  if (userId) searchUrl += userId;
+  if (userId) searchUrl += `/${userId}`;
 
   return await axios.get<UserBaseResponse>(searchUrl).then((res) => res.data);
 }
@@ -98,3 +98,17 @@ export const useFullUser = (userId?: number | string) => {
     staleTime: 60 * 1000,
   });
 };
+
+export type UserEditRequest = {
+  user_name?: string;
+  profile_picture?: string;
+  bio?: string;
+};
+
+export function editUser(body: UserEditRequest) {
+  // Mock data for dev
+  if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
+
+  let searchUrl = "/api/v1/user/update";
+  return axios.post(searchUrl, body);
+}

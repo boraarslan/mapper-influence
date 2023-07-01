@@ -65,10 +65,18 @@
   border-radius: $border-radius;
   color: var(--buttonText-alt);
   font-weight: 700;
+
   &:hover,
   &:focus-visible {
-    background-color: $color-button-outline;
-    color: $color-background;
+    &:not(:disabled) {
+      background-color: $color-button-outline;
+      color: $color-background;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }
 

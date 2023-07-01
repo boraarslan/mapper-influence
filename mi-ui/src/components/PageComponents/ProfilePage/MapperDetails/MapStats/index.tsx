@@ -1,5 +1,5 @@
 import { useFullUser } from "@services/user";
-import { FC, MouseEventHandler, ReactNode, useCallback, useMemo } from "react";
+import { FC, MouseEventHandler, ReactNode, useMemo } from "react";
 import { useGlobalTooltip } from "@states/globalTooltip";
 
 import styles from "./style.module.scss";
@@ -53,7 +53,9 @@ const MapStats: FC<{
     <div className={`${styles.wrapper} ${isLoading ? styles.loading : ""}`}>
       <SingleStat
         count={ranked_count + nominated_count + guest_count}
-        onMouseEnter={(e) => activateTooltip(rankedTooltip, e.currentTarget)}
+        onMouseEnter={(e) =>
+          rankedTooltip && activateTooltip(rankedTooltip, e.currentTarget)
+        }
         onMouseLeave={() => deactivateTooltip()}
       >
         Ranked

@@ -105,3 +105,36 @@ button {
   padding: $spacing / 2;
   border-radius: $border-radius;
 }
+
+.danger {
+  color: $color-danger;
+  background-color: $color-danger-bg;
+  outline-color: $color-danger;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-danger;
+      color: $color-background;
+    }
+  }
+}
+
+.cancel {
+  color: $color-reset;
+  background-color: $color-reset-bg;
+  outline-color: $color-reset;
+
+  &:hover,
+  &:focus,
+  &:focus-within,
+  &:focus-visible {
+    &:not(:disabled) {
+      background-color: $color-reset;
+      color: $color-background;
+    }
+  }
+}
+

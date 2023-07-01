@@ -29,6 +29,11 @@ html {
   --cardShadowHover: 0 0 0 0.15rem rgba(150, 150, 150, 0.9);
   --contentShadow: none;
 
+  --danger: red;
+  --dangerBg: rgba(255, 0, 0, 0.25);
+  --reset: gray;
+  --resetBg: rgba(128, 128, 128, 0.1);
+
   --white: hsl(0, 0%, 90%);
 }
 html[data-theme="light"] {
@@ -58,6 +63,11 @@ html[data-theme="light"] {
   --cardShadow: 0 0.05rem 0.2rem 0.05rem rgba(0, 0, 0, 0.15);
   --cardShadowHover: 0 0.1rem 0.5rem 0.15rem rgba(0, 0, 0, 0.2);
   --contentShadow: 0 0.1rem 1.5rem -0.25rem rgba(0, 0, 0, 0.1);
+
+  --danger: red;
+  --dangerBg: rgba(255, 0, 0, 0.25);
+  --reset: gray;
+  --resetBg: rgba(128, 128, 128, 0.1);
 
   --white: white;
 }

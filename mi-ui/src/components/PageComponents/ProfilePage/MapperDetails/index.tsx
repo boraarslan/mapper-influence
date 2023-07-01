@@ -1,19 +1,20 @@
 import type { FC } from "react";
-import { useFullUser } from "@services/user";
+import { editUser, useFullUser } from "@services/user";
 import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
 import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
+import { toast } from "react-toastify";
 
 import styles from "./style.module.scss";
 
 type Props = {
   userId?: number | string;
-  editable?: boolean;
 };
 
-const MapperDetails: FC<Props> = ({ userId, editable }) => {
+const MapperDetails: FC<Props> = ({ userId }) => {
   const { data: profileData, isLoading } = useFullUser(userId);
+  const editable = !userId;
 
   return (
     <div className={styles.mapperDetails}>
@@ -28,6 +29,12 @@ const MapperDetails: FC<Props> = ({ userId, editable }) => {
             description={profileData?.bio || ""}
             placeholder={"Enter a description for your profile."}
             editable={editable}
+            onChange={(e) => editUser({ bio: e.target.value })}
+            statusText={{
+              loading: "Submitting your bio.",
+              error: "Could not submit your bio.",
+              success: "Updated your bio.",
+            }}
           />
         </div>
         {!!profileData?.featured_maps?.length && (
