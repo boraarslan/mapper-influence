@@ -1,14 +1,15 @@
+import { FC } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import React, { FC } from "react";
-import { Influence } from "@libs/types/influence";
-import EditableDescription from "../EditableDescription";
-import InfluenceType from "./InfluenceType";
 import MapCarousel from "@components/SharedComponents/MapCarousel/SingleItem";
+import { convertToInfluence } from "@libs/enums";
+import { InfluenceResponse } from "@services/influence";
+import InfluenceType from "./InfluenceType";
+import EditableDescription from "../EditableDescription";
 
 import styles from "./style.module.scss";
 
 const InfluenceElement: FC<{
-  influenceData: Influence;
+  influenceData: InfluenceResponse;
   editable?: boolean;
 }> = ({ influenceData, editable }) => {
   return (
@@ -17,23 +18,23 @@ const InfluenceElement: FC<{
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}
-            influenceType={influenceData.type}
+            influenceType={convertToInfluence(influenceData.influence_level)}
           />
           <BaseProfileCard
-            userData={influenceData.profileData}
+            userId={influenceData.from_id}
             className={`${editable ? styles.editable : ""}`}
           />
         </div>
         <EditableDescription
           className={styles.description}
-          label={`Description textarea for ${influenceData.profileData.username}`}
-          description={influenceData.description}
+          label={`Description textarea`}
+          description={influenceData.info || ""}
           editable={editable}
           placeholder={"Describe your influence here."}
         />
         <div className={styles.maps}>
           <h4>Featured Maps</h4>
-          <MapCarousel mapList={influenceData.maps || []} />
+          <MapCarousel mapList={[]} />
         </div>
       </div>
     </>

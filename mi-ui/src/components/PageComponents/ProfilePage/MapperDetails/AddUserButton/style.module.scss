@@ -1,25 +1,73 @@
-.addUser {
+.addUser,
+.removeUser {
   .icon {
     width: 2rem;
     height: 2rem;
   }
 
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: $spacing;
 
-  background: linear-gradient(to right, $color-secondary-bg, $color-primary-bg);
-
   outline: none;
-
-  border-radius: $border-radius;
+  border-radius: $border-radius * 2;
   padding-inline: $spacing * 2;
   padding-block: $spacing;
 
   > span {
     font-size: 1.5rem;
+    line-height: 100%;
     font-weight: 700;
+  }
+
+  // Gradient border
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius * 2;
+    padding: 0.25rem;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+.addUser {
+  background: linear-gradient(to right, $color-secondary-bg, $color-primary-bg);
+  // use text gradient
+
+  &::after {
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+  }
+
+  &.light > span {
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  > span {
+    color: $white;
+  }
+
+  &:hover {
+    background: linear-gradient(to right, $color-secondary, $color-primary);
+    > span {
+      background-clip: unset;
+      background: unset;
+      -webkit-text-fill-color: unset;
+    }
+  }
+}
+
+.removeUser {
+  background: red;
+
+  > span {
     color: $color-text-primary;
   }
 
