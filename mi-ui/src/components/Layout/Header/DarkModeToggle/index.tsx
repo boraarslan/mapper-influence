@@ -10,12 +10,10 @@ type Props = {
 
 const DarkModeToggle: FC<Props> = ({ className }) => {
   const { setCss, theme: currentMode } = useThemeToggle();
-  const { setTheme } = useGlobalTheme();
 
   const toggleMode = () => {
     const targetTheme = currentMode === "dark" ? "light" : "dark";
     setCss(targetTheme);
-    setTheme(targetTheme);
   };
 
   return (
@@ -36,6 +34,7 @@ export default DarkModeToggle;
 
 const useThemeToggle = () => {
   const [theme, setTheme] = useState<"dark" | "light" | "none">("none");
+  const { setTheme: setGlobalTheme } = useGlobalTheme();
 
   const setCss = (targetTheme: "dark" | "light" | "none") => {
     const root = window.document.documentElement;
@@ -48,6 +47,7 @@ const useThemeToggle = () => {
     }
 
     setTheme(targetTheme);
+    setGlobalTheme(targetTheme);
   };
 
   const getLocalColor = () => {

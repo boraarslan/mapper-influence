@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
 type DarkModeState = {
-  theme: "dark" | "light";
-  setTheme: (theme: "dark" | "light") => void;
+  theme: "dark" | "light" | "none";
+  setTheme: (theme: "dark" | "light" | "none") => void;
 };
 
 export const useGlobalTheme = create<DarkModeState>((set) => ({
