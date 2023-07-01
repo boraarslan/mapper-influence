@@ -1,51 +1,88 @@
 import { FC, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 import Arrow from "@components/SvgComponents/Arrow";
-import { InfluenceTypeEnum } from "@libs/enums";
+import { InfluenceTypeEnum, convertToInfluence } from "@libs/enums";
+import Modal from "@components/SharedComponents/Modal";
+import { InfluenceResponse, deleteInfluence } from "@services/influence";
 
 import styles from "./style.module.scss";
 
 type Props = {
   className?: string;
-  influenceType?: InfluenceTypeEnum;
   editable?: boolean;
+  influenceData: InfluenceResponse;
   hideRemove?: boolean;
-  onChange?: (type: InfluenceTypeEnum) => void;
+  onChange?: (type: InfluenceTypeEnum) => Promise<any>;
 };
 
 const InfluenceType: FC<Props> = ({
   className,
   editable,
-  influenceType = InfluenceTypeEnum.Fascination,
+  influenceData,
   hideRemove,
   onChange,
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState(influenceType);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<InfluenceTypeEnum>(
+    convertToInfluence(influenceData.influence_level || 1)
+  );
+
+  const queryClient = useQueryClient();
 
   const ref = useRef(null);
   useOnClickOutside(ref, () => {
     if (isOpen) setIsOpen(false);
   });
 
-  const onRemove = () => {
-    // TODO: Remove influence from list
-  };
+  const onRemove = () =>
+    deleteInfluence(influenceData.from_id)
+      .then(() => {
+        queryClient.invalidateQueries(["influences", influenceData.to_id], {
+          exact: true,
+        });
+      })
+      .finally(() => setIsModalOpen(false));
 
-  const handleChange = (type: InfluenceTypeEnum) => {
-    setSelectedType(type);
-    onChange && onChange(type);
+  const handleChange = (newType: InfluenceTypeEnum) => {
+    if (onChange) {
+      setIsLoading(true);
+      setSelectedType(newType);
+      onChange(newType)
+        .catch(() => {
+          setSelectedType(selectedType);
+          toast.error("Failed to update influence level.");
+        })
+        .finally(() => setIsLoading(false));
+    }
   };
 
   const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ""}`;
   if (editable)
     return (
       <>
+        <Modal
+          setShowModal={setIsModalOpen}
+          showModal={isModalOpen}
+          className={styles.modal}>
+          <h4>Are you sure you want to delete this influence?</h4>
+          <div>
+            <button className="cancel" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </button>
+            <button className="danger" onClick={onRemove}>
+              Delete
+            </button>
+          </div>
+        </Modal>
         <button
           className={`${dropdownClass} ${className}`}
-          onClick={() => setIsOpen((t) => !t)}
           ref={ref}
-        >
+          disabled={isLoading}
+          onClick={() => setIsOpen(true)}>
           <span>
             {selectedType}{" "}
             <Arrow className={styles.arrow} color="var(--textColor)" />
@@ -57,12 +94,20 @@ const InfluenceType: FC<Props> = ({
                 <button
                   key={option.value}
                   onClick={() => handleChange(option.label)}
-                  disabled={option.label === selectedType}
-                >
+                  disabled={option.label === selectedType}>
                   {option.label}
                 </button>
               ))}
-              {!hideRemove && <button style={{ color: "red" }}>Remove</button>}
+              {!hideRemove && (
+                <button
+                  style={{ color: "red" }}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsModalOpen(true);
+                  }}>
+                  Remove
+                </button>
+              )}
             </div>
           )}
         </button>

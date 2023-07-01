@@ -1,8 +1,13 @@
 import { FC } from "react";
+import { toast } from "react-toastify";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import MapCarousel from "@components/SharedComponents/MapCarousel/SingleItem";
-import { convertToInfluence } from "@libs/enums";
-import { InfluenceResponse } from "@services/influence";
+import { convertFromInfluence, convertToInfluence } from "@libs/enums";
+import {
+  InfluenceResponse,
+  editInfluenceInfo,
+  editInfluenceLevel,
+} from "@services/influence";
 import InfluenceType from "./InfluenceType";
 import EditableDescription from "../EditableDescription";
 
@@ -18,7 +23,13 @@ const InfluenceElement: FC<{
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}
-            influenceType={convertToInfluence(influenceData.influence_level)}
+            influenceData={influenceData}
+            onChange={(type) =>
+              editInfluenceLevel({
+                from_id: influenceData.from_id,
+                level: convertFromInfluence(type),
+              })
+            }
           />
           <BaseProfileCard
             userId={influenceData.from_id}
@@ -31,6 +42,17 @@ const InfluenceElement: FC<{
           description={influenceData.info || ""}
           editable={editable}
           placeholder={"Describe your influence here."}
+          onChange={(e) =>
+            editInfluenceInfo({
+              from_id: influenceData.from_id,
+              info: e.target.value,
+            })
+          }
+          statusText={{
+            loading: "Submitting influence description.",
+            error: "Could not update influence description.",
+            success: "Updated influence description.",
+          }}
         />
         {false && (
           <div className={styles.maps}>

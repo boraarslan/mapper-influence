@@ -29,25 +29,11 @@ const MapperDetails: FC<Props> = ({ userId }) => {
             description={profileData?.bio || ""}
             placeholder={"Enter a description for your profile."}
             editable={editable}
-            onChange={(e) => {
-              const loadingToast = toast.loading("Submitting description.");
-              editUser({ bio: e.target.value })
-                .then(() => {
-                  toast.update(loadingToast, {
-                    render: "Edited description.",
-                    type: toast.TYPE.SUCCESS,
-                    isLoading: false,
-                    autoClose: 5000,
-                  });
-                })
-                .catch(() =>
-                  toast.update(loadingToast, {
-                    render: "Could not submit description.",
-                    type: toast.TYPE.ERROR,
-                    isLoading: false,
-                    autoClose: 5000,
-                  })
-                );
+            onChange={(e) => editUser({ bio: e.target.value })}
+            statusText={{
+              loading: "Submitting your bio.",
+              error: "Could not submit your bio.",
+              success: "Updated your bio.",
             }}
           />
         </div>

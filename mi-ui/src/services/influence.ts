@@ -1,6 +1,5 @@
 import axios from "axios";
-
-import { mockRequest } from "@libs/functions";
+import { mockRequest, mockAxiosReject } from "@libs/functions";
 import { useCurrentUser } from "@hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
 import { DUMMY_INFLUENCES } from "@libs/consts/dummyUserData";
@@ -73,7 +72,7 @@ export type EditInfluenceLevelRequest = {
 
 export async function editInfluenceLevel(body: EditInfluenceLevelRequest) {
   // Mock data for dev
-  if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
+  if (process.env.NODE_ENV !== "production") return mockAxiosReject({}, 1000);
 
   let searchUrl = "/api/v1/influence/update/level";
   return await axios.post(searchUrl, body);

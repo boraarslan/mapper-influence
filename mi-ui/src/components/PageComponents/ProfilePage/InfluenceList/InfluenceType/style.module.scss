@@ -14,11 +14,18 @@
   background-color: $color-background-card;
   box-shadow: var(--cardShadow);
 
+  &:disabled {
+    cursor: default;
+    opacity: 0.25;
+  }
+
   &:hover,
   &:focus,
   &:focus-visible,
   &:focus-within {
-    background-color: $color-background-card-hover;
+    &:not(:disabled) {
+      background-color: $color-background-card-hover;
+    }
   }
 
   > span {
@@ -101,8 +108,16 @@
   padding-block: $spacing / 2;
   font-size: 1.5rem;
   text-align: center;
-  
+
   > span {
     opacity: 0.75;
+  }
+}
+
+.modal {
+  > div{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
   }
 }

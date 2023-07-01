@@ -1,8 +1,13 @@
 import { FC } from "react";
-import { useGetInfluences } from "@services/influence";
+import {
+  editInfluenceInfo,
+  editInfluenceLevel,
+  useGetInfluences,
+} from "@services/influence";
 import InfluenceElement from "./InfluenceElement";
 
 import styles from "./style.module.scss";
+import { convertFromInfluence } from "@libs/enums";
 
 const InfluenceList: FC<{
   userId?: string | number;
@@ -10,7 +15,7 @@ const InfluenceList: FC<{
 }> = ({ userId, open }) => {
   const editable = !userId;
 
-  const { data: influences } = useGetInfluences(userId);
+  const { data: influences, ...all } = useGetInfluences(userId);
 
   const InfluenceCards = influences?.map((influence) => (
     <InfluenceElement
@@ -20,14 +25,15 @@ const InfluenceList: FC<{
     />
   ));
 
+  console.log(all);
+
   return (
     <div
       className={styles.mapperInfluences}
-      style={!open ? { display: "none" } : {}}
-    >
+      style={!open ? { display: "none" } : {}}>
       <div className={styles.scrollWrapper}>
         {InfluenceCards}
-        {!!influences?.length && (
+        {!influences?.length && (
           <span>
             {`This person is unique!`}
             <br />
