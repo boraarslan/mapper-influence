@@ -1,5 +1,5 @@
 use axum::debug_handler;
-use axum::extract::{State, Path};
+use axum::extract::{Path, State};
 use mi_db::influence::Influence;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -16,7 +16,6 @@ use crate::AuthUserId;
 )]
 #[debug_handler]
 pub async fn get_influences(
-    AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
     Path(query_user_id): Path<i64>,
 ) -> AppResult<Json<Vec<Influence>>> {
