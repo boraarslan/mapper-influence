@@ -5,11 +5,11 @@ import { useRouter } from "next/router";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { Influences } from "@components/SvgComponents";
-import { UserBase } from "@libs/types/user";
 import { useSessionStore } from "src/states/user";
 import SearchBar from "./SearchBar";
 
 import styles from "../style.module.scss";
+import { UserBaseResponse } from "@services/user";
 
 export default function Header() {
   const router = useRouter();
@@ -41,11 +41,13 @@ export default function Header() {
   );
 }
 
-export const ProfileLinkAvatar: FC<{ user?: UserBase }> = ({ user }) => (
+export const ProfileLinkAvatar: FC<{ user?: UserBaseResponse }> = ({
+  user,
+}) => (
   <Link href={"/profile"}>
     <ProfilePhoto
       className={styles.avatar}
-      photoUrl={user?.avatarUrl}
+      photoUrl={user?.profile_picture}
       size="md"
       circle
     />

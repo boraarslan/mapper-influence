@@ -27,6 +27,30 @@
   z-index: 2;
 }
 
+%skeleton {
+  background: linear-gradient(
+    90deg,
+    $color-text-faded 0%,
+    $color-text 10%,
+    $color-text-faded 20%,
+    $color-text-faded 100%
+  );
+  background-size: 400% 100%;
+  animation: moveGradient 3s linear infinite;
+  opacity: 10% !important;
+  border-radius: $border-radius;
+  border: 0.1px solid $color-text;
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+
 %contentBox {
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);

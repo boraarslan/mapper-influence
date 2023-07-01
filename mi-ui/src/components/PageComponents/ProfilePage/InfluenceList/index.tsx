@@ -1,24 +1,27 @@
-import React, { FC } from "react";
-import { Influence } from "@libs/types/influence";
-
-import styles from "./style.module.scss";
+import { FC } from "react";
+import { InfluenceResponse } from "@services/influence";
 import InfluenceElement from "./InfluenceElement";
 
-const InfluenceList: FC<{ influences: Influence[]; editable?: boolean }> = ({
-  influences,
-  editable,
-}) => {
+import styles from "./style.module.scss";
 
+const InfluenceList: FC<{
+  influences: InfluenceResponse[];
+  editable?: boolean;
+  open?: boolean;
+}> = ({ influences, editable, open }) => {
   const InfluenceCards = influences.map((influence) => (
     <InfluenceElement
-      key={influence.profileData.id}
+      key={influence.from_id}
       influenceData={influence}
       editable={editable}
     />
   ));
 
   return (
-    <div className={styles.mapperInfluences}>
+    <div
+      className={styles.mapperInfluences}
+      style={open ? { display: "none" } : {}}
+    >
       <div className={styles.scrollWrapper}>
         {InfluenceCards}
         {influences.length === 0 && (

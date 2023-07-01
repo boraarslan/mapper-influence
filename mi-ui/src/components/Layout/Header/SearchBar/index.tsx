@@ -1,20 +1,23 @@
-import { FC, useCallback, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { Magnify } from "@components/SvgComponents";
 import { MaxNameLength } from "@libs/consts";
-import { UserBase } from "@libs/types/user";
 import Results from "./Results";
 
 import styles from "./styles.module.scss";
+import { UserBaseResponse } from "@services/user";
 
 type Props = {
   className?: string;
 };
 
 const SearchBar: FC<Props> = ({ className }) => {
+  const router = useRouter();
   const containerRef = useRef(null);
-  const [results, setResults] = useState<UserBase[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [results, setResults] = useState<UserBaseResponse[]>([]);
   const [showResults, setShowResults] = useState(false);
 
   useOnClickOutside(containerRef, () => setShowResults(false));
@@ -22,14 +25,16 @@ const SearchBar: FC<Props> = ({ className }) => {
   const searchUser = useCallback((query: string) => {
     setResults(
       Array.from(Array(10).keys()).map((_, index) => ({
-        username: query,
-        avatarUrl: "https://picsum.photos/200",
+        user_name: query,
+        profile_picture: "https://picsum.photos/200",
         id: index,
         flag: { code: "TR", name: "Türkiye" },
       }))
     );
     // TODO: Search user service
   }, []);
+
+  useEffect(() => {}, [router.pathname]);
 
   const debouncedSearch = AwesomeDebouncePromise(searchUser, 500);
 
@@ -50,6 +55,7 @@ const SearchBar: FC<Props> = ({ className }) => {
           onChange={(e) => handleChange(e.target.value)}
           placeholder={"Search User"}
           maxLength={MaxNameLength}
+          ref={inputRef}
         />
         <button className={styles.magnifyButton}>
           <Magnify className={styles.magnifySvg} />
