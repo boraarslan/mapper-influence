@@ -99,7 +99,7 @@ pub struct UpdateInfluenceLevelRequest {
 
 #[utoipa::path(
     post,
-    path = "/influence/update/level",
+    path = "/influence/update/level/",
     request_body = UpdateInfluenceLevelRequest,
     responses((status = 200, description = "Influence level successfully updated")),
 )]
@@ -128,7 +128,7 @@ pub struct UpdateInfluenceInfoRequest {
 
 #[utoipa::path(
     post,
-    path = "/influence/update/info",
+    path = "/influence/update/info/",
     request_body = UpdateInfluenceInfoRequest,
     responses((status = 200, description = "Influence info successfully updated")),
 )]

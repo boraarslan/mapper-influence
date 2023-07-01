@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { getUserBase } from "src/services/userBase";
+import { getUserBase } from "@services/user";
 import { useSessionStore } from "src/states/user";
 
 //! THIS PAGE WILL NOT BE ROUTED TO IN PRODUCTION
@@ -15,16 +15,7 @@ const DevLoginPage = () => {
 
   useEffect(() => {
     setCookie("mi-session-token", session);
-    getUserBase().then(({ data }) =>
-      login(
-        {
-          avatarUrl: data.profile_picture,
-          id: data.id,
-          username: data.user_name,
-          flag: { code: "TR", name: "Türkiye" },
-        }
-      )
-    );
+    getUserBase().then((data) => login(data));
     //router.replace("/");
   }, [session, setCookie, login]);
 

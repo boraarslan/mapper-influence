@@ -20,7 +20,8 @@
       "@styles/*": ["src/styles/*"],
       "@hooks/*": ["src/hooks/*"],
       "@libs/*": ["src/libs/*"],
-      "@services/*": ["src/services/*"]
+      "@services/*": ["src/services/*"],
+      "@states/*": ["src/states/*"],
     },
     "incremental": true,
   },

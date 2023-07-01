@@ -1,10 +1,18 @@
 import Head from "next/head";
 import type { AppProps } from "next/app";
+import { useState } from "react";
 import { CookiesProvider } from "react-cookie";
+import {
+  QueryClient,
+  QueryClientProvider,
+  Hydrate,
+} from "@tanstack/react-query";
 import Layout from "@components/Layout";
+
 import "../styles/globals.scss";
 
 function App({ Component, pageProps }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <>
       <Head>
@@ -27,11 +35,15 @@ function App({ Component, pageProps }: AppProps) {
         <title>Mapper Influences</title>
       </Head>
 
-      <CookiesProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </CookiesProvider>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <CookiesProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </CookiesProvider>
+        </Hydrate>
+      </QueryClientProvider>
     </>
   );
 }

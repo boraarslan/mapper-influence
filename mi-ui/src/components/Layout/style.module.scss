@@ -4,6 +4,7 @@
   align-items: center;
 
   max-width: $screen-size;
+  min-height: calc(100vh - 3.5rem);
 
   margin-inline: auto;
   padding: $spacing;

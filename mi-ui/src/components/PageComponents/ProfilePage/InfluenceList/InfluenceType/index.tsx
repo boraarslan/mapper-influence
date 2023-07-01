@@ -1,20 +1,24 @@
-import { InfluenceTypeEnum } from "@libs/types/influence";
 import { FC, useRef, useState } from "react";
+import { useOnClickOutside } from "usehooks-ts";
 import Arrow from "@components/SvgComponents/Arrow";
+import { InfluenceTypeEnum } from "@libs/enums";
 
 import styles from "./style.module.scss";
-import { useOnClickOutside } from "usehooks-ts";
 
 type Props = {
   className?: string;
-  editable?: boolean;
   influenceType?: InfluenceTypeEnum;
+  editable?: boolean;
+  hideRemove?: boolean;
+  onChange?: (type: InfluenceTypeEnum) => void;
 };
 
 const InfluenceType: FC<Props> = ({
   className,
   editable,
   influenceType = InfluenceTypeEnum.Fascination,
+  hideRemove,
+  onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(influenceType);
@@ -24,9 +28,14 @@ const InfluenceType: FC<Props> = ({
     if (isOpen) setIsOpen(false);
   });
 
-  function onRemove() {
+  const onRemove = () => {
     // TODO: Remove influence from list
-  }
+  };
+
+  const handleChange = (type: InfluenceTypeEnum) => {
+    setSelectedType(type);
+    onChange && onChange(type);
+  };
 
   const dropdownClass = `${styles.dropdown} ${isOpen ? styles.open : ""}`;
   if (editable)
@@ -47,13 +56,13 @@ const InfluenceType: FC<Props> = ({
               {DROPDOWN_OPTIONS.map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => setSelectedType(option.label)}
+                  onClick={() => handleChange(option.label)}
                   disabled={option.label === selectedType}
                 >
                   {option.label}
                 </button>
               ))}
-              <button style={{ color: "red" }}>Remove</button>
+              {!hideRemove && <button style={{ color: "red" }}>Remove</button>}
             </div>
           )}
         </button>

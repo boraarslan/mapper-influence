@@ -4,7 +4,7 @@ import EditableDescription from "@components/PageComponents/ProfilePage/Editable
 import InfluenceType from "@components/PageComponents/ProfilePage/InfluenceList/InfluenceType";
 import AddUserButton from "@components/PageComponents/ProfilePage/MapperDetails/AddUserButton";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
-import { Influence, InfluenceTypeEnum } from "@libs/types/influence";
+import { InfluenceResponse } from "@services/influence";
 
 import styles from "./style.module.scss";
 
@@ -48,7 +48,12 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           number={2}
           title={"Add the user to  your influences list"}
         >
-          <AddUserButton onClick={toggleTooltip} />
+          <AddUserButton
+            userId={0}
+            action="add"
+            onClick={toggleTooltip}
+            dontShowForm
+          />
           {showTooltip && (
             <div className={styles.addButtonTooltip}>
               You need to click this inside a profile. <br />
@@ -64,7 +69,7 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           <div className={styles.profileSide}>
             <InfluenceType editable />
             <BaseProfileCard
-              userData={influenceData.profileData}
+              userId={influenceData.from_id}
               className={styles.card}
             />
           </div>
@@ -83,18 +88,13 @@ const TutorialScreen: FC<Props> = ({ children }) => {
   );
 };
 
-const influenceData: Influence = {
-  description: "Edit here to give details.",
-  lastUpdated: new Date().getDate(),
-  profileData: {
-    avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
-    username: "Fursum",
-    id: 1234,
-    flag: { code: "TR", name: "Türkiye" },
-  },
-  maps: [],
-  strength: 1,
-  type: InfluenceTypeEnum.Respect,
+const influenceData: InfluenceResponse = {
+  info: "Edit here to give details.",
+  modified_at: new Date().getDate(),
+  created_at: new Date().getDate(),
+  from_id: 123,
+  to_id: 1234,
+  influence_level: 1,
 };
 
 export default TutorialScreen;

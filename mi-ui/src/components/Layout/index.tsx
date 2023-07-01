@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import Header from "./Header";
-import { useUser } from "@hooks/useUser";
+import { useCurrentUser } from "@hooks/useUser";
 import Tooltip from "@components/SharedComponents/Tooltip";
 
 import "@fontsource-variable/inter";
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const Layout: FC<Props> = ({ children }) => {
-  const user = useUser(); // Just to fetch the user data
+  const user = useCurrentUser(); // Just to fetch the user data
 
   return (
     <>

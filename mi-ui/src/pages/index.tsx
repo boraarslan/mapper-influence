@@ -1,6 +1,6 @@
 import { LoginScreen } from "@components/PageComponents/Home";
-import { useUser } from "@hooks/useUser";
-import { userData } from "@libs/consts/dummyUserData";
+import { useCurrentUser } from "@hooks/useUser";
+import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
 import { readFileSync } from "fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
@@ -13,7 +13,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user } = useCurrentUser();
 
   useEffect(() => {
     if (user) router.push("/dashboard");
@@ -34,17 +34,19 @@ export const getStaticProps = async () => {
     },
   ];
 
-  const exampleTopList = userData.influences
+  /*
+  const exampleTopList = DUMMY_USER.influences
     .map((influence) => ({
       user: influence.profileData,
       number: Math.floor(Math.random() * 150),
     }))
     .sort((a, b) => b.number - a.number);
+  */
 
   return {
     props: {
       news: exampleNews,
-      leaderboard: exampleTopList,
+      leaderboard: [],
     },
   };
 };

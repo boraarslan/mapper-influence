@@ -1,22 +1,17 @@
 import { AxiosError, AxiosResponse } from "axios";
 
-export function mockAxios<T>(
-  returnValue: T,
-  timeout: number
-): Promise<AxiosResponse<T>> {
+export function mockRequest<T>(returnValue: T, timeout: number): Promise<T> {
   return new Promise((resolve) =>
-    setTimeout(
-      () => resolve({ data: returnValue, status: 200 } as AxiosResponse<T>),
-      timeout
-    )
+    setTimeout(() => resolve(returnValue), timeout)
   );
 }
 
 // Parameters are the same as above to quickly test for rejection
-export function mockAxiosReject<T>(
+export async function mockAxiosReject<T>(
   returnValue: T,
-  timeout: number
+  timeout: number = 0
 ): Promise<AxiosResponse<T>> {
+  await new Promise((r) => setTimeout(r, timeout));
   const error: Partial<AxiosError> = {
     isAxiosError: true,
     status: 401,

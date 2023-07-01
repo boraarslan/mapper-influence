@@ -1,46 +1,29 @@
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import { useRouter } from "next/router";
-import { UserProfile, UserBase } from "@libs/types/user";
+import { useCurrentUser } from "@hooks/useUser";
 import InfluenceList from "./InfluenceList";
 import MapperDetails from "./MapperDetails";
 import MentionList from "./MentionList";
-import { useUser } from "@hooks/useUser";
+import { useFullUser } from "@services/user";
 
 import styles from "./style.module.scss";
 
-type Props = { userData: UserProfile; editable?: boolean };
+type Props = { userId?: number | string; editable?: boolean };
 
-const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
-  const { logout } = useUser();
+const ProfilePage: FC<Props> = ({ userId, editable = false }) => {
+  const { logout } = useCurrentUser();
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
     "influences"
   );
 
-  const isUser = router.asPath === "/profile";
+  const { data: userData } = useFullUser(userId);
 
-  const InfluenceTab = useMemo(() => {
-    switch (selectedTab) {
-      case "influences":
-        return (
-          <InfluenceList influences={userData.influences} editable={editable} />
-        );
-      case "mentions":
-        return <MentionList mentions={userData.mentions} />;
-      default:
-        return <></>;
-    }
-  }, [selectedTab, userData, editable]);
+  const isUser = router.asPath === "/profile";
 
   return (
     <div className={styles.profilePage}>
-      <MapperDetails
-        description={userData.description}
-        mapList={userData.maps}
-        details={userData.details}
-        profileData={userData as UserBase}
-        editable={editable}
-      />
+      <MapperDetails userId={userId} editable={editable} />
 
       <div className={styles.buttons}>
         <button
@@ -56,8 +39,14 @@ const ProfilePage: FC<Props> = ({ userData, editable = false }) => {
           Mentions
         </button>
       </div>
-      <div className={styles.content}>{InfluenceTab}</div>
-
+      <div className={styles.content}>
+        <MentionList mentions={[]} open={selectedTab === "mentions"} />
+        <InfluenceList
+          influences={[]}
+          editable={editable}
+          open={selectedTab === "influences"}
+        />
+      </div>
       {isUser && <button onClick={logout}>Sign out</button>}
     </div>
   );
