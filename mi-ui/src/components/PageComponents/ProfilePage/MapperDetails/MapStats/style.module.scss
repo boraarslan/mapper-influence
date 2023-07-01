@@ -28,3 +28,10 @@
     }
   }
 }
+
+.loading {
+  .stat .number {
+    @extend %skeleton;
+    color: transparent;
+  }
+}

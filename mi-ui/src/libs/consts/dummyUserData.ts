@@ -1,48 +1,103 @@
-import { InfluenceTypeEnum } from "@libs/types/influence";
-import { UserProfile } from "@libs/types/user";
+import { BeatmapType } from "@libs/types/user";
+import { FeaturedMapsResponse, UserFullResponse } from "@services/user";
 
-const exampleMapList = [
+const exampleMapList: FeaturedMapsResponse[] = [
   {
-    artist: "NCT",
-    title: "Before I Go (Blooom remix)",
-    diff: "pjm",
-    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
-    mapUrl: "https://osu.ppy.sh/beatmapsets/1801710#osu/3694128",
+    featured_map_id: 3535240,
+    beatmapset: {
+      id: 1801710,
+      status: BeatmapType.Graveyard,
+      creator: "Fursum",
+      names: {
+        artist: "NCT",
+        artist_unicode: "NCT",
+        title: "Before I Go (Blooom remix)",
+        title_unicode: "Before I Go (Blooom remix)",
+      },
+      covers: {
+        card: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+        cover: "https://assets.ppy.sh/beatmaps/1801710/covers/cover.jpg",
+        list: "https://assets.ppy.sh/beatmaps/1801710/covers/list.jpg",
+        slimcover:
+          "https://assets.ppy.sh/beatmaps/1801710/covers/slimcover.jpg",
+      },
+
+      beatmaps: [
+        {
+          difficulty_rating: 5,
+          id: 3535240,
+          name: "pjm",
+          url: "https://osu.ppy.sh/beatmapsets/1729824#osu/3535240",
+        },
+      ],
+    },
   },
   {
-    artist: "NCT",
-    title: "Before I Go (Blooom remix)",
-    diff: "pjm",
-    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
-    mapUrl: "https://osu.ppy.sh/beatmapsets/1729824#osu/3535240",
+    featured_map_id: 3535240,
+    beatmapset: {
+      id: 1801710,
+      status: BeatmapType.Graveyard,
+      creator: "Fursum",
+      names: {
+        artist: "NCT",
+        artist_unicode: "NCT",
+        title: "Before I Go (Blooom remix)",
+        title_unicode: "Before I Go (Blooom remix)",
+      },
+      covers: {
+        card: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+        cover: "https://assets.ppy.sh/beatmaps/1801710/covers/cover.jpg",
+        list: "https://assets.ppy.sh/beatmaps/1801710/covers/list.jpg",
+        slimcover:
+          "https://assets.ppy.sh/beatmaps/1801710/covers/slimcover.jpg",
+      },
+
+      beatmaps: [
+        {
+          difficulty_rating: 5,
+          id: 3535240,
+          name: "pjm",
+          url: "https://osu.ppy.sh/beatmapsets/1729824#osu/3535240",
+        },
+      ],
+    },
   },
   {
-    artist: "NCT",
-    title: "Before I Go (Blooom remix)",
-    diff: "pjm",
-    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
-    mapUrl: "https://osu.ppy.sh/beatmapsets/817932#osu/1715114",
-  },
-  {
-    artist: "NCT",
-    title: "Before I Go (Blooom remix)",
-    diff: "pjm",
-    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
-    mapUrl: "https://osu.ppy.sh/beatmapsets/1570536#osu/3460598",
-  },
-  {
-    artist: "NCT",
-    title: "Before I Go (Blooom remix)",
-    diff: "pjm",
-    backgroundUrl: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
-    mapUrl: "https://osu.ppy.sh/beatmapsets/1570536",
+    featured_map_id: 3535240,
+    beatmapset: {
+      id: 1801710,
+      status: BeatmapType.Graveyard,
+      creator: "Fursum",
+      names: {
+        artist: "NCT",
+        artist_unicode: "NCT",
+        title: "Before I Go (Blooom remix)",
+        title_unicode: "Before I Go (Blooom remix)",
+      },
+      covers: {
+        card: "https://assets.ppy.sh/beatmaps/1801710/covers/card.jpg",
+        cover: "https://assets.ppy.sh/beatmaps/1801710/covers/cover.jpg",
+        list: "https://assets.ppy.sh/beatmaps/1801710/covers/list.jpg",
+        slimcover:
+          "https://assets.ppy.sh/beatmaps/1801710/covers/slimcover.jpg",
+      },
+
+      beatmaps: [
+        {
+          difficulty_rating: 5,
+          id: 3535240,
+          name: "pjm",
+          url: "https://osu.ppy.sh/beatmapsets/1729824#osu/3535240",
+        },
+      ],
+    },
   },
 ];
 
-export const userData: UserProfile = {
+export const DUMMY_USER: UserFullResponse = {
   id: 12345,
-  username: "Test username",
-  avatarUrl: "https://a.ppy.sh/4865030?1650115534.jpeg",
+  user_name: "Test username",
+  profile_picture: "https://a.ppy.sh/4865030?1650115534.jpeg",
   flag: { code: "TR", name: "Türkiye" },
   groups: [
     {
@@ -57,16 +112,18 @@ export const userData: UserProfile = {
       short_name: "NAT",
     },
   ],
-  description: "Test description",
-  maps: exampleMapList,
-  details: {
-    followerCount: 1,
-    graveyardCount: 1,
-    lovedCount: 0,
-    pendingCount: 1,
-    rankedCount: 0,
-    subCount: 2,
-  },
+  bio: "Test description",
+  featured_maps: exampleMapList,
+  graveyard_count: 1,
+  loved_count: 0,
+  //pending_count: 1,
+  ranked_count: 0,
+  guest_count: 2,
+  nominated_count: 1,
+  osu_data_modified_at: Date.now(),
+  profile_data_modified_at: Date.now(),
+
+  /*
   influences: [
     {
       profileData: {
@@ -206,4 +263,5 @@ export const userData: UserProfile = {
       flag: { code: "TR", name: "Türkiye" },
     },
   ],
+  */
 };

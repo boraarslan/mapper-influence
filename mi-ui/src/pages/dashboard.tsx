@@ -3,9 +3,9 @@ import type { NextPage, InferGetStaticPropsType } from "next";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { readFileSync } from "fs";
-import { userData } from "@libs/consts/dummyUserData";
+import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
-import { useUser } from "@hooks/useUser";
+import { useCurrentUser } from "@hooks/useUser";
 
 const DynamicNewsScreen = dynamic(() =>
   import("@components/PageComponents/Home").then((r) => r.NewsScreen)
@@ -21,7 +21,7 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const router = useRouter();
   const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
-  const { user } = useUser();
+  const { user } = useCurrentUser();
 
   const [isHydrated, setIsHydrated] = useState(false);
   useEffect(() => {
@@ -53,17 +53,19 @@ export const getStaticProps = async () => {
     },
   ];
 
-  const exampleTopList = userData.influences
+  /*
+  const exampleTopList = DUMMY_USER.influences
     .map((influence) => ({
       user: influence.profileData,
       number: Math.floor(Math.random() * 150),
     }))
     .sort((a, b) => b.number - a.number);
+  */
 
   return {
     props: {
       news: exampleNews,
-      leaderboard: exampleTopList,
+      leaderboard: [],
     },
   };
 };

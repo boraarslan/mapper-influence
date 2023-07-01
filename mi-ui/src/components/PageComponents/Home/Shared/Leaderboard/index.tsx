@@ -1,6 +1,6 @@
+import { FC } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { LeaderboardType } from "@libs/types/influence";
-import { FC } from "react";
 
 import styles from "./style.module.scss";
 
@@ -14,7 +14,7 @@ const Leaderboard: FC<{ topList: LeaderboardType[]; className?: string }> = ({
       <div className={styles.list}>
         {topList.map((rowData) => (
           <div key={rowData.user.id} className={styles.row}>
-            <BaseProfileCard userData={rowData.user} />
+            <BaseProfileCard userId={rowData.user.id} />
             <div className={styles.number}>
               <span>{rowData.number}</span>
               <span>{`Mention${rowData.number !== 1 ? "s" : ""}`}</span>

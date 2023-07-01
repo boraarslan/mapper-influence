@@ -1,13 +1,13 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-
-import { MapInfo } from "@libs/types/user";
 import MapCard from "@components/SharedComponents/MapCard";
-
+import { FeaturedMapsResponse } from "@services/user";
 
 import styles from "./style.module.scss";
 
-const SliderCarousel: FC<{ mapList: MapInfo[] }> = ({ mapList }) => {
+const SliderCarousel: FC<{ mapList: FeaturedMapsResponse[] }> = ({
+  mapList,
+}) => {
   const [emblaRef, embla] = useEmblaCarousel({
     skipSnaps: true,
     inViewThreshold: 1,
@@ -34,8 +34,8 @@ const SliderCarousel: FC<{ mapList: MapInfo[] }> = ({ mapList }) => {
     <div ref={emblaRef} className={styles.viewport}>
       <div>
         {mapList.map((item) => (
-          <div key={item.mapUrl} className={styles.slide}>
-            <MapCard {...item} />
+          <div key={item.beatmapset.id} className={styles.slide}>
+            <MapCard map={item} />
           </div>
         ))}
       </div>

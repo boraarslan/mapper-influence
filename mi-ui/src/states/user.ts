@@ -1,10 +1,10 @@
+import { UserBaseResponse } from "@services/user";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { UserBase } from "@libs/types/user";
 
 type SessionStore = {
-  user?: UserBase;
-  login: (user: UserBase) => void;
+  user?: UserBaseResponse;
+  login: (user: UserBaseResponse) => void;
   logout: () => void;
 };
 

@@ -6,9 +6,10 @@ import MapCard from "../../MapCard";
 
 import styles from "./style.module.scss";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { FeaturedMapsResponse } from "@services/user";
 
 const SingleItemCarousel: FC<{
-  mapList: MapInfo[];
+  mapList: FeaturedMapsResponse[];
   className?: string;
   editable?: boolean;
 }> = ({ mapList, editable, className = "" }) => {
@@ -21,8 +22,8 @@ const SingleItemCarousel: FC<{
       showThumbs={false}
     >
       {mapList.map((item) => (
-        <div key={item.mapUrl} className={styles.slide}>
-          <MapCard {...item} />
+        <div key={item.beatmapset.id} className={styles.slide}>
+          <MapCard map={item} />
         </div>
       ))}
     </Carousel>

@@ -1,23 +1,21 @@
-import { FC, useEffect, useMemo, useRef } from "react";
-import { useRouter } from "next/router";
+import { FC, useEffect, useRef } from "react";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { useFullUser } from "@services/user";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
-import { UserBase } from "@libs/types/user";
 import AddUserButton from "../AddUserButton";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
 const textFit = require("textfit");
 
 import styles from "./style.module.scss";
 
 type Props = {
-  profileData: UserBase;
+  userId?: string | number;
 };
 
-const ProfileInfo: FC<Props> = ({ profileData }) => {
-  const router = useRouter();
-  const ownProfile = useMemo(() => {
-    return router.asPath === "/profile";
-  }, [router]);
+const ProfileInfo: FC<Props> = ({ userId }) => {
+  const ownProfile = !userId;
+
+  const { data: profileData, isLoading } = useFullUser(userId);
 
   const nameRef = useRef(null);
 
@@ -32,9 +30,10 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
     return () => {
       window.removeEventListener("resize", debounceFitText);
     };
-  }, [nameRef]);
+  }, [nameRef, profileData]);
 
-  const renderGroup = () => {
+  /*
+  const UserGroup = () => {
     if (!profileData.groups?.length) return <></>;
     return (
       <div
@@ -45,38 +44,52 @@ const ProfileInfo: FC<Props> = ({ profileData }) => {
       </div>
     );
   };
+  */
+
+  if (isLoading)
+    return (
+      <div className={`${styles.skeleton} ${styles.profileInfo}`}>
+        <ProfilePhoto
+          loading={true}
+          size="xl"
+          circle
+          className={styles.avatar}
+        />
+        <div className={styles.rightSide}>
+          <div className={styles.mapperName}></div>
+          <div className={styles.title}></div>
+          {!ownProfile && <div className={styles.addUser}></div>}
+        </div>
+      </div>
+    );
+
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${osuBaseUrl}profile/${profileData.id}`}
+        href={`${osuBaseUrl}profile/${profileData?.id}`}
         target="_blank"
         rel="noreferrer"
       >
         <ProfilePhoto
-          photoUrl={profileData.avatarUrl}
+          photoUrl={profileData?.profile_picture}
+          loading={isLoading}
           size="xl"
-          className={styles.avatar}
           circle
+          className={styles.avatar}
         />
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${osuBaseUrl}profile/${profileData.id}`}
+          href={`${osuBaseUrl}profile/${profileData?.id}`}
           target="_blank"
           rel="noreferrer"
         >
           <div className={styles.mapperName} ref={nameRef}>
-            {profileData.username}
+            {profileData?.user_name}
           </div>
         </a>
-        {renderGroup()}
-        {!ownProfile && (
-          <AddUserButton
-            onClick={() => {
-              //TODO: Add service
-            }}
-          />
-        )}
+        {/* <UserGroup /> */}
+        {!ownProfile && <AddUserButton userId={userId!} action="add" />}
       </div>
     </div>
   );
