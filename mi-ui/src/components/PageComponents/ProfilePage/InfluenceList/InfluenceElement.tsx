@@ -1,8 +1,7 @@
-import { FC } from "react";
-import { toast } from "react-toastify";
+import { forwardRef } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import MapCarousel from "@components/SharedComponents/MapCarousel/SingleItem";
-import { convertFromInfluence, convertToInfluence } from "@libs/enums";
+import { convertFromInfluence } from "@libs/enums";
 import {
   InfluenceResponse,
   editInfluenceInfo,
@@ -13,13 +12,15 @@ import EditableDescription from "../EditableDescription";
 
 import styles from "./style.module.scss";
 
-const InfluenceElement: FC<{
+type Props = {
   influenceData: InfluenceResponse;
   editable?: boolean;
-}> = ({ influenceData, editable }) => {
-  return (
+};
+
+const InfluenceElement = forwardRef<HTMLDivElement, Props>(
+  ({ influenceData, editable }, ref) => (
     <>
-      <div className={styles.influenceRow}>
+      <div className={styles.influenceRow} ref={ref}>
         <div className={styles.cardWrapper}>
           <InfluenceType
             editable={editable}
@@ -62,7 +63,9 @@ const InfluenceElement: FC<{
         )}
       </div>
     </>
-  );
-};
+  )
+);
+
+InfluenceElement.displayName = "InfluenceElement";
 
 export default InfluenceElement;

@@ -62,7 +62,7 @@ h6 {
   $allTransitions: background-color $transitionConfig, color $transitionConfig,
     outline-color $transitionConfig, text-shadow $transitionConfig,
     box-shadow $transitionConfig, font-weight $transitionConfig,
-    fill $transitionConfig;
+    opacity $transitionConfig, fill $transitionConfig;
   transition: $allTransitions;
   &::after,
   &::before {
@@ -137,4 +137,3 @@ button {
     }
   }
 }
-

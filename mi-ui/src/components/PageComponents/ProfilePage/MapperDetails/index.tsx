@@ -4,7 +4,6 @@ import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
 import ProfileInfo from "./ProfileInfo";
 import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
-import { toast } from "react-toastify";
 
 import styles from "./style.module.scss";
 

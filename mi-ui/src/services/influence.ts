@@ -1,8 +1,10 @@
 import axios from "axios";
 import { mockRequest, mockAxiosReject } from "@libs/functions";
 import { useCurrentUser } from "@hooks/useUser";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DUMMY_INFLUENCES } from "@libs/consts/dummyUserData";
+import { UserFullResponse } from "./user";
+import { toast } from "react-toastify";
 
 export type InfluenceResponse = {
   from_id: number;
@@ -45,13 +47,61 @@ export async function addInfluence(body: AddInfluenceRequest) {
   return await axios.post(searchUrl, body);
 }
 
+export const useAddInfluenceMutation = () => {
+  const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
+  const key = ["influences", user?.id];
+
+  return useMutation({
+    mutationFn: addInfluence,
+    onSuccess: (_, variables) => {
+      queryClient.cancelQueries(key);
+      queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
+        const newInfluence = {
+          from_id: user?.id || 0,
+          to_id: variables.from_id,
+          influence_level: variables.level,
+          info: variables.info,
+          created_at: new Date(),
+          modified_at: new Date(),
+        };
+        if (!old) return [newInfluence];
+        return [...old, newInfluence];
+      });
+      toast.success("Influence added successfully.");
+    },
+    onError: () => toast.error("Failed to add influence."),
+    onSettled: () => queryClient.invalidateQueries(key),
+  });
+};
+
 export async function deleteInfluence(from_id: string | number) {
   // Mock data for dev
   if (process.env.NODE_ENV !== "production") return mockRequest({}, 1000);
 
-  let searchUrl = "/api/v1/influence/delete";
-  return await axios.post(searchUrl, { from_id });
+  let searchUrl = `/api/v1/influence/delete/${from_id}`;
+  return await axios.delete(searchUrl);
 }
+
+export const useDeleteInfluenceMutation = () => {
+  const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
+  const key = ["influences", user?.id];
+
+  return useMutation({
+    mutationFn: deleteInfluence,
+    onSuccess: (_, variables) => {
+      queryClient.cancelQueries(key);
+      queryClient.setQueryData(key, (old: InfluenceResponse[] | undefined) => {
+        if (!old) return [];
+        return old.filter((influence) => influence.from_id !== variables);
+      });
+      toast.success("Influence removed successfully.");
+    },
+    onError: () => toast.error("Failed to remove influence."),
+    onSettled: () => queryClient.invalidateQueries(key),
+  });
+};
 
 export type EditInfluenceInfoRequest = {
   from_id: number;
