@@ -60,7 +60,7 @@ pub struct DeleteInfluenceRequest {
 
 #[utoipa::path(
     delete,
-    path = "/influence/delete/",
+    path = "/influence/delete/{from_id}",
     request_body = DeleteInfluenceRequest,
     responses((status = 200, description = "Influence successfully deleted")),
 )]
@@ -68,12 +68,9 @@ pub struct DeleteInfluenceRequest {
 pub async fn delete_influence(
     AuthUserId(user_id): AuthUserId,
     State(state): State<SharedState>,
-    Json(request): Json<DeleteInfluenceRequest>,
+    Path(from_id): Path<i64>,
 ) -> AppResult<()> {
-    state
-        .postgres()
-        .delete_influence(request.from_id, user_id)
-        .await?;
+    state.postgres().delete_influence(from_id, user_id).await?;
 
     Ok(())
 }

@@ -28,7 +28,7 @@ fn influence_route() -> Router<SharedState> {
     Router::new()
         .route("/get/:query_user_id", get(get_influences))
         .route("/create", post(create_influence))
-        .route("/delete", delete(delete_influence))
+        .route("/delete/:from_id", delete(delete_influence))
         .nest(
             "/update",
             Router::new()
