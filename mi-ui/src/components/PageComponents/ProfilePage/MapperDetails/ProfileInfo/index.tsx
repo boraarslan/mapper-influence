@@ -66,7 +66,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   return (
     <div className={styles.profileInfo}>
       <a
-        href={`${osuBaseUrl}profile/${profileData?.id}`}
+        href={`${osuBaseUrl}users/${profileData?.id}`}
         target="_blank"
         rel="noreferrer"
       >
@@ -80,7 +80,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
       </a>
       <div className={styles.rightSide}>
         <a
-          href={`${osuBaseUrl}profile/${profileData?.id}`}
+          href={`${osuBaseUrl}users/${profileData?.id}`}
           target="_blank"
           rel="noreferrer"
         >
