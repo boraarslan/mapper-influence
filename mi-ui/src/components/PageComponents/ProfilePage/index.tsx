@@ -7,6 +7,7 @@ import MentionList from "./MentionList";
 import { useFullUser } from "@services/user";
 
 import styles from "./style.module.scss";
+import { useGetInfluences } from "@services/influence";
 
 type Props = { userId?: number | string };
 
@@ -16,9 +17,7 @@ const ProfilePage: FC<Props> = ({ userId }) => {
   const [selectedTab, setSelectedTab] = useState<"influences" | "mentions">(
     "influences"
   );
-
-  const { data: userData } = useFullUser(userId);
-
+  
   const isUser = router.asPath === "/profile";
 
   return (
@@ -28,14 +27,12 @@ const ProfilePage: FC<Props> = ({ userId }) => {
       <div className={styles.buttons}>
         <button
           className={selectedTab === "influences" ? styles.selected : ""}
-          onClick={() => setSelectedTab("influences")}
-        >
+          onClick={() => setSelectedTab("influences")}>
           Influences
         </button>
         <button
           className={selectedTab === "mentions" ? styles.selected : ""}
-          onClick={() => setSelectedTab("mentions")}
-        >
+          onClick={() => setSelectedTab("mentions")}>
           Mentions
         </button>
       </div>

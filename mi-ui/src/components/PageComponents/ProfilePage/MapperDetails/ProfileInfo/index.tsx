@@ -1,8 +1,9 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useMemo, useRef } from "react";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useFullUser } from "@services/user";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { osuBaseUrl } from "@libs/consts/urls";
+import { useGetInfluences } from "@services/influence";
 import AddUserButton from "../AddUserButton";
 const textFit = require("textfit");
 
@@ -16,6 +17,14 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
   const ownProfile = !userId;
 
   const { data: profileData, isLoading } = useFullUser(userId);
+  const { data: currentUserInfluences } = useGetInfluences();
+
+  const isAlreadyAdded = useMemo(() => {
+    if (!currentUserInfluences) return false;
+    return currentUserInfluences.some(
+      (influence) => influence.from_id.toString() === userId?.toString()
+    );
+  }, [currentUserInfluences, userId]);
 
   const nameRef = useRef(null);
 
@@ -68,8 +77,7 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
       <a
         href={`${osuBaseUrl}users/${profileData?.id}`}
         target="_blank"
-        rel="noreferrer"
-      >
+        rel="noreferrer">
         <ProfilePhoto
           photoUrl={profileData?.profile_picture}
           loading={isLoading}
@@ -82,14 +90,18 @@ const ProfileInfo: FC<Props> = ({ userId }) => {
         <a
           href={`${osuBaseUrl}users/${profileData?.id}`}
           target="_blank"
-          rel="noreferrer"
-        >
+          rel="noreferrer">
           <div className={styles.mapperName} ref={nameRef}>
             {profileData?.user_name}
           </div>
         </a>
         {/* <UserGroup /> */}
-        {!ownProfile && <AddUserButton userId={userId!} action="add" />}
+        {!ownProfile && (
+          <AddUserButton
+            userId={userId!}
+            action={isAlreadyAdded ? "remove" : "add"}
+          />
+        )}
       </div>
     </div>
   );

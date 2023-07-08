@@ -25,6 +25,8 @@
     width: 100%;
     background-color: inherit;
     z-index: 5;
+    pointer-events: none;
+    opacity: 0;
   }
 
   &::before {
@@ -36,6 +38,18 @@
     height: $spacing;
     mask-image: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
     transform: translateY(-150%) scaleY(2);
+  }
+
+  &.firstGradient {
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &.lastGradient {
+    &::after {
+      opacity: 1;
+    }
   }
 
   .scrollWrapper {
