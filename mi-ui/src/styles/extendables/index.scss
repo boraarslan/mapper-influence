@@ -55,6 +55,7 @@
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);
   border-radius: $border-radius;
+  backdrop-filter: blur(0.1rem);
 }
 
 %button {
