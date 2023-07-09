@@ -1,5 +1,5 @@
-import { FC } from "react";
 import { FeaturedMapsResponse } from "@services/user";
+import { FC } from "react";
 
 import styles from "./style.module.scss";
 

@@ -1,7 +1,7 @@
-import { FC } from "react";
-
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { UserBaseResponse } from "@services/user";
+import { FC } from "react";
+
 import styles from "./style.module.scss";
 
 const Results: FC<{ results: UserBaseResponse[]; length?: number }> = ({

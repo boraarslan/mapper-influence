@@ -1,12 +1,12 @@
-import { FC } from "react";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
+import { FC } from "react";
+import { useGlobalTooltip } from "src/states/globalTooltip";
+
 import ContributeButtons from "../Shared/ContributeButtons";
 import Leaderboard from "../Shared/Leaderboard";
 import News from "../Shared/News";
 import CoolCards from "./CoolCards";
-import { useGlobalTooltip } from "src/states/globalTooltip";
-
 import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };

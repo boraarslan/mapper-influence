@@ -1,6 +1,6 @@
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { ChangeEvent, ChangeEventHandler, FC } from "react";
 import { toast } from "react-toastify";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 import styles from "./style.module.scss";
 

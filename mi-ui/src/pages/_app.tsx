@@ -1,14 +1,14 @@
-import Head from "next/head";
-import type { AppProps } from "next/app";
-import { CookiesProvider } from "react-cookie";
+import "../styles/globals.scss";
+
+import Layout from "@components/Layout";
 import {
+  Hydrate,
   QueryClient,
   QueryClientProvider,
-  Hydrate,
 } from "@tanstack/react-query";
-import Layout from "@components/Layout";
-
-import "../styles/globals.scss";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { CookiesProvider } from "react-cookie";
 
 const queryClient = new QueryClient();
 

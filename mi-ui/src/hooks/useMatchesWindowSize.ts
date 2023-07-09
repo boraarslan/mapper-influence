@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Changes state when matching width on resize

@@ -1,11 +1,11 @@
+import { LoginScreen } from "@components/PageComponents/Home";
+import { useCurrentUser } from "@hooks/useUser";
+import { NewsType } from "@libs/types/influence";
 import { readFileSync } from "fs";
 import type { InferGetStaticPropsType, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { LoginScreen } from "@components/PageComponents/Home";
-import { useCurrentUser } from "@hooks/useUser";
-import { NewsType } from "@libs/types/influence";
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   leaderboard,

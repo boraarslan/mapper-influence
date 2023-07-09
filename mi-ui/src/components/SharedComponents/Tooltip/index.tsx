@@ -1,4 +1,4 @@
-import { useEffect, type FC, useRef } from "react";
+import { type FC, useEffect, useRef } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
 
 import styles from "./style.module.scss";

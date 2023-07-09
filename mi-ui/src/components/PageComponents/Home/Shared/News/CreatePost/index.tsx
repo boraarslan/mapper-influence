@@ -1,9 +1,9 @@
 import Modal from "@components/SharedComponents/Modal";
 import { NewsType } from "@libs/types/influence";
 import { FC, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import NewsRow from "../NewsRow";
+import { SubmitHandler,useForm } from "react-hook-form";
 
+import NewsRow from "../NewsRow";
 import styles from "./style.module.scss";
 
 const CreatePost: FC = ({}) => {

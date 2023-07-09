@@ -1,7 +1,7 @@
-import { FC, useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import MapCard from "@components/SharedComponents/MapCard";
 import { FeaturedMapsResponse } from "@services/user";
+import useEmblaCarousel from "embla-carousel-react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import styles from "./style.module.scss";
 

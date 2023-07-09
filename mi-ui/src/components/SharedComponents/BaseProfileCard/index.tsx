@@ -1,10 +1,10 @@
-import type { FC } from "react";
-import Link from "next/link";
-import { useGlobalTooltip } from "@states/globalTooltip";
-import Badge from "./Badge";
-
-import styles from "./style.module.scss";
 import { useBaseUser } from "@services/user";
+import { useGlobalTooltip } from "@states/globalTooltip";
+import Link from "next/link";
+import type { FC } from "react";
+
+import Badge from "./Badge";
+import styles from "./style.module.scss";
 
 type Props = { userId?: string | number; className?: string };
 

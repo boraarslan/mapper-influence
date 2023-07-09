@@ -1,11 +1,10 @@
+import { LeaderboardType, NewsType } from "@libs/types/influence";
 import { FC } from "react";
 
-import { LeaderboardType, NewsType } from "@libs/types/influence";
-import Leaderboard from "../Shared/Leaderboard";
-
-import styles from "./style.module.scss";
-import News from "../Shared/News";
 import ContributeButtons from "../Shared/ContributeButtons";
+import Leaderboard from "../Shared/Leaderboard";
+import News from "../Shared/News";
+import styles from "./style.module.scss";
 
 type Props = {
   newsList: NewsType[];

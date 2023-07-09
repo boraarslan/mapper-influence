@@ -1,10 +1,10 @@
-import type { FC } from "react";
-import { editUser, useFullUser } from "@services/user";
 import MapCarousel from "@components/SharedComponents/MapCarousel/Slider";
-import ProfileInfo from "./ProfileInfo";
+import { editUser, useFullUser } from "@services/user";
+import type { FC } from "react";
+
 import EditableDescription from "../EditableDescription";
 import MapStats from "./MapStats";
-
+import ProfileInfo from "./ProfileInfo";
 import styles from "./style.module.scss";
 
 type Props = {

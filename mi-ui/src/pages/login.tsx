@@ -1,7 +1,7 @@
+import { getUserBase } from "@services/user";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { getUserBase } from "@services/user";
 import { useSessionStore } from "src/states/user";
 
 //! THIS PAGE WILL NOT BE ROUTED TO IN PRODUCTION

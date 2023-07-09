@@ -1,18 +1,18 @@
-import { FC, useRef, useState } from "react";
-import { useOnClickOutside } from "usehooks-ts";
-import { toast } from "react-toastify";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Arrow from "@components/SvgComponents/Arrow";
-import { InfluenceTypeEnum, convertToInfluence } from "@libs/enums";
 import Modal from "@components/SharedComponents/Modal";
+import Arrow from "@components/SvgComponents/Arrow";
+import { useCurrentUser } from "@hooks/useUser";
+import { convertToInfluence,InfluenceTypeEnum } from "@libs/enums";
 import {
-  InfluenceResponse,
   deleteInfluence,
   getInfluences,
+  InfluenceResponse,
 } from "@services/influence";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FC, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { useOnClickOutside } from "usehooks-ts";
 
 import styles from "./style.module.scss";
-import { useCurrentUser } from "@hooks/useUser";
 
 type Props = {
   className?: string;

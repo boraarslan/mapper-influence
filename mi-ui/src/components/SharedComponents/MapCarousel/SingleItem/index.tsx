@@ -1,12 +1,12 @@
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+import { MapInfo } from "@libs/types/user";
+import { FeaturedMapsResponse } from "@services/user";
 import { FC, useCallback, useEffect, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 
-import { MapInfo } from "@libs/types/user";
 import MapCard from "../../MapCard";
-
 import styles from "./style.module.scss";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { FeaturedMapsResponse } from "@services/user";
 
 const SingleItemCarousel: FC<{
   mapList: FeaturedMapsResponse[];

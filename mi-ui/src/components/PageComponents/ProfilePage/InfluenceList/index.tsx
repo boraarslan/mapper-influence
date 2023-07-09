@@ -1,10 +1,10 @@
-import { FC, useRef } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useGetInfluences } from "@services/influence";
-import InfluenceElement from "./InfluenceElement";
-
-import styles from "./style.module.scss";
+import { FC, useRef } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
+
+import InfluenceElement from "./InfluenceElement";
+import styles from "./style.module.scss";
 
 const InfluenceList: FC<{
   userId?: string | number;

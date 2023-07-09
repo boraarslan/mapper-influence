@@ -1,12 +1,12 @@
+import { DUMMY_USER } from "@libs/consts/dummyUserData";
+import { mockAxiosReject, mockRequest } from "@libs/functions";
 import type {
   BeatmapResponse,
   BeatmapType,
   CoversResponse,
 } from "@libs/types/user";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { DUMMY_USER } from "@libs/consts/dummyUserData";
-import { mockAxiosReject, mockRequest } from "@libs/functions";
+import axios from "axios";
 
 export type UserBaseResponse = {
   id: number;

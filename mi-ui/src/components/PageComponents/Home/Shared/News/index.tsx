@@ -1,8 +1,8 @@
-import { FC } from "react";
 import { NewsType } from "@libs/types/influence";
+import { FC } from "react";
+
 import CreatePost from "./CreatePost";
 import NewsRow from "./NewsRow";
-
 import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; className?: string };

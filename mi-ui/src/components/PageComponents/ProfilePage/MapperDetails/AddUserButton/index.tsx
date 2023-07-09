@@ -1,16 +1,16 @@
-import { FC, FormEvent, useCallback, useState, MouseEvent } from "react";
+import Modal from "@components/SharedComponents/Modal";
+import { convertFromInfluence,InfluenceTypeEnum } from "@libs/enums";
 import {
   AddInfluenceRequest,
   useAddInfluenceMutation,
   useDeleteInfluenceMutation,
 } from "@services/influence";
-import Modal from "@components/SharedComponents/Modal";
 import { useGlobalTheme } from "@states/theme";
-import { InfluenceTypeEnum, convertFromInfluence } from "@libs/enums";
-import InfluenceType from "../../InfluenceList/InfluenceType";
+import { FC, FormEvent, MouseEvent,useCallback, useState } from "react";
 
-import styles from "./style.module.scss";
 import EditableDescription from "../../EditableDescription";
+import InfluenceType from "../../InfluenceList/InfluenceType";
+import styles from "./style.module.scss";
 
 type Props = {
   userId: string | number;

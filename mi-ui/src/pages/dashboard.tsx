@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import type { NextPage, InferGetStaticPropsType } from "next";
-import { useRouter } from "next/router";
-import dynamic from "next/dynamic";
-import { readFileSync } from "fs";
+import { useCurrentUser } from "@hooks/useUser";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
-import { useCurrentUser } from "@hooks/useUser";
+import { readFileSync } from "fs";
+import type { InferGetStaticPropsType,NextPage } from "next";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 const DynamicNewsScreen = dynamic(() =>
   import("@components/PageComponents/Home").then((r) => r.NewsScreen)
