@@ -1,9 +1,9 @@
+import News from "@components/SharedComponents/News";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
 import { FC } from "react";
 
-import ContributeButtons from "../Shared/ContributeButtons";
-import Leaderboard from "../Shared/Leaderboard";
-import News from "../Shared/News";
+import ContributeButtons from "../../../SharedComponents/ContributeButtons";
+import Leaderboard from "../../../SharedComponents/Leaderboard";
 import styles from "./style.module.scss";
 
 type Props = {

@@ -1,8 +1,9 @@
 import { useCurrentUser } from "@hooks/useUser";
 import { DUMMY_USER } from "@libs/consts/dummyUserData";
 import { NewsType } from "@libs/types/influence";
+import { useGetInfluences } from "@services/influence";
 import { readFileSync } from "fs";
-import type { InferGetStaticPropsType,NextPage } from "next";
+import type { InferGetStaticPropsType, NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -20,14 +21,19 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   news,
 }) => {
   const router = useRouter();
-  const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
+  const [screen, setScreen] = useState<"Tutorial" | "News">("News");
   const { user, isLoading } = useCurrentUser();
+  const { data: influenceList } = useGetInfluences();
 
   const [isHydrated, setIsHydrated] = useState(false);
   useEffect(() => {
     if (!isHydrated) setIsHydrated(true);
     if (!user && isHydrated && !isLoading) router.push("/");
   }, [user, isHydrated, router, isLoading]);
+
+  useEffect(() => {
+    if (influenceList && influenceList.length === 0) setScreen("Tutorial");
+  }, [influenceList]);
 
   switch (screen) {
     case "News":
