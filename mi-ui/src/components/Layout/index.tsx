@@ -1,14 +1,15 @@
-import React, { FC, ReactNode } from "react";
-import { ToastContainer } from "react-toastify";
-import { useGlobalTheme } from "@states/theme";
-import { useCurrentUser } from "@hooks/useUser";
-import Tooltip from "@components/SharedComponents/Tooltip";
-import Header from "./Header";
-
-import styles from "./style.module.scss";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/comfortaa";
 import "react-toastify/dist/ReactToastify.css";
+
+import Tooltip from "@components/SharedComponents/Tooltip";
+import { useCurrentUser } from "@hooks/useUser";
+import { useGlobalTheme } from "@states/theme";
+import React, { FC, ReactNode } from "react";
+import { ToastContainer } from "react-toastify";
+
+import Header from "./Header";
+import styles from "./style.module.scss";
 
 type Props = {
   children?: ReactNode;

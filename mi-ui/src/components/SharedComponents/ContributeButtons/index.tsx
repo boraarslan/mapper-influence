@@ -1,5 +1,5 @@
+import { Discord,Github } from "@components/SvgComponents";
 import { FC } from "react";
-import { Github, Discord } from "@components/SvgComponents";
 
 import styles from "./style.module.scss";
 

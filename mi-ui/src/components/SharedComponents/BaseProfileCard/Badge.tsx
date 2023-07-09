@@ -1,9 +1,9 @@
-import type { FC } from "react";
 import { Group } from "@libs/types/IOsuApi";
-import Tooltip from "../Tooltip";
-
-import styles from "./style.module.scss";
+import type { FC } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
+
+import Tooltip from "../Tooltip";
+import styles from "./style.module.scss";
 
 type Props = { group: Group };
 const Badge: FC<Props> = ({ group }) => {

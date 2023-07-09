@@ -1,10 +1,11 @@
-import axios from "axios";
-import { mockRequest, mockAxiosReject } from "@libs/functions";
 import { useCurrentUser } from "@hooks/useUser";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DUMMY_INFLUENCES } from "@libs/consts/dummyUserData";
-import { UserFullResponse } from "./user";
+import { mockAxiosReject,mockRequest } from "@libs/functions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { toast } from "react-toastify";
+
+import { UserFullResponse } from "./user";
 
 export type InfluenceResponse = {
   from_id: number;

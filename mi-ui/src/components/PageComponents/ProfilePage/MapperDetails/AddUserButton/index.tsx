@@ -1,60 +1,66 @@
-import { FC, FormEvent, useCallback, useState } from "react";
+import Modal from "@components/SharedComponents/Modal";
+import { convertFromInfluence, InfluenceTypeEnum } from "@libs/enums";
 import {
   AddInfluenceRequest,
-  addInfluence,
   useAddInfluenceMutation,
   useDeleteInfluenceMutation,
 } from "@services/influence";
-import Modal from "@components/SharedComponents/Modal";
 import { useGlobalTheme } from "@states/theme";
-import { InfluenceTypeEnum, convertFromInfluence } from "@libs/enums";
-import InfluenceType from "../../InfluenceList/InfluenceType";
+import { FC, FormEvent, MouseEvent, useCallback, useState } from "react";
 
-import styles from "./style.module.scss";
 import EditableDescription from "../../EditableDescription";
+import InfluenceType from "../../InfluenceList/InfluenceType";
+import styles from "./style.module.scss";
 
 type Props = {
   userId: string | number;
   action: "add" | "remove";
   dontShowForm?: boolean;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const AddUserButton: FC<Props> = ({
   userId,
-  action,
   dontShowForm,
   onClick,
+  action,
 }) => {
   const { theme } = useGlobalTheme();
-  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [description, setDescription] = useState("");
   const [type, setType] = useState<InfluenceTypeEnum>(
     InfluenceTypeEnum.Fascination
   );
 
-  const { mutate: addInfluence } = useAddInfluenceMutation();
-  const { mutate: deleteInfluence } = useDeleteInfluenceMutation();
+  const { mutate: addInfluence, isLoading: isAddLoading } =
+    useAddInfluenceMutation();
+  const { mutate: deleteInfluence, isLoading: isDeleteLoading } =
+    useDeleteInfluenceMutation();
+  const isLoading = isAddLoading || isDeleteLoading;
 
-  const handleClick = useCallback(() => {
-    onClick && onClick(); // Used in tutorial
-    if (action === "add" && !dontShowForm) {
-      setShowForm(true);
-    }
-    if (action === "remove") {
-      setLoading(true);
-      deleteInfluence(userId, {
-        onSettled: () => setLoading(false),
-      });
-    }
-  }, [action, dontShowForm, userId, setShowForm, onClick, deleteInfluence]);
+  const onRemove = () => {
+    deleteInfluence(userId, {
+      onSettled: () => setShowConfirm(false),
+    });
+  };
+
+  const handleClick = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      onClick && onClick(e); // Used in tutorial
+      if (action === "add" && !dontShowForm) {
+        setShowForm(true);
+      }
+      if (action === "remove") {
+        setShowConfirm(true);
+      }
+    },
+    [action, dontShowForm, setShowForm, onClick]
+  );
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      setLoading(true);
-
       const body: AddInfluenceRequest = {
         from_id: Number(userId),
         level: convertFromInfluence(type),
@@ -63,7 +69,6 @@ const AddUserButton: FC<Props> = ({
 
       addInfluence(body, {
         onSuccess: () => setShowForm(false),
-        onSettled: () => setLoading(false),
       });
     },
     [userId, type, description, addInfluence]
@@ -103,11 +108,29 @@ const AddUserButton: FC<Props> = ({
           </div>
         </form>
       </Modal>
+      <Modal
+        className={styles.modal}
+        keepOpen
+        showModal={showConfirm}
+        setShowModal={setShowConfirm}>
+        <h4>Are you sure you want to delete this influence?</h4>
+        <div className={styles.buttons}>
+          <button
+            type="button"
+            className="cancel"
+            onClick={() => setShowConfirm(false)}>
+            Cancel
+          </button>
+          <button className="danger" onClick={onRemove}>
+            Delete
+          </button>
+        </div>
+      </Modal>
       <button
         className={`${
           action === "add" ? styles.addUser : styles.removeUser + " danger"
         } ${theme === "dark" ? styles.dark : styles.light}`}
-        disabled={loading}
+        disabled={isLoading}
         onClick={handleClick}>
         <span>{action === "add" ? "Add" : "Remove"} Influence</span>
       </button>

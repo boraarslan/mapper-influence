@@ -55,13 +55,14 @@
   background-color: $color-background-content;
   box-shadow: var(--contentShadow);
   border-radius: $border-radius;
+  backdrop-filter: blur(0.1rem);
 }
 
 %button {
   cursor: pointer;
   padding: $spacing;
   background-color: var(--buttonBg-alt);
-  outline: 2px solid $color-button-outline;
+  outline: 0.1rem solid $color-button-outline;
   border-radius: $border-radius;
   color: var(--buttonText-alt);
   font-weight: 700;

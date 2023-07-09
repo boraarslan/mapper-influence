@@ -1,9 +1,8 @@
-import { FC, useState, lazy, Suspense } from "react";
-
 import Modal from "@components/SharedComponents/Modal";
+import { NewsType } from "@libs/types/influence";
+import { FC, lazy, Suspense,useState } from "react";
 
 import styles from "./style.module.scss";
-import { NewsType } from "@libs/types/influence";
 
 const LazyMarkdown = lazy(() => import("./RenderMarkdown"));
 

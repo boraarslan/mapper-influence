@@ -1,10 +1,10 @@
-import { FC, useRef } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useGetInfluences } from "@services/influence";
-import InfluenceElement from "./InfluenceElement";
-
-import styles from "./style.module.scss";
+import { FC, useRef } from "react";
 import { useIntersectionObserver } from "usehooks-ts";
+
+import InfluenceElement from "./InfluenceElement";
+import styles from "./style.module.scss";
 
 const InfluenceList: FC<{
   userId?: string | number;
@@ -15,37 +15,18 @@ const InfluenceList: FC<{
   const { data: influences } = useGetInfluences(userId);
   const [animateRef] = useAutoAnimate({ easing: "ease-out", duration: 200 });
 
-  const firstInfRef = useRef<HTMLDivElement>(null);
-  const firstIntersection = useIntersectionObserver(firstInfRef, {
-    threshold: 1,
-  });
-  const lastInfRef = useRef<HTMLDivElement>(null);
-  const lastIntersection = useIntersectionObserver(lastInfRef, {
-    threshold: 1,
-  });
-  const firstGradient = !firstIntersection?.isIntersecting;
-  const lastGradient = !lastIntersection?.isIntersecting;
-
-  const InfluenceCards = influences?.map((influence, i) => {
-    let ref;
-    if (i === 0) ref = firstInfRef;
-    if (i === influences.length - 1) ref = lastInfRef;
-    return (
-      <InfluenceElement
-        ref={ref}
-        key={influence.from_id}
-        influenceData={influence}
-        editable={editable}
-      />
-    );
-  });
-
-  const rootClass = `${styles.mapperInfluences} ${
-    firstGradient ? styles.firstGradient : ""
-  } ${lastGradient ? styles.lastGradient : ""}`;
+  const InfluenceCards = influences?.map((influence, i) => (
+    <InfluenceElement
+      key={influence.from_id}
+      influenceData={influence}
+      editable={editable}
+    />
+  ));
 
   return (
-    <div className={rootClass} style={!open ? { display: "none" } : {}}>
+    <div
+      className={styles.mapperInfluences}
+      style={!open ? { display: "none" } : {}}>
       <div className={styles.scrollWrapper} ref={animateRef}>
         {InfluenceCards}
         {!influences?.length && (

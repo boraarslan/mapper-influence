@@ -1,6 +1,6 @@
-import { FC } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import { LeaderboardType } from "@libs/types/influence";
+import { FC } from "react";
 
 import styles from "./style.module.scss";
 

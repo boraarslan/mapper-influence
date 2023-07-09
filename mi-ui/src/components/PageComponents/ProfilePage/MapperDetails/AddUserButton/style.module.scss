@@ -25,7 +25,6 @@
     line-height: 100%;
     font-weight: 700;
   }
-
 }
 
 .addUser {
@@ -36,8 +35,8 @@
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    border-radius: $border-radius * 2;
+    inset: -0.2rem;
+    border-radius: $border-radius * 3;
     padding: 0.25rem;
     background: linear-gradient(to right, $color-secondary, $color-primary);
     -webkit-mask: linear-gradient(#fff 0 0) content-box,
@@ -89,27 +88,47 @@
     gap: $spacing;
     width: 30rem;
 
+    .influenceType,
+    > textarea,
+    .buttons {
+      animation: slideIn 0.3s ease-out both;
+    }
+
     .influenceType {
       top: $spacing;
       left: 0;
       right: 0;
       margin: 0;
       margin-inline: auto;
+      animation-delay: 0.1s;
     }
 
     > textarea {
       margin-top: 1.5rem + $spacing * 2;
       height: 10rem;
+      animation-delay: 0.15s;
     }
+  }
 
-    .buttons {
-      display: flex;
-      justify-content: space-between;
-      gap: $spacing;
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing;
+    animation-delay: 0.2s;
 
-      > button {
-        width: 6rem;
-      }
+    > button {
+      width: 6rem;
     }
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-1rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

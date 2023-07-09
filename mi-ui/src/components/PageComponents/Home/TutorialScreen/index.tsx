@@ -1,13 +1,14 @@
-import { FC, ReactNode, useState } from "react";
 import SearchBar from "@components/Layout/Header/SearchBar";
 import EditableDescription from "@components/PageComponents/ProfilePage/EditableDescription";
 import InfluenceType from "@components/PageComponents/ProfilePage/InfluenceList/InfluenceType";
 import AddUserButton from "@components/PageComponents/ProfilePage/MapperDetails/AddUserButton";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
+import { useCurrentUser } from "@hooks/useUser";
 import { InfluenceResponse } from "@services/influence";
+import { useGlobalTooltip } from "@states/globalTooltip";
+import { FC, ReactNode } from "react";
 
 import styles from "./style.module.scss";
-import { useCurrentUser } from "@hooks/useUser";
 
 // TODO: Add featured map controls
 
@@ -26,14 +27,9 @@ const TutorialStep: FC<{
 
 type Props = { children?: ReactNode };
 const TutorialScreen: FC<Props> = ({ children }) => {
-  const [showTooltip, setShowTooltip] = useState(false);
+  const { activateTooltip } = useGlobalTooltip();
 
   const { user } = useCurrentUser();
-
-  const toggleTooltip = () => {
-    setShowTooltip(true);
-    setTimeout(() => setShowTooltip(false), 3000);
-  };
 
   const influenceData: InfluenceResponse = {
     info: "Edit here to give details.",
@@ -61,15 +57,14 @@ const TutorialScreen: FC<Props> = ({ children }) => {
           <AddUserButton
             userId={0}
             action="add"
-            onClick={toggleTooltip}
+            onClick={(e) => {
+              activateTooltip(
+                "You need to click this inside a profile. Search someone first!",
+                e.currentTarget
+              );
+            }}
             dontShowForm
           />
-          {showTooltip && (
-            <div className={styles.addButtonTooltip}>
-              You need to click this inside a profile. <br />
-              Search someone first!
-            </div>
-          )}
         </TutorialStep>
 
         <TutorialStep

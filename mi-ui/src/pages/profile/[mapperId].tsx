@@ -1,9 +1,9 @@
+import ProfilePage from "@components/PageComponents/ProfilePage";
+import { useCurrentUser } from "@hooks/useUser";
+import { useFullUser } from "@services/user";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import ProfilePage from "@components/PageComponents/ProfilePage";
-import { useFullUser } from "@services/user";
-import { useCurrentUser } from "@hooks/useUser";
 
 const MapperPage: NextPage = () => {
   const router = useRouter();

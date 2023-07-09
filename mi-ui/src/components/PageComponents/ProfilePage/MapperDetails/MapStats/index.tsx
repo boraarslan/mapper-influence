@@ -1,6 +1,6 @@
 import { useFullUser } from "@services/user";
-import { FC, MouseEventHandler, ReactNode, useMemo } from "react";
 import { useGlobalTooltip } from "@states/globalTooltip";
+import { FC, MouseEventHandler, ReactNode, useMemo } from "react";
 
 import styles from "./style.module.scss";
 

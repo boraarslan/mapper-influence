@@ -1,15 +1,15 @@
-import { FC, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
 import ProfilePhoto from "@components/SharedComponents/ProfilePhoto";
 import { Influences } from "@components/SvgComponents";
+import { UserBaseResponse } from "@services/user";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
 import { useSessionStore } from "src/states/user";
-import SearchBar from "./SearchBar";
 
 import styles from "../style.module.scss";
-import { UserBaseResponse } from "@services/user";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
   const router = useRouter();

@@ -1,15 +1,15 @@
-import { forwardRef } from "react";
 import BaseProfileCard from "@components/SharedComponents/BaseProfileCard";
 import MapCarousel from "@components/SharedComponents/MapCarousel/SingleItem";
 import { convertFromInfluence } from "@libs/enums";
 import {
-  InfluenceResponse,
   editInfluenceInfo,
   editInfluenceLevel,
+  InfluenceResponse,
 } from "@services/influence";
-import InfluenceType from "./InfluenceType";
-import EditableDescription from "../EditableDescription";
+import { forwardRef } from "react";
 
+import EditableDescription from "../EditableDescription";
+import InfluenceType from "./InfluenceType";
 import styles from "./style.module.scss";
 
 type Props = {

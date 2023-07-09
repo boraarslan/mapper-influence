@@ -4,7 +4,6 @@
   position: absolute;
   overflow: hidden;
   z-index: 1;
-  top: $spacing / 2;
   width: $card-width - $spacing;
   margin-left: $spacing / 2;
   margin-bottom: $spacing / 2;
@@ -27,6 +26,7 @@
   &:focus-within {
     &:not(.disabled) {
       background-color: $color-background-card-hover;
+      box-shadow: var(--cardShadowHover);
     }
   }
 

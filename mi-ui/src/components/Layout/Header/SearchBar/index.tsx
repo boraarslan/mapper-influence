@@ -1,13 +1,13 @@
+import { Magnify } from "@components/SvgComponents";
+import { MaxNameLength } from "@libs/consts";
+import { UserBaseResponse } from "@services/user";
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { useRouter } from "next/router";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useOnClickOutside } from "usehooks-ts";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { Magnify } from "@components/SvgComponents";
-import { MaxNameLength } from "@libs/consts";
-import Results from "./Results";
 
+import Results from "./Results";
 import styles from "./styles.module.scss";
-import { UserBaseResponse } from "@services/user";
 
 type Props = {
   className?: string;

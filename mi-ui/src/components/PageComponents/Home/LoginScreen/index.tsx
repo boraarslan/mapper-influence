@@ -1,12 +1,12 @@
-import { FC } from "react";
 import DarkModeToggle from "@components/Layout/Header/DarkModeToggle";
+import News from "@components/SharedComponents/News";
 import { LeaderboardType, NewsType } from "@libs/types/influence";
-import ContributeButtons from "../Shared/ContributeButtons";
-import Leaderboard from "../Shared/Leaderboard";
-import News from "../Shared/News";
-import CoolCards from "./CoolCards";
+import { FC } from "react";
 import { useGlobalTooltip } from "src/states/globalTooltip";
 
+import ContributeButtons from "../../../SharedComponents/ContributeButtons";
+import Leaderboard from "../../../SharedComponents/Leaderboard";
+import CoolCards from "./CoolCards";
 import styles from "./style.module.scss";
 
 type Props = { newsList: NewsType[]; topList: LeaderboardType[] };
@@ -42,8 +42,7 @@ const LoginScreen: FC<Props> = ({ topList, newsList }) => {
             className={styles.a}
             onMouseEnter={(e) =>
               activateTooltip("Opens in new tab", e.currentTarget)
-            }
-          >
+            }>
             pishifat’s Mapper Influences
           </a>{" "}
           project.

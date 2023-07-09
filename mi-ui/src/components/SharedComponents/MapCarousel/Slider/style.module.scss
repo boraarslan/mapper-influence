@@ -27,29 +27,4 @@
       }
     }
   }
-
-  .prevGradient,
-  .nextGradient {
-    position: absolute;
-    background-color: var(--currentBg);
-    mask-image: linear-gradient(to right, white, transparent);
-    top: 0;
-    bottom: 0;
-    opacity: 0;
-    width: 2rem;
-    transition: opacity 0.1s ease-in, background-color 0.1s ease-in;
-  }
-
-  .prevGradient {
-    left: -2px;
-  }
-
-  .nextGradient {
-    right: -2px;
-    rotate: 180deg;
-  }
-
-  .visible {
-    opacity: 1;
-  }
 }

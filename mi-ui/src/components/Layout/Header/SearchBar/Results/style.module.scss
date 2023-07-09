@@ -9,7 +9,7 @@
   top: calc(100% + $spacing);
   padding: $spacing;
   
-  background-color: $color-background-content;
+  background-color: var(--bgColor-1);
   
   outline: 0.1rem solid $color-primary;
   border-radius: $border-radius;
