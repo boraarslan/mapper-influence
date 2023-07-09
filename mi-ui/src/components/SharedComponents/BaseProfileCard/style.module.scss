@@ -7,6 +7,8 @@ $photoSize: 5rem;
   grid-template-rows: 3.5rem auto;
   gap: $spacing / 2;
 
+  background-color: $color-background-content;
+
   border-radius: $border-radius;
   width: $card-width;
   height: $card-height;

@@ -61,10 +61,10 @@
   }
 
   .avatar {
-    outline: 2px $color-primary solid;
+    outline: 2px transparent solid;
   }
   .avatar:hover {
-    outline-color: $color-secondary;
+    outline-color: $color-button-outline;
   }
 }
 

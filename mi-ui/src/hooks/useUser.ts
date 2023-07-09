@@ -8,7 +8,7 @@ export const useCurrentUser = () => {
   const router = useRouter();
   const { user, login, logout } = useSessionStore();
   const [cookie, _, deleteCookie] = useCookies(["mi-session-token"]);
-  const { data } = useBaseUser();
+  const { data, isLoading } = useBaseUser();
 
   const sessionToken = cookie["mi-session-token"];
 
@@ -22,6 +22,7 @@ export const useCurrentUser = () => {
   }, [sessionToken, user, login, logout, router, data]);
 
   return {
+    isLoading,
     user,
     logout: () => {
       logout();
