@@ -21,13 +21,13 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 }) => {
   const router = useRouter();
   const [screen, setScreen] = useState<"Tutorial" | "News">("Tutorial");
-  const { user } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
 
   const [isHydrated, setIsHydrated] = useState(false);
   useEffect(() => {
     if (!isHydrated) setIsHydrated(true);
-    if (!user && isHydrated) router.push("/");
-  }, [user, isHydrated, router]);
+    if (!user && isHydrated && !isLoading) router.push("/");
+  }, [user, isHydrated, router, isLoading]);
 
   switch (screen) {
     case "News":
