@@ -1,7 +1,6 @@
-import { FC, FormEvent, useCallback, useState } from "react";
+import { FC, FormEvent, useCallback, useState, MouseEvent } from "react";
 import {
   AddInfluenceRequest,
-  addInfluence,
   useAddInfluenceMutation,
   useDeleteInfluenceMutation,
 } from "@services/influence";
@@ -17,7 +16,7 @@ type Props = {
   userId: string | number;
   action: "add" | "remove";
   dontShowForm?: boolean;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const AddUserButton: FC<Props> = ({
@@ -37,18 +36,21 @@ const AddUserButton: FC<Props> = ({
   const { mutate: addInfluence } = useAddInfluenceMutation();
   const { mutate: deleteInfluence } = useDeleteInfluenceMutation();
 
-  const handleClick = useCallback(() => {
-    onClick && onClick(); // Used in tutorial
-    if (action === "add" && !dontShowForm) {
-      setShowForm(true);
-    }
-    if (action === "remove") {
-      setLoading(true);
-      deleteInfluence(userId, {
-        onSettled: () => setLoading(false),
-      });
-    }
-  }, [action, dontShowForm, userId, setShowForm, onClick, deleteInfluence]);
+  const handleClick = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => {
+      onClick && onClick(e); // Used in tutorial
+      if (action === "add" && !dontShowForm) {
+        setShowForm(true);
+      }
+      if (action === "remove") {
+        setLoading(true);
+        deleteInfluence(userId, {
+          onSettled: () => setLoading(false),
+        });
+      }
+    },
+    [action, dontShowForm, userId, setShowForm, onClick, deleteInfluence]
+  );
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
