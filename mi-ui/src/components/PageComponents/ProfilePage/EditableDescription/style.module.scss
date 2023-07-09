@@ -23,6 +23,7 @@
 
   &.editable:hover {
     background-color: $color-background-card-hover;
+    box-shadow: var(--cardShadowHover);
   }
 
   &::placeholder {

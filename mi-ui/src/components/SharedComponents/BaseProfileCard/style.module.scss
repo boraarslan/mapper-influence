@@ -1,13 +1,13 @@
 $photoSize: 5rem;
 
 .cardWrapper {
+  position: relative;
+  isolation: isolate;
   display: grid;
   justify-items: center;
   grid-template-columns: 1fr $photoSize 1fr;
   grid-template-rows: 3.5rem auto;
   gap: $spacing / 2;
-
-  background-color: $color-background-content;
 
   border-radius: $border-radius;
   width: $card-width;
@@ -17,6 +17,31 @@ $photoSize: 5rem;
   padding-bottom: $spacing / 2;
 
   @extend %cardShadow;
+
+  .backgroundFill {
+    position: absolute;
+    inset: 0;
+    background-color: var(--bgColor-2);
+    z-index: -1;
+    border-radius: inherit;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    grid-row: 1;
+    grid-column: 1;
+    width: $photoSize;
+    height: $photoSize;
+    border-radius: 999rem;
+    margin-top: -$photoSize / 4;
+    z-index: -1;
+    box-shadow: var(--cardShadow);
+  }
+
+  &:hover::before {
+    box-shadow: var(--cardShadowHover);
+  }
 
   .name {
     grid-row: 2;
@@ -127,7 +152,6 @@ $photoSize: 5rem;
 }
 
 .skeleton {
-  
   &:hover {
     box-shadow: var(--cardShadow);
   }

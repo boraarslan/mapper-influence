@@ -89,9 +89,8 @@
         }
 
         .descriptionSide {
-          height: calc(100% - $spacing / 2);
+          height: 100%;
           flex-grow: 1;
-          margin-top: $spacing / 2;
         }
 
         @media screen and (max-width: $responsive-breakpoint) {
