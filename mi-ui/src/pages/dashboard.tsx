@@ -33,7 +33,6 @@ const Dashboard: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
 
   useEffect(() => {
     if (influenceList && influenceList.length === 0) setScreen("Tutorial");
-    setScreen("Tutorial")
   }, [influenceList]);
 
   switch (screen) {

@@ -1,11 +1,12 @@
 import Modal from "@components/SharedComponents/Modal";
 import Arrow from "@components/SvgComponents/Arrow";
 import { useCurrentUser } from "@hooks/useUser";
-import { convertToInfluence,InfluenceTypeEnum } from "@libs/enums";
+import { convertToInfluence, InfluenceTypeEnum } from "@libs/enums";
 import {
   deleteInfluence,
   getInfluences,
   InfluenceResponse,
+  useDeleteInfluenceMutation,
 } from "@services/influence";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FC, useRef, useState } from "react";
@@ -38,51 +39,23 @@ const InfluenceType: FC<Props> = ({
     convertToInfluence(influenceData?.influence_level || 1)
   );
 
-  const { user } = useCurrentUser();
-  const queryClient = useQueryClient();
-
   const ref = useRef(null);
   useOnClickOutside(ref, () => {
     if (isOpen) setIsOpen(false);
   });
 
+  const { mutate: removeInfluence } = useDeleteInfluenceMutation();
+
   const onRemove = () => {
     setIsLoading(true);
-    return deleteInfluence(influenceData?.from_id || 0).finally(() => {
-      setIsLoading(false);
-      setIsModalOpen(false);
+    removeInfluence(influenceData?.from_id || 0, {
+      onSettled: () => {
+        setIsLoading(false);
+        setIsModalOpen(false);
+      },
     });
+    return deleteInfluence(influenceData?.from_id || 0).finally(() => {});
   };
-
-  const updateInfluences = useMutation(onRemove, {
-    onMutate: async () => {
-      await queryClient.cancelQueries(["influences", user?.id]);
-      const previousInfluences = queryClient.getQueryData<InfluenceResponse[]>([
-        "influences",
-        user?.id,
-      ]);
-      if (previousInfluences) {
-        queryClient.setQueryData<InfluenceResponse[]>(
-          ["influences", user?.id],
-          previousInfluences.filter(
-            (influence) => influence.from_id !== influenceData?.from_id
-          )
-        );
-      }
-      return { previousInfluences };
-    },
-    onError: (err, _, context: any) => {
-      if (context?.previousInfluences) {
-        queryClient.setQueryData<InfluenceResponse[]>(
-          ["influences", user?.id],
-          context.previousInfluences
-        );
-      }
-      toast.error("Failed to delete influence.");
-    },
-    onSuccess: () => toast.success("Influence deleted."),
-    onSettled: () => queryClient.invalidateQueries(["influences", user?.id]),
-  });
 
   const handleChange = (newType: InfluenceTypeEnum) => {
     setSelectedType(newType);
@@ -116,10 +89,7 @@ const InfluenceType: FC<Props> = ({
               onClick={() => setIsModalOpen(false)}>
               Cancel
             </button>
-            <button
-              className="danger"
-              disabled={isLoading}
-              onClick={() => updateInfluences.mutate()}>
+            <button className="danger" disabled={isLoading} onClick={onRemove}>
               Delete
             </button>
           </div>
