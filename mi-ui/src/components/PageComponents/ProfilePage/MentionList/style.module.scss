@@ -2,11 +2,12 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+
   height: var(--height);
   max-width: var(--max-width);
+
   margin-inline: auto;
   padding: $spacing;
-  padding-top: 0;
 
   background-color: $color-background-content;
 
