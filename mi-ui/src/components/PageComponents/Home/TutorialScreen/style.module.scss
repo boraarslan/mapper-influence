@@ -65,12 +65,18 @@
             bottom: 15%;
           }
         }
+        z-index: 1; // fix for search results
+        // apparently backdrop-filter messes up stacking context
       }
 
       // Editing step
       &:nth-child(3) {
         width: 40rem + $spacing;
         padding-bottom: $spacing;
+
+        .centerer {
+          gap: $spacing;
+        }
 
         .profileSide {
           position: relative;
@@ -83,9 +89,8 @@
         }
 
         .descriptionSide {
-          height: 100%;
+          height: calc(100% - $spacing / 2);
           flex-grow: 1;
-          margin-left: $spacing / 2;
           margin-top: $spacing / 2;
         }
 
