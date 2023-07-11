@@ -7,7 +7,7 @@ export const ReportBug: FC = () => {
   return (
     <a
       className={styles.button}
-      href={"https://github.com/Fursum/Mapper-Influences-Frontend/issues"}
+      href={"https://github.com/boraarslan/mapper-influence/issues"}
       target="_blank"
       rel="noreferrer"
     >
