@@ -15,7 +15,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = ({
   const { user, isLoading } = useCurrentUser();
 
   useEffect(() => {
-    if (!user && isLoading) toast.loading("Logging in...");
+    //if (!user && isLoading) toast.loading("Logging in...");
     if (user) router.push("/dashboard");
   }, [user, router, isLoading]);
 
