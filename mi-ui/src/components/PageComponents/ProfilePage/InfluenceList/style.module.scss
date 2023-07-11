@@ -1,4 +1,5 @@
 .mapperInfluences {
+  @extend %contentBox;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,8 +9,6 @@
   margin-inline: auto;
 
   padding: $spacing / 2;
-
-  background-color: $color-background-content;
 
   > h2 {
     text-align: center;
