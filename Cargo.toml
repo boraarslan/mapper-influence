@@ -7,7 +7,7 @@ edition = "2021"
 license = "MIT"
 
 [workspace.dependencies]
-async-trait = "0.1.68"
+async-trait = "0.1.73"
 axum = { version = "0.6.18", features = ["macros", "http2"] }
 axum-auth = "0.4.0"
 axum-macros = "0.3.7"
